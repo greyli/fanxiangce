@@ -1,0 +1,82 @@
+
+
+
+body {
+    background: #666699; /*#468e8d*/
+    font-family: Georgia, "Times New Roman",
+     "Microsoft YaHei", "微软雅黑",
+     STXihei, "华文细黑",
+     serif;
+    font-size: 18px;
+    padding: 16px;
+}
+
+a {
+    color: #b3b3cc;
+    text-decoration: none;
+
+}
+a:hover,
+a:focus {
+    color: #fff;
+    text-shadow: -1px -1px 2px rgba(100,100,100,0.5);
+    padding: 0 0;
+    background: rgba(255,255,255,0.5);
+    text-shadow: -1px -1px 2px rgba(100,100,100,0.9);
+    border-radius: 0.2em;
+
+    -webkit-transition: 0.5s;
+    -moz-transition:    0.5s;
+    -ms-transition:     0.5s;
+    -o-transition:      0.5s;
+    transition:         0.5s;
+}
+
+img {
+    border: solid white 12px;
+    /*border-bottom: solid white 50px;*/
+}
+
+#tag-cloud {
+    text-align: center;
+    position: absolute;
+    top: 10%;
+    left: 20%;
+}
+
+#title {
+    color: #b3b3cc;
+    cursor: default;
+    display: inline-block;
+    transition-duration: 0.5s;
+    z-index: 10;
+    position: absolute;
+}
+
+#title:hover {
+    color: #fff;}
+
+#name {
+    position: absolute;
+    bottom: -472px;
+    right: 0;
+    font-size: 500px;
+    color: #9292b9; /*#66a09f*/
+    cursor: default;
+    transition-duration: 1s;
+    z-index: -1;
+    }
+
+#info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 20px;
+    font-size: 15px;
+    color: #b3b3cc;
+    cursor: default;
+    transition-duration: 1s;
+    }
+
+#info:hover {
+    color: #fff;}

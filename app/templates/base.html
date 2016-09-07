@@ -1,0 +1,40 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}TagCloud Album{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle"
+                    data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+              <b>
+              <span style="color: #f79d00">翻</span>
+              <span style="color: #8b3fb2">相</span>
+              <span style="color: #4CAF50">册</span>
+              </b></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">主页</a></li>
+                <li><a href="/demo">Demo</a></li>
+                <li><a href="/new-album/tag">试用</a></li>
+                <li><a href="/about">关于</a></li>
+                <li><a class=".navbar-btn" href="/login">登录</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
