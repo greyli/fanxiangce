@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}翻相册 - 确认账户{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>你好，{{ current_user.username }}！</h1>
+    <h3>你还没有确认你的账户，请前往你的邮箱查收确认邮件。</h3>
+    <p>
+        在开始你的翻相册之旅前，你需要确认你的账户。检查你的收件箱，点击翻相册的确认邮件里的链接。
+        <br><br>
+        没有收到？点击<a href="{{ url_for('auth.resend_confirmation') }}">这里</a>重新发送。
+    </p>
+</div>
+{% endblock %}

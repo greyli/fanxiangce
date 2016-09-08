@@ -1,0 +1,397 @@
+
+<!doctype html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>照片云demo</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/normalize.css') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='ccss/demo.css') }}">
+    <link href="{{ url_for('static', filename='css/remodal.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/remodal-tag-theme.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/tag.css') }}" rel="stylesheet">
+
+
+</head>
+<body>
+    <h1 id="title">{{ title }}</h1>
+    <div><p id="name"></p></div>
+    <div id="info"><a href="http://withlihui.com" target="_blank" title="(ง •̀_•́)ง">{{ sub_title }}</a></div>
+    <div id='tag-cloud'></div>
+
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}" type="text/javascript"></script>
+	<script>window.jQuery || document.write('<script src="js/jquery-2.1.1.min.js"><\/script>')</script>
+	<script src="{{ url_for('static', filename='js/jquery.svg3dtagcloud.min.js') }}"></script>
+	<script>
+    	$( document ).ready( function() {
+            var entries = [
+                
+{ label: '二丫', url: '#二丫', target: '_top' }, { label: '刘军', url: '#刘军', target: '_top' }, { label: '刘凤仪', url: '#刘凤仪', target: '_top' }, { label: '刘玲', url: '#刘玲', target: '_top' }, { label: '刘琴', url: '#刘琴', target: '_top' }, { label: '吴诗雅', url: '#吴诗雅', target: '_top' }, { label: '周海伦', url: '#周海伦', target: '_top' }, { label: '孙燕妮', url: '#孙燕妮', target: '_top' }, { label: '宋卫德', url: '#宋卫德', target: '_top' }, { label: '宋文', url: '#宋文', target: '_top' }, { label: '小伟', url: '#小伟', target: '_top' }, { label: '小军', url: '#小军', target: '_top' }, { label: '小刚', url: '#小刚', target: '_top' }, { label: '小娟', url: '#小娟', target: '_top' }, { label: '小婷', url: '#小婷', target: '_top' }, { label: '小敏', url: '#小敏', target: '_top' }, { label: '小明', url: '#小明', target: '_top' }, { label: '小美', url: '#小美', target: '_top' }, { label: '小雅', url: '#小雅', target: '_top' }, { label: '张婷', url: '#张婷', target: '_top' }, { label: '彼得', url: '#彼得', target: '_top' }, { label: '晨晨', url: '#晨晨', target: '_top' }, { label: '李志', url: '#李志', target: '_top' }, { label: '杰克', url: '#杰克', target: '_top' }, { label: '楠楠', url: '#楠楠', target: '_top' }, { label: '狗蛋', url: '#狗蛋', target: '_top' }, { label: '王文丽', url: '#王文丽', target: '_top' }, { label: '王露怡', url: '#王露怡', target: '_top' }, { label: '理查德', url: '#理查德', target: '_top' }, { label: '百香', url: '#百香', target: '_top' }, { label: '罗大佑', url: '#罗大佑', target: '_top' }, { label: '莉莉', url: '#莉莉', target: '_top' }, { label: '蛤蛤', url: '#蛤蛤', target: '_top' }, { label: '许三观', url: '#许三观', target: '_top' }, { label: '赵云', url: '#赵云', target: '_top' }, { label: '赵框理', url: '#赵框理', target: '_top' }, { label: '赵立', url: '#赵立', target: '_top' }, { label: '赵芸', url: '#赵芸', target: '_top' }, { label: '赵雅芝', url: '#赵雅芝', target: '_top' }, { label: '麦克', url: '#麦克', target: '_top' }, 
+            ]
+            var settings = {
+
+                entries: entries,
+                width: 800,
+                height: 600,
+                radius: '65%',
+                radiusMin: 75,
+                bgDraw: true,
+                bgColor: 'transparent',
+                opacityOver: 1.00,
+                opacityOut: 0.05,
+                opacitySpeed: 6,
+                fov: 800,
+                speed: 2,
+                fontFamily: 'Georgia, Times New Roman, Microsoft YaHei, STXihei, serif',
+                fontSize: '20',
+                fontColor: '#fff',
+                fontWeight: 'bold',//bold
+                fontStyle: 'normal',//italic
+                fontStretch: 'normal',//wider, narrower, ultra-condensed, extra-condensed, condensed, semi-condensed, semi-expanded, expanded, extra-expanded, ultra-expanded
+                fontToUpperCase: true
+
+            };
+
+            //var svg3DTagCloud = new SVG3DTagCloud( document.getElementById( 'holder'  ), settings );
+            $( '#tag-cloud' ).svg3DTagCloud( settings );
+
+		} );
+
+    </script>   
+
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="二丫">
+
+        <img src="{{ url_for('static', filename='photos/二丫.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="刘军">
+
+        <img src="{{ url_for('static', filename='photos/刘军.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="刘凤仪">
+
+        <img src="{{ url_for('static', filename='photos/刘凤仪.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="刘玲">
+
+        <img src="{{ url_for('static', filename='photos/刘玲.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="刘琴">
+
+        <img src="{{ url_for('static', filename='photos/刘琴.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="吴诗雅">
+
+        <img src="{{ url_for('static', filename='photos/吴诗雅.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="周海伦">
+
+        <img src="{{ url_for('static', filename='photos/周海伦.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="孙燕妮">
+
+        <img src="{{ url_for('static', filename='photos/孙燕妮.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="宋卫德">
+
+        <img src="{{ url_for('static', filename='photos/宋卫德.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="宋文">
+
+        <img src="{{ url_for('static', filename='photos/宋文.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小伟">
+
+        <img src="{{ url_for('static', filename='photos/小伟.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小军">
+
+        <img src="{{ url_for('static', filename='photos/小军.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小刚">
+
+        <img src="{{ url_for('static', filename='photos/小刚.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小娟">
+
+        <img src="{{ url_for('static', filename='photos/小娟.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小婷">
+
+        <img src="{{ url_for('static', filename='photos/小婷.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小敏">
+
+        <img src="{{ url_for('static', filename='photos/小敏.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小明">
+
+        <img src="{{ url_for('static', filename='photos/小明.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小美">
+
+        <img src="{{ url_for('static', filename='photos/小美.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="小雅">
+
+        <img src="{{ url_for('static', filename='photos/小雅.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="张婷">
+
+        <img src="{{ url_for('static', filename='photos/张婷.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="彼得">
+
+        <img src="{{ url_for('static', filename='photos/彼得.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="晨晨">
+
+        <img src="{{ url_for('static', filename='photos/晨晨.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="李志">
+
+        <img src="{{ url_for('static', filename='photos/李志.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="杰克">
+
+        <img src="{{ url_for('static', filename='photos/杰克.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="楠楠">
+
+        <img src="{{ url_for('static', filename='photos/楠楠.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="狗蛋">
+
+        <img src="{{ url_for('static', filename='photos/狗蛋.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="王文丽">
+
+        <img src="{{ url_for('static', filename='photos/王文丽.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="王露怡">
+
+        <img src="{{ url_for('static', filename='photos/王露怡.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="理查德">
+
+        <img src="{{ url_for('static', filename='photos/理查德.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="百香">
+
+        <img src="{{ url_for('static', filename='photos/百香.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="罗大佑">
+
+        <img src="{{ url_for('static', filename='photos/罗大佑.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="莉莉">
+
+        <img src="{{ url_for('static', filename='photos/莉莉.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="蛤蛤">
+
+        <img src="{{ url_for('static', filename='photos/蛤蛤.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="许三观">
+
+        <img src="{{ url_for('static', filename='photos/许三观.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="赵云">
+
+        <img src="{{ url_for('static', filename='photos/赵云.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="赵框理">
+
+        <img src="{{ url_for('static', filename='photos/赵框理.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="赵立">
+
+        <img src="{{ url_for('static', filename='photos/赵立.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="赵芸">
+
+        <img src="{{ url_for('static', filename='photos/赵芸.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="赵雅芝">
+
+        <img src="{{ url_for('static', filename='photos/赵雅芝.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+        <div class="remodal-is-closed" style="display: none;">
+    </div>
+    <div class="remodal-wrapper remodal-is-closed" style="display: none;">
+      <div class="remodal remodal-is-initialized remodal-is-closed" data-remodal-id="麦克">
+
+        <img src="{{ url_for('static', filename='photos/麦克.png') }}" height="500"><button data-remodal-action="close" class="remodal-close"></button></img>
+      </div>
+    </div>
+  <script src="{{ url_for('static', filename='js/remodal.min.js') }}"></script>
+  <script>
+      $(document).ready(function(){
+        $("a").mouseover(function(){
+          var text = $(this).attr("xlink:href");
+          $("p").html(text[text.length-1]);
+        });
+        $("a").mouseout(function(){
+          $("p").html("");
+        });
+      });
+
+  </script>
+</body>
+</html>

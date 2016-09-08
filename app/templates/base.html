@@ -20,14 +20,48 @@
               <span style="color: #4CAF50">册</span>
               </b></a>
         </div>
+
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">主页</a></li>
-                <li><a href="/demo">Demo</a></li>
-                <li><a href="/new-album/tag">试用</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="/">我的相册</a></li>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">创建<span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a target="_blank" href="{{ url_for('main.normal') }}">普通相册</a></li>
+                    <li><a target="_blank" href="{{ url_for('main.tag') }}">标签云相册</a></li>
+                    <li><a target="_blank" href="{{ url_for('main.wall') }}">照片墙</a></li>
+                  </ul>
+                </li>
+                {% else %}
+                <li><a href="/create">体验</a></li>
+                {% endif %}
                 <li><a href="/about">关于</a></li>
-                <li><a class=".navbar-btn" href="/login">登录</a></li>
             </ul>
+
+
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <span></span>
+                    {{ current_user.email }} <strong class="caret"></strong>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">资料</a></li>
+                        <li><a href="#">设置</a></li>
+                        <li><a href="#">帮助</a></li>
+                        <li class="divider"></li>
+                        <li><a href='{{ url_for("auth.logout") }}'>注销</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">登录</a></li>
+            </ul>
+            {% endif %}
+
         </div>
     </div>
 </div>
@@ -35,6 +69,12 @@
 
 {% block content %}
 <div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
     {% block page_content %}{% endblock %}
 </div>
 {% endblock %}

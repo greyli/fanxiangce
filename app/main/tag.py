@@ -130,7 +130,7 @@ def glue():
         content2.append(insert2(img[0].decode('GBK').encode('utf-8'),
                                 img[1].decode('GBK').encode('utf-8')))
 
-    f = open(r'D:\Projects\TagCloudAlbum\app\templates\album.html', 'w')
+    f = open(r'D:\Projects\fanxiangce\app\templates\tag-album.html', 'w')
     f.write(part1 + "\n")
     f.writelines(content1)
     f.write(part2 + "\n")

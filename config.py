@@ -6,9 +6,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'very hard to guess'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-    LOG_MAIL_SUBJIECT_PRIFIX = '[log]'
-    LOG_MAIL_SENDER = 'Li Hui<lihui@log.com>'
-    LOG_ADMIN = os.environ.get('LOG_ADMIN')
+    FANXIANGCE_MAIL_SUBJECT_PREFIX = u'[翻相册]'
+    FANXIANGCE_MAIL_SENDER = u'翻相册<admin@fanxiangce.com>'
+    FANXIANGCE_ADMIN = os.environ.get('FANXIANG_ADMIN')
 
     @staticmethod
     def init_app(app):
@@ -27,13 +27,13 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
-    DEBUG = True
+    TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URI') or \
         'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or \
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or \
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 
@@ -44,4 +44,3 @@ config = {
 
     'default': DevelopmentConfig
 }
-
