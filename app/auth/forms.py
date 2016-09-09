@@ -33,3 +33,41 @@ class RegisterForm(Form):
     def validate_username(self, field):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError(u'用户名已被注册，换一个吧。')
+
+
+class ChangePasswordForm(Form):
+    old_password = PasswordField(u'旧密码', validators=[Required()])
+    password = PasswordField(u'新密码', validators=[
+        Required(), EqualTo('password2', message='密码必须匹配。')])
+    password2 = PasswordField(u'确认新密码', validators=[Required()])
+    submit = SubmitField(u'更改')
+
+
+class PasswordResetRequestForm(Form):
+    email = StringField(u'邮箱', validators=[Required(), Length(1, 64),
+                                             Email()])
+    submit = SubmitField(u'重设密码')
+
+
+class PasswordResetForm(Form):
+    email = StringField(u'邮箱', validators=[Required(), Length(1, 64),
+                                             Email()])
+    password = PasswordField(u'新密码', validators=[
+        Required(), EqualTo(u'password2', message='Passwords must match')])
+    password2 = PasswordField(u'确认密码', validators=[Required()])
+    submit = SubmitField(u'重设')
+
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first() is None:
+            raise ValidationError(u'邮箱地址有错，请检查。')
+
+
+class ChangeEmailForm(Form):
+    email = StringField(u'新邮箱地址', validators=[Required(), Length(1, 64),
+                                                 Email()])
+    password = PasswordField(u'密码', validators=[Required()])
+    submit = SubmitField(u'更新')
+
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError(u'邮箱已经注册过了，换一个吧。')

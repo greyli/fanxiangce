@@ -1,0 +1,14 @@
+<p>亲爱的 {{ user.username }},</p>
+<p>欢迎来到 <b>翻相册</b>!</p>
+<p>点击下面的链接确认你的账户： <br>
+    <a href="{{ url_for('auth.confirm', token=token, _external=True) }}">{{ url_for('auth.confirm', token=token, _external=True) }}</a></p>
+<p>如果你的email程序不支持链接点击，请将上面的地址拷贝至你的浏览器的地址栏进入翻相册。</p>
+<p>感谢对翻相册的支持，祝你在翻相册获得愉快的体验。</p>
+<p>翻相册 http://fanxiangce.com/</p>
+<p><small>(这是一封自动生成的email，请勿回复。)</small></p>
+
+
+
+
+
+

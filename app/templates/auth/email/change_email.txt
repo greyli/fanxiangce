@@ -1,0 +1,13 @@
+亲爱的{{ user.username }}：
+
+请点击下面的链接确认新的邮箱地址。
+
+{{ url_for('auth.change_email', token=token, _external=True) }}
+
+如果你的email程序不支持链接点击，请将上面的地址拷贝至你的浏览器的地址栏打开。
+
+感谢对翻相册的支持，祝你在翻相册获得愉快的体验。
+
+翻相册 http://fanxiangce.com/
+
+(这是一封自动生成的email，请勿回复。)
