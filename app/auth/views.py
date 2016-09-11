@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'lihui'
 
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, abort
 from flask_login import login_user, logout_user, login_required, current_user
 
 from .forms import LoginForm, RegisterForm, ChangePasswordForm,\
@@ -46,7 +46,7 @@ def register():
         send_email(user.email, u'确认你的翻相册账户',
                    'auth/email/confirm', user=user, token=token)
         flash(u'确认邮件已经发送到您的邮箱，请查收。')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
 @auth.route('/confirm/<token>')
@@ -162,4 +162,13 @@ def change_email(token):
     else:
         flash(u'请求无效.')
     return redirect(url_for('main.index'))
+
+
+@auth.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.ping()
+        if not current_user.confirmed \
+            and request.endpoint[:5] != 'auth.':
+            return redirect(url_for('auth.unconfirmed'))
 

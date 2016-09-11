@@ -8,22 +8,22 @@ from wtforms import ValidationError
 from ..models import User
 
 class LoginForm(Form):
-    email = StringField(u'邮箱', validators=[Required(), Length(1, 64),
-                                           Email()])
-    password = PasswordField(u'密码', validators=[Required()])
+    email = StringField(u'邮箱', validators=[Required(message= u'邮箱不能为空'), Length(1, 64),
+                                           Email(message= u'请输入有效的邮箱地址，比如：username@domain.com')])
+    password = PasswordField(u'密码', validators=[Required(message= u'密码不能为空')])
     remember_me = BooleanField(u'记住我')
     submit = SubmitField(u'登录')
 
 class RegisterForm(Form):
-    email = StringField(u'邮箱', validators=[Required(), Length(1, 64),
-                                           Email()])
-    username = StringField(u'用户名', validators=[Required(), Length(1, 64),
+    email = StringField(u'邮箱', validators=[Required(message= u'邮箱不能为空'), Length(1, 64),
+                                           Email(message= u'请输入有效的邮箱地址，比如：username@domain.com')])
+    username = StringField(u'用户名', validators=[Required(message= u'用户名不能为空'), Length(1, 64),
                                            Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                                                   u'用户名只能有字母，'
                                                     u'数字，点和下划线组成。')])
-    password = PasswordField(u'密码', validators=[Required(),
+    password = PasswordField(u'密码', validators=[Required(message= u'密码不能为空'),
                                                 EqualTo('password2', message=u'密码必须相等')])
-    password2 = PasswordField(u'确认密码', validators=[Required()])
+    password2 = PasswordField(u'确认密码', validators=[Required(message= u'密码不能为空')])
     submit = SubmitField(u'注册')
 
     def validate_email(self, field):
@@ -36,25 +36,25 @@ class RegisterForm(Form):
 
 
 class ChangePasswordForm(Form):
-    old_password = PasswordField(u'旧密码', validators=[Required()])
+    old_password = PasswordField(u'旧密码', validators=[Required(message= u'密码不能为空')])
     password = PasswordField(u'新密码', validators=[
-        Required(), EqualTo('password2', message='密码必须匹配。')])
-    password2 = PasswordField(u'确认新密码', validators=[Required()])
+        Required(message= u'密码不能为空'), EqualTo('passwuord2', message=u'密码必须匹配。')])
+    password2 = PasswordField(u'确认新密码', validators=[Required(message= u'密码不能为空')])
     submit = SubmitField(u'更改')
 
 
 class PasswordResetRequestForm(Form):
-    email = StringField(u'邮箱', validators=[Required(), Length(1, 64),
-                                             Email()])
+    email = StringField(u'邮箱', validators=[Required(message= u'邮箱不能为空'), Length(1, 64),
+                                             Email(message= u'请输入有效的邮箱地址，比如：username@domain.com')])
     submit = SubmitField(u'重设密码')
 
 
 class PasswordResetForm(Form):
-    email = StringField(u'邮箱', validators=[Required(), Length(1, 64),
-                                             Email()])
+    email = StringField(u'邮箱', validators=[Required(message= u'邮箱不能为空'), Length(1, 64),
+                                             Email(message= u'请输入有效的邮箱地址，比如：username@domain.com')])
     password = PasswordField(u'新密码', validators=[
-        Required(), EqualTo(u'password2', message='Passwords must match')])
-    password2 = PasswordField(u'确认密码', validators=[Required()])
+        Required(message= u'密码不能为空'), EqualTo(u'password2', message=u'密码必须匹配。')])
+    password2 = PasswordField(u'确认密码', validators=[Required(message= u'密码不能为空')])
     submit = SubmitField(u'重设')
 
     def validate_email(self, field):
@@ -63,9 +63,9 @@ class PasswordResetForm(Form):
 
 
 class ChangeEmailForm(Form):
-    email = StringField(u'新邮箱地址', validators=[Required(), Length(1, 64),
-                                                 Email()])
-    password = PasswordField(u'密码', validators=[Required()])
+    email = StringField(u'新邮箱地址', validators=[Required(message= u'邮箱不能为空'), Length(1, 64),
+                                                 Email(message= u'请输入有效的邮箱地址，比如：username@domain.com')])
+    password = PasswordField(u'密码', validators=[Required(message= u'密码不能为空')])
     submit = SubmitField(u'更新')
 
     def validate_email(self, field):

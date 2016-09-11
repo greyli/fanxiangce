@@ -2,6 +2,16 @@
 
 {% block title %}TagCloud Album{% endblock %}
 
+
+{% block head %}
+{{ super() }}
+
+<!--link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"-->
+{% endblock %}
+
+
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
@@ -47,10 +57,15 @@
                 <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     <span></span>
+                    <img src="{{ current_user.gravatar(size=18) }}">
                     {{ current_user.email }} <strong class="caret"></strong>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">资料</a></li>
+                        {% if current_user.confirmed %}
+                        <li><a href="{{ url_for('.user', username=current_user.username) }}">个人资料</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('main.edit_profile') }}">个人资料</a></li>
+                        {% endif %}
                         <li><a href="#">设置</a></li>
                         <li><a href="#">帮助</a></li>
                         <li class="divider"></li>
@@ -79,4 +94,10 @@
     {% endfor %}
     {% block page_content %}{% endblock %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang('zh-cn') }}
 {% endblock %}

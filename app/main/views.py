@@ -1,19 +1,82 @@
 # -*-coding: utf-8-*-
+import os
 from datetime import datetime
-from flask import render_template, session, redirect, url_for, flash
-from flask_login import current_user
+from flask import render_template, session, redirect, \
+    url_for, flash, abort, request, current_app
+from flask_login import login_required, current_user
+from werkzeug import secure_filename
+
 
 from . import main
-from .forms import TagForm, WallForm, NormalForm
+from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm
 from .. import db
+from ..models import User, Role
 from tag import glue
+from ..decorators import admin_required, permission_required
+
+
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
 
 
-@main.route('/create/tag', methods=['GET', 'POST'])
+@main.route('/user/<username>')
+def user(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    return render_template('user.html', user=user)
+
+
+@main.route('/edit-profile', methods=['GET', 'POST'])
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.name = form.name.data
+        current_user.location = form.location.data
+        current_user.website = form.website.data
+        current_user.about_me = form.about_me.data
+        db.session.add(current_user)
+        flash(u'你的资料已经更新。')
+        return redirect(url_for('.user', username=current_user.username))
+    form.name.data = current_user.name
+    form.location.data = current_user.location
+    form.website.data = current_user.website
+    form.about_me.data = current_user.about_me
+    return render_template('edit_profile.html', form=form)
+
+
+@main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_profile_admin(id):
+    user = User.query.get_or_404(id)
+    form = EditProfileAdminForm(user=user)
+    if form.validate_on_submit():
+        user.email = form.email.data
+        user.username = form.username.data
+        user.confirmed = form.confirmed.data
+        user.role = Role.query.get(form.role.data)
+        user.name = form.name.data
+        user.location = form.location.data
+        user.website = form.website.data
+        user.about_me = form.about_me.data
+        db.session.add(current_user)
+        flash(u'资料已经更新。')
+        return redirect(url_for('.user', username=user.username))
+    form.email.data = user.email
+    form.username.data = user.username
+    form.confirmed.data = user.confirmed
+    form.role.data = user.role
+    form.name.data = user.name
+    form.location.data = user.location
+    form.website.data = user.website
+    form.about_me.data = user.about_me
+    return render_template('edit_profile.html', form=form, user=user)
+
+
+@main.route('/create-tag', methods=['GET', 'POST'])
 def tag():
     flash(u'目前只是测试阶段，仅支持标签云相册，暂不提供永久存储。不好意思>_<')
     form = TagForm()
@@ -22,26 +85,32 @@ def tag():
         sub_title = form.sub_title.data
         theme = form.theme.data
         glue()
-        return render_template('album.html', title=title, sub_title=sub_title)
+        return render_template('tag_album.html', title=title, sub_title=sub_title)
     return render_template('create/tag.html', form=form)
 
 
-@main.route('/create/wall', methods=['GET', 'POST'])
+@main.route('/create-wall', methods=['GET', 'POST'])
 def wall():
     form = WallForm()
     if form.validate_on_submit():
         title = form.title.data
         sub_title = form.sub_title.data
         theme = form.theme.data
-        return render_template('album.html', title=title, sub_title=sub_title)
+        return render_template('wall_album.html', title=title, sub_title=sub_title)
     return render_template('create/wall.html', form=form)
 
 
-@main.route('/create/normal', methods=['GET', 'POST'])
+@main.route('/create-normal', methods=['GET', 'POST'])
 def normal():
+    from flask_uploads import UploadSet, configure_uploads, IMAGES
+    app = current_app._get_current_object()
+    photos = UploadSet('photos', IMAGES)
     form = NormalForm()
     if form.validate_on_submit():
         title = form.title.data
-        sub_title = form.sub_title.data
-        return render_template('album.html', title=title, sub_title=sub_title)
+        about = form.about.data
+        if request.method == 'POST' and 'photo' in request.files:
+            filename = photos.save(request.files['photo'])
+            flash("Photo saved.")
+        return render_template('album.html', title=title, about=about, filename=app.config['UPLOADED_PHOTOS_DEST']+filename)
     return render_template('create/normal.html', form=form)

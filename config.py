@@ -9,6 +9,7 @@ class Config:
     FANXIANGCE_MAIL_SUBJECT_PREFIX = u'[翻相册]'
     FANXIANGCE_MAIL_SENDER = 'mimi_19@sina.com'
     FANXIANGCE_ADMIN = 'withlihui@qq.com' # os.environ.get('FANXIANG_ADMIN')
+    UPLOADED_PHOTOS_DEST = r'D:\Projects\fanxiangce\app\static\img'
 
     @staticmethod
     def init_app(app):
