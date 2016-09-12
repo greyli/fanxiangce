@@ -8,9 +8,9 @@ from werkzeug import secure_filename
 
 
 from . import main
-from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm
+from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm
 from .. import db
-from ..models import User, Role
+from ..models import User, Role, Permission, Album
 from tag import glue
 from ..decorators import admin_required, permission_required
 
@@ -26,7 +26,23 @@ def user(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         abort(404)
-    return render_template('user.html', user=user)
+    albums = user.albums.order_by(Album.timestamp.desc()).all()
+    return render_template('user.html', user=user, albums=albums)
+
+
+@main.route('/user/<username>/albums', methods=['GET'])
+def albums(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    albums = user.albums.order_by(Album.timestamp.desc()).all()
+    return render_template('create/normal.html', user=user, albums=albums)
+
+
+@main.route('/album/<id>')
+def album(id):
+    album = Album.query.get_or_404(id)
+    return render_template('album.html', albums=[album])
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
@@ -80,11 +96,19 @@ def edit_profile_admin(id):
 def tag():
     flash(u'目前只是测试阶段，仅支持标签云相册，暂不提供永久存储。不好意思>_<')
     form = TagForm()
+    app = current_app._get_current_object()
     if form.validate_on_submit():
         title = form.title.data
         sub_title = form.sub_title.data
         theme = form.theme.data
-        glue()
+        pro_attachment = request.files.getlist('pro_attachment1')
+        for upload in pro_attachment:
+            filename = upload.filename.rsplit("/")[0]
+            destination = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], filename)
+            print "Accept incoming file:", filename
+            print "Save it to:", destination
+            upload.save(destination)
+        # glue()
         return render_template('tag_album.html', title=title, sub_title=sub_title)
     return render_template('create/tag.html', form=form)
 
@@ -106,11 +130,33 @@ def normal():
     app = current_app._get_current_object()
     photos = UploadSet('photos', IMAGES)
     form = NormalForm()
-    if form.validate_on_submit():
-        title = form.title.data
-        about = form.about.data
+    if current_user.can(Permission.CREATE_ALBUMS) and form.validate_on_submit():
         if request.method == 'POST' and 'photo' in request.files:
-            filename = photos.save(request.files['photo'])
+            filename=[]
+            for img in request.files.getlist('photo'):
+                photos.save(img)
+                url = photos.url(img.filename)
+                filename.append(url)
+            print filename
             flash("Photo saved.")
-        return render_template('album.html', title=title, about=about, filename=app.config['UPLOADED_PHOTOS_DEST']+filename)
+        album = Album(title=form.title.data,about=form.about.data,
+                      author=current_user._get_current_object())
+        db.session.add(album)
+        albums = Album.query.order_by(Album.timestamp.desc()).all()
+        return render_template('albums.html', albums=albums)
     return render_template('create/normal.html', form=form)
+
+
+@main.route('/base', methods=['GET','POST'])
+def test():
+    name = None
+    form = TESTForm()
+
+    if form.validate_on_submit():
+        name = form.name.data
+        session['name'] = form.name.data
+        return redirect(url_for('base'))
+
+    return render_template('test.html', form=form)
+
+#filename = photos.save(request.files['photo'])

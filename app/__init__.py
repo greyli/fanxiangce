@@ -10,7 +10,6 @@ from config import config
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 
 
-
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
@@ -32,7 +31,6 @@ def create_app(config_name):
     login_manager.init_app(app)
     photos = UploadSet('photos', IMAGES)
     configure_uploads(app, (photos,))
-
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

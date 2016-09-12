@@ -2,7 +2,7 @@
 from flask_wtf import Form
 from wtforms import StringField, SubmitField, RadioField, PasswordField, BooleanField, FileField, \
                     TextAreaField, SelectField
-from wtforms.validators import Required, Length, Email, Regexp, EqualTo, URL
+from wtforms.validators import Required, Length, Email, Regexp, EqualTo, URL, Optional
 from wtforms import ValidationError
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_uploads import UploadSet, configure_uploads, IMAGES
@@ -15,10 +15,14 @@ from ..models import User, Role
 class EditProfileForm(Form):
     name = StringField(u'姓名或昵称', validators=[Length(0, 64)])
     location = StringField(u'城市', validators=[Length(0,64)])
-    website = StringField(u'网站', validators=[Length(0,64), URL(message= u'请输入有效的地址，比如：http://withlihui.com')])
+    website = StringField(u'网站', validators=[Length(0,64), Optional(),
+                         URL(message= u'请输入有效的地址，比如：http://withlihui.com')])
     about_me = TextAreaField(u'关于我', validators=[Length(0,64)])
     submit = SubmitField(u'提交')
 
+class TESTForm(EditProfileForm):
+    name = StringField(u'姓名或昵称', validators=[Length(0, 64)], default='lihui')
+    location = StringField(u'城市', validators=[Length(0, 64)], default='12345')
 
 class EditProfileAdminForm(Form):
     email = StringField(u'邮箱', validators=[Required(message= u'邮件不能为空'), Length(1, 64),
@@ -31,7 +35,8 @@ class EditProfileAdminForm(Form):
     role = SelectField(u'角色', coerce=int)
     name = StringField(u'姓名或昵称', validators=[Length(0, 64)])
     location = StringField(u'城市', validators=[Length(0, 64)])
-    website = StringField(u'网站', validators=[Length(0, 64), URL(message= u'请输入有效的地址，比如：http://withlihui.com')])
+    website = StringField(u'网站', validators=[Length(0, 64),
+                                             URL(message= u'请输入有效的地址，比如：http://withlihui.com')])
     about_me = TextAreaField(u'关于我', validators=[Length(0, 64)])
     submit = SubmitField(u'提交')
 
@@ -57,8 +62,7 @@ class TagForm(Form):
     sub_title = StringField(u'副标题')
     theme = RadioField(
         u'选择一个主题',
-        choices=[('1', u'黑底白字'), ('2', u'白底黑字'), ('3', u'紫底白字')]
-    )
+        choices=[('1', u'黑底白字'), ('2', u'白底黑字'), ('3', u'紫底白字')], default='1')
     photos = FileField(u'选择图片')
     submit = SubmitField(u'提交')
 
@@ -76,7 +80,7 @@ class WallForm(Form):
 
 class NormalForm(Form):
     title = StringField(u'标题')
-    about = StringField(u'介绍')
+    about = TextAreaField(u'介绍')
     photo = FileField(u'图片', validators=[
         FileRequired(),
         FileAllowed(photos, u'只能上传图片！')

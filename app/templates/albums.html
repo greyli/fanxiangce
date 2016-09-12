@@ -5,11 +5,10 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>{{ title }}</h1>
-    <h2>{{ about }}</h2>
+    <h1>我的相册</h1>
 </div>
 
-<div class="col-md-4">
-    <img src="{{ url_for('static', filename='img/{}'.format(filename)) }}">
+<div class="albums">
+    {% for album in albums %}
 </div>
 {% endblock %}

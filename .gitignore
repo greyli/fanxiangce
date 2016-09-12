@@ -51,3 +51,4 @@ log/
 *.pyc
 *.pyc
 app/main/views.pyc
+*.pyc

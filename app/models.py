@@ -51,6 +51,23 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
+class Photo(db.Model):
+    __tablename__ = 'photos'
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    album_id = db.Column(db.Integer, db.ForeignKey('albums.id'))
+
+class Album(db.Model):
+    __tablename__ = 'albums'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text)
+    about = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    photos = db.relationship('Photo', backref='album', lazy='dynamic')
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -62,13 +79,15 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, default=False)
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
-    album = db.Column(db.Integer)
+    albums = db.Column(db.Integer)
     like = db.Column(db.Integer)
     website = db.Column(db.String(64))
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
+    albums = db.relationship('Album', backref='author', lazy='dynamic')
+    photos = db.relationship('Photo', backref='author', lazy='dynamic')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -165,3 +184,5 @@ login_manager.anonymous_user = AnonymousUser
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+

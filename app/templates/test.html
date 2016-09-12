@@ -1,15 +1,14 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Tag{% endblock %}
+{% block title %}翻相册 - 登录{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-    <h1>制作标签云相册</h1>
+    <h1>登录</h1>
 </div>
 
-<div class="container">
+<div class="col-md-4">
     {{ wtf.quick_form(form) }}
-    Browse <input type="file" name="pro_attachment1" id="pro_attachment1" multiple>
 </div>
 {% endblock %}
