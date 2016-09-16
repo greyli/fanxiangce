@@ -10,7 +10,7 @@ from werkzeug import secure_filename
 from . import main
 from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm
 from .. import db
-from ..models import User, Role, Permission, Album
+from ..models import User, Role, Permission, Album, Photo
 from tag import glue
 from ..decorators import admin_required, permission_required
 
@@ -30,19 +30,21 @@ def user(username):
     return render_template('user.html', user=user, albums=albums)
 
 
-@main.route('/user/<username>/albums', methods=['GET'])
+@main.route('/user/<username>/albums')
 def albums(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         abort(404)
     albums = user.albums.order_by(Album.timestamp.desc()).all()
-    return render_template('create/normal.html', user=user, albums=albums)
+    album_count = len(albums)
+    return render_template('albums.html', user=user, albums=albums, album_count=album_count)
 
 
-@main.route('/album/<id>')
+@main.route('/album/<int:id>')
 def album(id):
     album = Album.query.get_or_404(id)
-    return render_template('album.html', albums=[album])
+    photos = album.photos.order_by(Photo.timestamp.asc())
+    return render_template('album.html', album=album, photos=photos)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
@@ -130,20 +132,26 @@ def normal():
     app = current_app._get_current_object()
     photos = UploadSet('photos', IMAGES)
     form = NormalForm()
-    if current_user.can(Permission.CREATE_ALBUMS) and form.validate_on_submit():
+    if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
         if request.method == 'POST' and 'photo' in request.files:
             filename=[]
             for img in request.files.getlist('photo'):
                 photos.save(img)
                 url = photos.url(img.filename)
-                filename.append(url)
-            print filename
-            flash("Photo saved.")
-        album = Album(title=form.title.data,about=form.about.data,
-                      author=current_user._get_current_object())
+                filename.append(url.replace("%20", "_"))
+        title = form.title.data
+        about = form.about.data
+        author = current_user._get_current_object()
+        album = Album(title=title,
+        about=about, cover=filename[0],
+        author = current_user._get_current_object())
         db.session.add(album)
-        albums = Album.query.order_by(Album.timestamp.desc()).all()
-        return render_template('albums.html', albums=albums)
+
+        for file in filename:
+            photo = Photo(path=file, album=album)
+            db.session.add(photo)
+        db.session.commit()
+        return redirect(url_for('.album', id=album.id))
     return render_template('create/normal.html', form=form)
 
 

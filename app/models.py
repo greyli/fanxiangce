@@ -55,6 +55,7 @@ class Photo(db.Model):
     __tablename__ = 'photos'
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.Text)
+    about = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     album_id = db.Column(db.Integer, db.ForeignKey('albums.id'))
@@ -64,6 +65,7 @@ class Album(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text)
     about = db.Column(db.Text)
+    cover = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     photos = db.relationship('Photo', backref='album', lazy='dynamic')

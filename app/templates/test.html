@@ -3,12 +3,29 @@
 
 {% block title %}翻相册 - 登录{% endblock %}
 
+{% block head %}
+{{ super() }}
+<style>
+    #test {
+    font-size: 60px;
+    }
+    #middle {
+    font-size: 40px;
+    }
+
+</style>
+{% endblock %}
+
 {% block page_content %}
 <div class="page-header">
     <h1>登录</h1>
 </div>
 
 <div class="col-md-4">
-    {{ wtf.quick_form(form) }}
+<div class="form-group has-feedback">
+    <label class="control-label">Username</label>
+
+    <input type="text" class="form-control" placeholder="Username" />
+</div>
 </div>
 {% endblock %}

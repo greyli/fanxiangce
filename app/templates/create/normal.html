@@ -14,8 +14,8 @@
         {{ wtf.form_field(form.title) }}
         {{ wtf.form_field(form.about) }}
         {{ wtf.form_field(form.photo, multiple="multiple") }}
-        <!--img src="http://i2.piimg.com/674a895eaa333a88.png" alt ="tietuku" style ="cursor:pointer" onclick="tietuku_upload()"/>
-        <br><br-->
+        <img src="http://i2.piimg.com/674a895eaa333a88.png" alt ="tietuku" style ="cursor:pointer" onclick="tietuku_upload()"/>
+        <br><br>
         {{ wtf.form_field(form.submit) }}
     </form>
 </div>
@@ -23,5 +23,5 @@
 
 {% block scripts %}
 {{ super() }}
-<!--script language = "javascript" type = "text/javascript"  src="http://static.kekaoyun.com/static/open/tietuku.jquery.min.js"></script><script language = "javascript" type = "text/javascript"  src="http://static.kekaoyun.com/static/open/tietuku.dialog.js"></script><script>var jq=jQuery.noConflict();function tietuku_upload(){jq.dialog.showIframeDialog(850, '', '<iframe frameborder="0" width="824" height="460" marginheight="0" marginwidth="0"  src="http://static.kekaoyun.com/upByPlugn?token=520a69e999343680d4ae35ead9c877418bd37510:GxxX3tXM6ntITe2ZQJ6d0eyOR7U=:eyJkZWFkbGluZSI6MTQ3MzY4MjMzMywiYWN0aW9uIjoiZ2V0IiwidWlkIjoiNTY3NTkxIiwiYWlkIjoiMTI0NTI1NCIsImZyb20iOiJmaWxlIn0=&ifr=1&"></iframe>');}var $=jQuery.noConflict();</script-->
+<script language = "javascript" type = "text/javascript"  src="http://static.kekaoyun.com/static/open/tietuku.jquery.min.js"></script><script language = "javascript" type = "text/javascript"  src="http://static.kekaoyun.com/static/open/tietuku.dialog.js"></script><script>var jq=jQuery.noConflict();function tietuku_upload(){jq.dialog.showIframeDialog(850, '', '<iframe frameborder="0" width="824" height="460" marginheight="0" marginwidth="0"  src="http://static.kekaoyun.com/upByPlugn?token=520a69e999343680d4ae35ead9c877418bd37510:GxxX3tXM6ntITe2ZQJ6d0eyOR7U=:eyJkZWFkbGluZSI6MTQ3MzY4MjMzMywiYWN0aW9uIjoiZ2V0IiwidWlkIjoiNTY3NTkxIiwiYWlkIjoiMTI0NTI1NCIsImZyb20iOiJmaWxlIn0=&ifr=1&"></iframe>');}var $=jQuery.noConflict();</script>
 {% endblock %}

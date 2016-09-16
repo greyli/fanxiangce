@@ -2,19 +2,18 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}翻相册 - 我的相册{% endblock %}
+
 {% block head %}
 {{ super() }}
 <style>
 
 /* make the well swell */
 .well {
-    height: 350px;
-    width: 290px;
 	border-color:#c9c9c9;
 }
 
 .post {
-margin: 40px;
+margin: 10px;
 }
 
 .post h4 {
@@ -26,14 +25,13 @@ margin: 40px;
 }
 
 .post img.image {
-  max-width: 400px;
+  max-width: 100%;
   margin-top: 9px;
 }
 
 .info {
 	padding:4px;
 }
-
 /* Isotope Transitions
 ------------------------------- */
 .isotope,
@@ -114,47 +112,27 @@ margin: 40px;
     width: 270px;
   }
 }
-
-
-.thumbnail {
-  position: relative;
-  width: 250px;
-  height: 200px;
-  overflow: hidden;
-}
-.thumbnail img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 100%;
-  width: auto;
-  -webkit-transform: translate(-50%,-50%);
-      -ms-transform: translate(-50%,-50%);
-          transform: translate(-50%,-50%);
-}
-.thumbnail img.portrait {
-  width: 100%;
-  height: auto;
-}
 </style>
 {% endblock %}
+
 {% block page_content %}
 <div class="page-header">
-    <h1>我的相册（{{ album_count  }}）</h1>
+    <h1>{{ album.title }}</h1>
+    <h4>{{ album.about }}</h4>
+    <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}</p>
 </div>
 
 <div class="container">
 <div id="posts" class="row">
-            {% for album in albums %}
+            {% for photo in photos %}
             <div class="post item span3">
               <div class="well">
-                <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}" >
-                    <img class="img-responsive portrait" src="{{ album.cover }}">
+                <a class="thumbnail" href="">
+                    <img class="img-responsive" src="{{ photo.path }}">
                 </a>
                 <div class="info">
-                  <h5>{{ album.title }}</h5>
-                  <span>{{ album.photos.count() }}张图片</span>
-                  <span>创建于{{ moment(album.timestamp).format('L') }}</span>
+                  <span class="badge">100</span>
+                  <span class="badge">45</span>
                 </div>
               </div>
             </div>
@@ -162,6 +140,7 @@ margin: 40px;
   </div>
 
 </div>
+
 {% endblock %}
 
 {% block scripts %}

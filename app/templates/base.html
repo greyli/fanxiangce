@@ -1,16 +1,13 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}TagCloud Album{% endblock %}
-
+{% block title %}翻相册{% endblock %}
 
 {% block head %}
 {{ super() }}
-
 <!--link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"-->
 {% endblock %}
-
 
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
@@ -34,7 +31,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 {% if current_user.is_authenticated %}
-                <li><a href="/">我的相册</a></li>
+                <li><a href="{{ url_for('.albums', username=current_user.username) }}">我的相册</a></li>
                 {% endif %}
                 {% if current_user.is_authenticated %}
                 <li class="dropdown">

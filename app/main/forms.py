@@ -6,6 +6,7 @@ from wtforms.validators import Required, Length, Email, Regexp, EqualTo, URL, Op
 from wtforms import ValidationError
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_uploads import UploadSet, configure_uploads, IMAGES
+from wtforms.widgets import TextArea
 
 photos = UploadSet('photos', IMAGES)
 
@@ -20,9 +21,11 @@ class EditProfileForm(Form):
     about_me = TextAreaField(u'关于我', validators=[Length(0,64)])
     submit = SubmitField(u'提交')
 
-class TESTForm(EditProfileForm):
-    name = StringField(u'姓名或昵称', validators=[Length(0, 64)], default='lihui')
-    location = StringField(u'城市', validators=[Length(0, 64)], default='12345')
+class TESTForm(Form):
+    url = StringField("Enter URL",
+                   validators=[URL(), Required()],
+                   )
+    submit = SubmitField('Search')
 
 class EditProfileAdminForm(Form):
     email = StringField(u'邮箱', validators=[Required(message= u'邮件不能为空'), Length(1, 64),
