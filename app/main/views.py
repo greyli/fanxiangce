@@ -46,7 +46,6 @@ def album(id):
     photos = album.photos.order_by(Photo.timestamp.asc())
     return render_template('album.html', album=album, photos=photos)
 
-
 @main.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
     form = EditProfileForm()
@@ -118,13 +117,30 @@ def tag():
 @main.route('/create-wall', methods=['GET', 'POST'])
 def wall():
     form = WallForm()
-    if form.validate_on_submit():
+    from flask_uploads import UploadSet, configure_uploads, IMAGES
+    app = current_app._get_current_object()
+    photos = UploadSet('photos', IMAGES)
+    if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
+        if request.method == 'POST' and 'photo' in request.files:
+            filename=[]
+            for img in request.files.getlist('photo'):
+                photos.save(img)
+                url = photos.url(img.filename)
+                filename.append(url.replace("%20", "_"))
         title = form.title.data
-        sub_title = form.sub_title.data
-        theme = form.theme.data
-        return render_template('wall_album.html', title=title, sub_title=sub_title)
-    return render_template('create/wall.html', form=form)
+        about = form.about.data
+        author = current_user._get_current_object()
+        album = Album(title=title,
+        about=about, cover=filename[0],
+        author = current_user._get_current_object())
+        db.session.add(album)
 
+        for file in filename:
+            photo = Photo(path=file, album=album)
+            db.session.add(photo)
+        db.session.commit()
+        return redirect(url_for('.album', id=album.id))
+    return render_template('create/normal.html', form=form)
 
 @main.route('/create-normal', methods=['GET', 'POST'])
 def normal():
