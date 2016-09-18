@@ -66,6 +66,7 @@ class Album(db.Model):
     title = db.Column(db.Text)
     about = db.Column(db.Text)
     cover = db.Column(db.Text)
+    type = db.Column(db.Integer, default=0)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     photos = db.relationship('Photo', backref='album', lazy='dynamic')

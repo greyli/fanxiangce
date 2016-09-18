@@ -6,7 +6,7 @@
     <div class="col-md-4">
         <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
     </div>
-    <div class="profile-header">
+    <div class="profile-header col-md-4">
         <h1>{{ user.username }}</h1>
         {% if user.name or user.location %}
         <p>
@@ -33,6 +33,11 @@
             <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑 [Admin]</a>
             {% endif %}
         </p>
+    </div>
+    <div class="col-md-4">
+        <h1>{{ album_count }}</h1>&nbsp;&nbsp;喜欢
+        <h1>{{ album_count }}</h1>&nbsp;&nbsp;相册
+        <h1>{{ photo_count }}</h1>&nbsp;&nbsp;照片
     </div>
 </div>
 {% endblock %}

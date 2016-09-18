@@ -12,6 +12,7 @@ from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAd
 from .. import db
 from ..models import User, Role, Permission, Album, Photo
 from tag import glue
+from wall import wall
 from ..decorators import admin_required, permission_required
 
 
@@ -27,7 +28,9 @@ def user(username):
     if user is None:
         abort(404)
     albums = user.albums.order_by(Album.timestamp.desc()).all()
-    return render_template('user.html', user=user, albums=albums)
+    album_count = len(albums)
+    photo_count = sum([len(album.photos.order_by(Photo.timestamp.asc()).all()) for album in albums])
+    return render_template('user.html', user=user, albums=albums, album_count=album_count, photo_count=photo_count)
 
 
 @main.route('/user/<username>/albums')
@@ -44,6 +47,12 @@ def albums(username):
 def album(id):
     album = Album.query.get_or_404(id)
     photos = album.photos.order_by(Photo.timestamp.asc())
+    if album.type == 1:
+        files = []
+        for photo in photos:
+            files.append(photo.path)
+        html = wall()
+        return render_template('wall.html', album=album, html=html)
     return render_template('album.html', album=album, photos=photos)
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
@@ -131,7 +140,7 @@ def wall():
         about = form.about.data
         author = current_user._get_current_object()
         album = Album(title=title,
-        about=about, cover=filename[0],
+        about=about, cover=filename[0], type=1,
         author = current_user._get_current_object())
         db.session.add(album)
 
@@ -140,7 +149,7 @@ def wall():
             db.session.add(photo)
         db.session.commit()
         return redirect(url_for('.album', id=album.id))
-    return render_template('create/normal.html', form=form)
+    return render_template('create/wall.html', form=form)
 
 @main.route('/create-normal', methods=['GET', 'POST'])
 def normal():

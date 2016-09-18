@@ -8,7 +8,17 @@
     <h1>制作标签云相册</h1>
 </div>
 
-<div class="container">
-    {{ wtf.quick_form(form) }}
+<div class="col-md-4">
+    <form class="form form-horizontal" method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.title, class="form-control user") }}
+        {{ wtf.form_field(form.about) }}
+        {{ wtf.form_field(form.theme) }}
+        {{ wtf.form_field(form.photo, multiple="multiple") }}
+        <!--img src="http://i2.piimg.com/674a895eaa333a88.png" alt ="tietuku" style ="cursor:pointer" onclick="tietuku_upload()"/>
+        <br><br-->
+        {{ wtf.form_field(form.submit) }}
+    </form>
 </div>
+
 {% endblock %}
