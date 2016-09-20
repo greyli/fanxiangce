@@ -10,7 +10,7 @@ from werkzeug import secure_filename
 from . import main
 from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm
 from .. import db
-from ..models import User, Role, Permission, Album, Photo
+from ..models import User, Role, Permission, Album, Photo, Like
 from tag import glue
 from wall import wall
 from ..decorators import admin_required, permission_required
@@ -42,6 +42,14 @@ def albums(username):
     album_count = len(albums)
     return render_template('albums.html', user=user, albums=albums, album_count=album_count)
 
+@main.route('/user/<username>/likes')
+def likes(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    likes = user.likes.order_by(Like.timestamp.desc()).all()
+    like_count = len(likes)
+    return render_template('likes.html', user=user, likes=likes, like_count=like_count)
 
 @main.route('/album/<int:id>')
 def album(id):
@@ -163,7 +171,10 @@ def normal():
             for img in request.files.getlist('photo'):
                 photos.save(img)
                 url = photos.url(img.filename)
-                filename.append(url.replace("%20", "_"))
+                url = url.replace("%20", "_")
+                url = url.replace("%28", "")
+                url = url.replace("%29", "")
+                filename.append(url)
         title = form.title.data
         about = form.about.data
         author = current_user._get_current_object()
@@ -178,6 +189,21 @@ def normal():
         db.session.commit()
         return redirect(url_for('.album', id=album.id))
     return render_template('create/normal.html', form=form)
+
+@main.route('/like/<id>')
+@login_required
+#@permission_required(Permission.FOLLOW)# todo follow > like
+def like(id):
+    photo = Photo.query.filter_by(id=id).first()
+    print photo.path
+    if photo is None:
+        flash(u'无效的图片。')
+        return redirect(url_for('.index'))
+    if current_user.is_like(photo):
+        flash(u'你已经标记过喜欢了。')
+        return redirect(url_for('.index'))
+    current_user.like(photo)
+    return ('', 204)
 
 
 @main.route('/base', methods=['GET','POST'])

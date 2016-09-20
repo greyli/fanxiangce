@@ -51,6 +51,15 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
+class Like(db.Model):
+    __tablename__ = 'like'
+    like_id = db.Column(db.Integer, db.ForeignKey('photos.id'),
+                         primary_key=True)
+    liked_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                         primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+
+
 class Photo(db.Model):
     __tablename__ = 'photos'
     id = db.Column(db.Integer, primary_key=True)
@@ -59,6 +68,12 @@ class Photo(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     album_id = db.Column(db.Integer, db.ForeignKey('albums.id'))
+    liked = db.relationship('Like', foreign_keys=[Like.like_id],
+                               backref=db.backref('like', lazy='joined'),
+                            lazy='dynamic', cascade='all, delete-orphan')
+
+    def is_liked_by(self, user):
+        return self.liked.filter_by(like_id=user.id).first() is not None
 
 class Album(db.Model):
     __tablename__ = 'albums'
@@ -82,8 +97,6 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, default=False)
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
-    albums = db.Column(db.Integer)
-    like = db.Column(db.Integer)
     website = db.Column(db.String(64))
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
@@ -91,6 +104,9 @@ class User(UserMixin, db.Model):
     avatar_hash = db.Column(db.String(32))
     albums = db.relationship('Album', backref='author', lazy='dynamic')
     photos = db.relationship('Photo', backref='author', lazy='dynamic')
+    likes = db.relationship('Like', foreign_keys=[Like.liked_id],
+                            backref=db.backref('liked', lazy='joined'),
+                            lazy='dynamic', cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -170,6 +186,20 @@ class User(UserMixin, db.Model):
         self.confirmed = True
         db.session.add(self)
         return True
+
+    def like(self, photo):
+        if not self.is_like(photo):
+            p = Like(liked=self, like=photo)
+            db.session.add(p)
+
+    def unlike(self, photo):
+        p = self.likes.filter_by(like_id=photo.id).first()
+        if p:
+            db.session.delete(p)
+
+    def is_like(self, photo):
+        return self.likes.filter_by(like_id=photo.id).first() is not None
+
 
     def __repr__(self):
         return '<Role %r>' % self.name

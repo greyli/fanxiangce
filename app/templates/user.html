@@ -19,8 +19,6 @@
         {% if current_user.is_administrator() %}
         <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
         {% endif %}
-        {% if user.album %}<p>创建了{{ user.album }}个相册</p>{% endif %}
-        {% if user.like %}<p>获得了{{ user.like }}个赞</p>{% endif %}
         {% if user.website %}<p>网站：<a href="{{ user.website }}" target="_blank">{{ user.website }}</a></p>{% endif %}
         {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
         <p>注册时间：{{ moment(user.member_since).format('L') }}。 </p>
