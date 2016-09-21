@@ -189,6 +189,7 @@ class User(UserMixin, db.Model):
 
     def like(self, photo):
         if not self.is_like(photo):
+            print photo
             p = Like(liked=self, like=photo)
             db.session.add(p)
 

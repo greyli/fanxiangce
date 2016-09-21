@@ -49,19 +49,23 @@ def likes(username):
         abort(404)
     likes = user.likes.order_by(Like.timestamp.desc()).all()
     like_count = len(likes)
+    likes = [{'user': like.like, 'timestamp': like.timestamp, 'path':like.like.path} for like in likes]
     return render_template('likes.html', user=user, likes=likes, like_count=like_count)
 
 @main.route('/album/<int:id>')
 def album(id):
     album = Album.query.get_or_404(id)
     photos = album.photos.order_by(Photo.timestamp.asc())
+    #liked = photo.liked.order_by(Like.timestamp.desc()).all()
+    #liked_count = len(liked)
+    #liked = [{'user': like.liked, 'timestamp': like.timestamp, 'username':like.liked.username} for like in liked]
     if album.type == 1:
         files = []
         for photo in photos:
             files.append(photo.path)
         html = wall()
         return render_template('wall.html', album=album, html=html)
-    return render_template('album.html', album=album, photos=photos)
+    return render_template('album.html', album=album, photos=photos) #liked=liked, liked_count=liked_count)
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -194,6 +198,7 @@ def normal():
 @login_required
 #@permission_required(Permission.FOLLOW)# todo follow > like
 def like(id):
+    print "id:" + id
     photo = Photo.query.filter_by(id=id).first()
     print photo.path
     if photo is None:
@@ -201,8 +206,9 @@ def like(id):
         return redirect(url_for('.index'))
     if current_user.is_like(photo):
         flash(u'你已经标记过喜欢了。')
-        return redirect(url_for('.index'))
+        return ('', 204)
     current_user.like(photo)
+    flash(u'照片已经添加到你的喜欢里了。')
     return ('', 204)
 
 

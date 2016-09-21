@@ -134,7 +134,7 @@ margin: 10px;
                 </a>
                 <div class="info">
                     <a href="{{ url_for('.like', id=photo.id) }}" class="btn btn-primary">Like</a>
-                    <span class="badge">{{ photo.liked.count }}</span>
+                    <span class="badge">{{ like_count }}</span>
                 </div>
               </div>
             </div>

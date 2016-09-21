@@ -152,7 +152,7 @@ margin: 40px;
             <div class="post item span3">
               <div class="well">
                 <a class="thumbnail" href="{{ url_for('.like', id=like.id) }}" >
-                    <img class="img-responsive portrait" src="{{ like.photo.path }}">
+                    <img class="img-responsive portrait" src="{{ like.path }}">
                 </a>
                 <div class="info">
                   <span>标记于{{ moment(like.timestamp).format('L') }}</span>
