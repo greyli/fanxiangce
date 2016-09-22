@@ -114,6 +114,33 @@ margin: 10px;
     width: 270px;
   }
 }
+
+.fav-btn {
+      border: 1px solid black;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+      }
+
+.fav-btn:link, .fav-btn:hover  {
+    text-decoration: none;
+    }
+
+.fav-btn, .fav-btn:link, .fav-btn:hover {
+      border: 1px solid black;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px 5px;
+    }
+.fav-cancel, .fav-cancel:link, .fav-cancel:hover {
+    border: 1px solid black;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+
+    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
+    }
 </style>
 {% endblock %}
 
@@ -129,12 +156,16 @@ margin: 10px;
             {% for photo in photos %}
             <div class="post item span3">
               <div class="well">
-                <a class="thumbnail" data-lightbox="images" href="{{ photo.path }}">
+                <a class="thumbnail" data-lightbox="images" href="{{ photo.path }}" title="">
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
                 <div class="info">
-                    <a href="{{ url_for('.like', id=photo.id) }}" class="btn btn-primary">Like</a>
-                    <span class="badge">{{ like_count }}</span>
+                    {% if photo.path in like_list %}
+                    <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn fav-cancel" title="标记为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+                    <span class="badge"></span>
+                    {% else %}
+                    <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+                    {% endif %}
                 </div>
               </div>
             </div>
@@ -167,6 +198,12 @@ $.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function()
       'maxWidth': 1000,
       'disableScrolling': true,
     })
+</script>
+
+<script>
+    $(".fav-btn").click(function(event) {
+      $(event.target).toggleClass("fav-cancel");
+    });
 </script>
 
 {% endblock %}

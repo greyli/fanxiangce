@@ -55,7 +55,17 @@ def likes(username):
 @main.route('/album/<int:id>')
 def album(id):
     album = Album.query.get_or_404(id)
+    user = User.query.filter_by(username=current_user.username).first()
     photos = album.photos.order_by(Photo.timestamp.asc())
+    for photo in photos:
+        liked_count = []
+        liked = photo.liked.order_by(Like.timestamp.desc()).all()
+        liked_count.append(len(liked))
+    likes = user.likes.order_by(Like.timestamp.desc()).all()
+    like_count = len(likes)
+    likes = [{'id': like.like, 'timestamp': like.timestamp, 'path': like.like.path} for like in likes]
+    like_list = [like['path'] for like in likes]
+    print like_list
     #liked = photo.liked.order_by(Like.timestamp.desc()).all()
     #liked_count = len(liked)
     #liked = [{'user': like.liked, 'timestamp': like.timestamp, 'username':like.liked.username} for like in liked]
@@ -65,7 +75,7 @@ def album(id):
             files.append(photo.path)
         html = wall()
         return render_template('wall.html', album=album, html=html)
-    return render_template('album.html', album=album, photos=photos) #liked=liked, liked_count=liked_count)
+    return render_template('album.html', album=album, photos=photos, like_list=like_list, likes=likes, liked_count=[liked_count]) #liked=liked, liked_count=liked_count)
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -198,18 +208,16 @@ def normal():
 @login_required
 #@permission_required(Permission.FOLLOW)# todo follow > like
 def like(id):
-    print "id:" + id
     photo = Photo.query.filter_by(id=id).first()
-    print photo.path
+    album = photo.album_id
     if photo is None:
         flash(u'无效的图片。')
-        return redirect(url_for('.index'))
+        return redirect(url_for('.album', id=album))
     if current_user.is_like(photo):
-        flash(u'你已经标记过喜欢了。')
-        return ('', 204)
+        current_user.unlike(photo)
+        return (''), 204
     current_user.like(photo)
-    flash(u'照片已经添加到你的喜欢里了。')
-    return ('', 204)
+    return (''), 204
 
 
 @main.route('/base', methods=['GET','POST'])

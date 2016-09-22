@@ -52,3 +52,5 @@ log/
 *.pyc
 app/main/views.pyc
 *.pyc
+
+app/static/img/
