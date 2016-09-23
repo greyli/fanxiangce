@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
 {% block title %}翻相册 - 我的相册{% endblock %}
 
@@ -156,11 +157,11 @@ margin: 10px;
             {% for photo in photos %}
             <div class="post item span3">
               <div class="well">
-                <a class="thumbnail" data-lightbox="images" href="{{ photo.path }}" title="">
+                <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
                 <div class="info">
-                    {% if photo.path in like_list %}
+                    {% if photo.path in like_list and current_user.is_authencated %}
                     <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn fav-cancel" title="标记为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
                     <span class="badge"></span>
                     {% else %}
@@ -172,6 +173,10 @@ margin: 10px;
             {% endfor %}
   </div>
 
+</div>
+
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.album', id=album.id) }}
 </div>
 
 {% endblock %}

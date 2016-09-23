@@ -55,27 +55,58 @@ def likes(username):
 @main.route('/album/<int:id>')
 def album(id):
     album = Album.query.get_or_404(id)
-    user = User.query.filter_by(username=current_user.username).first()
-    photos = album.photos.order_by(Photo.timestamp.asc())
+    page = request.args.get('page', 1, type=int)
+    pagination = album.photos.order_by(Photo.timestamp.asc()).paginate(
+        page, per_page=20, error_out=False
+    )
+    photos = pagination.items
+
     for photo in photos:
         liked_count = []
         liked = photo.liked.order_by(Like.timestamp.desc()).all()
         liked_count.append(len(liked))
-    likes = user.likes.order_by(Like.timestamp.desc()).all()
-    like_count = len(likes)
-    likes = [{'id': like.like, 'timestamp': like.timestamp, 'path': like.like.path} for like in likes]
-    like_list = [like['path'] for like in likes]
-    print like_list
-    #liked = photo.liked.order_by(Like.timestamp.desc()).all()
-    #liked_count = len(liked)
-    #liked = [{'user': like.liked, 'timestamp': like.timestamp, 'username':like.liked.username} for like in liked]
+
+    if current_user.is_authenticated:
+        user = User.query.filter_by(username=current_user.username).first()
+        likes = user.likes.order_by(Like.timestamp.desc()).all()
+        likes = [{'id': like.like, 'timestamp': like.timestamp, 'path': like.like.path} for like in likes]
+        like_list = [like['path'] for like in likes]
+    else:
+        likes = ""
+        like_list = []
+
     if album.type == 1:
         files = []
         for photo in photos:
             files.append(photo.path)
         html = wall()
         return render_template('wall.html', album=album, html=html)
-    return render_template('album.html', album=album, photos=photos, like_list=like_list, likes=likes, liked_count=[liked_count]) #liked=liked, liked_count=liked_count)
+    return render_template('album.html', album=album, photos=photos, pagination=pagination,
+                           like_list=like_list, likes=likes, liked_count=[liked_count])
+
+
+@main.route('/photo/<int:id>')
+def photo(id):
+    photo = Photo.query.get_or_404(id)
+    album = photo.album
+    photo_index = [p.id for p in album.photos.order_by(Photo.timestamp.asc())].index(photo.id) + 1
+    page = request.args.get('page', photo_index, type=int)
+    pagination = album.photos.order_by(Photo.timestamp.asc()).paginate(
+        page, per_page=1, error_out=False
+    )
+    photos = pagination.items
+
+    if current_user.is_authenticated:
+        user = User.query.filter_by(username=current_user.username).first()
+        likes = user.likes.order_by(Like.timestamp.desc()).all()
+        likes = [{'id': like.like, 'timestamp': like.timestamp, 'path': like.like.path} for like in likes]
+        like_list = [like['path'] for like in likes]
+    else:
+        likes = ""
+        like_list = []
+
+    return render_template('photo.html', album=album, photos=photos, like_list=like_list, pagination=pagination, photo_index=photo_index)
+
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -93,7 +124,6 @@ def edit_profile():
     form.website.data = current_user.website
     form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', form=form)
-
 
 @main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
 @login_required

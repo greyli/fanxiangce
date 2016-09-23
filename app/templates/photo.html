@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros_photo.html" as macros %}
+
+{% block title %}翻相册 - 我的相册{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<link href="{{ url_for('static', filename='css/lightbox.css') }}" rel="stylesheet">
+<style>
+
+
+.fav-btn {
+      border: 1px solid black;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+      }
+
+.fav-btn:link, .fav-btn:hover  {
+    text-decoration: none;
+    }
+
+.fav-btn, .fav-btn:link, .fav-btn:hover {
+      border: 1px solid lightgrey;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px 5px;
+    }
+.fav-cancel, .fav-cancel:link, .fav-cancel:hover {
+    border: 1px solid lightgrey;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+
+    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
+    }
+
+#author {
+    background: #ccff99;
+    padding: 20px;
+    }
+
+.thumbnail {
+  position: relative;
+  width: 250px;
+  height: 200px;
+  overflow: hidden;
+}
+.thumbnail img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 100%;
+  width: auto;
+  -webkit-transform: translate(-50%,-50%);
+      -ms-transform: translate(-50%,-50%);
+          transform: translate(-50%,-50%);
+}
+.thumbnail img.portrait {
+  width: 100%;
+  height: auto;
+}
+
+.photo {
+    text-align: center;
+    }
+
+.photo img{
+    max-width:100%;
+    width:expression(this.offsetWidth > 800 ? "800px" : "auto");
+    max-height: 600px;
+}
+</style>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="container">
+<div id="posts" class="row">
+            {% for photo in photos %}
+            <div class="col-md-8 photo">
+                <a href="{{ photo.path }}" title="">
+                    <img src="{{ photo.path }}">
+                </a>
+              </div>
+            <div class="info col-md-4" >
+                <div class="pagination">
+                    {{ macros.pagination_widget(pagination, '.photo', id=photo_index) }}
+                    <p>
+                    {% if photo.path in like_list and current_user.is_authenticated %}
+                        <span class="badge">123</span>
+                        <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+                    {% else %}
+                    <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+                    {% endif %}
+                    </p>
+                    <p>第{{ pagination.page }}张 / 共{{ album.photos.count() }}张</p>
+                    <p>创建于{{ moment(album.timestamp).format('L') }}</p>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div id="author">
+                    <div class="col-md-4">
+                        <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
+                    </div>
+                <h4>{{ album.author.username }}</h4>
+                {% if album.author.about_me %}<p>{{ album.author.about_me }}</p>{% else %}<p>-</p>{% endif %}
+                </div>
+                <br>
+                <br>
+                <br>
+                <br>
+                <p>属于相册 </p>
+                <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
+                    <img  class="img-responsive  portrait" src="{{ album.cover }}">
+                </a>
+
+            </div>
+            {% endfor %}
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $(".fav-btn").click(function(event) {
+      $(event.target).toggleClass("fav-cancel");
+    });
+</script>
+
+{% endblock %}
