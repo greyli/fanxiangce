@@ -15,41 +15,58 @@
         color: #fff;
         text-decoration: none;
     }
+    a:hover {
+        border-bottom: 3px solid white;
+        }
 
     #welcome {
-        font-size: 50px;
+        font-size: 40px;
         text-align: center;
         position: absolute;
         left: 37%;
         top: 27%;
         }
-        
+
+    #logo {
+        font-size: 25px;
+        align: center;
+        position: absolute;
+        padding: 10px;
+        border: 2px solid white;
+        top: 5%;
+        left: 5%;
+    }
     #cry {
         font-size: 100px;
         text-align: center;
-        position: absolute;
-        left: 40%;
-        top: 20%;
+        position: relative;
         animation: example 5s infinite;
         }
         
 
     @keyframes example {
         0%   {left:30%; top:3%;}
-        25%  {left:60%; top:3%;}
-        50%  {left:60%; top:40%;}
-        75%  {left:30%; top:40%;}
+        25%  {left:40%; top:3%;}
+        50%  {left:30%; top:3%;}
+        75%  {left:40%; top:3%;}
         100% {left:30%; top:3%;}
     }
 </style>
 </head>
 
-<body style="background-color: rgb(18, 205, 85);">
+<body style="background-color: #f79d00;">
+
 <p id="welcome">你迷路了...<br>快<a href="{{ url_for('main.index') }}">回家</a>吧</p>
-<p id="cry">:(</p>
+<p id="logo"><a href="/">
+              <b>
+              <span style="color: #f79d00">翻</span>
+              <span style="color: #8b3fb2">相</span>
+              <span style="color: #4CAF50">册</span>
+              </b></a></p>
+<p id="cry">-_-</p>
 <script type="text/javascript" src="jquery.min.js"></script>  
 <script>
-	var listOfColors = ['#12CD55', '#2089DA', '#DE4D00', '#ffcc00'];
+	var listOfColors = ['#f79d00', '#8b3fb2', '#4CAF50', '#2089DA', '#DE4D00'];
 	var currentColorIndex = 0;
 	var moveToNextColor = function () {
 		if (currentColorIndex == listOfColors.length - 1) {

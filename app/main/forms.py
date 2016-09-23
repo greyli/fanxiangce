@@ -45,7 +45,7 @@ class EditProfileAdminForm(Form):
     location = StringField(u'城市', validators=[Length(0, 64)])
     website = StringField(u'网站', validators=[Length(0, 64),
                                              URL(message= u'请输入有效的地址，比如：http://withlihui.com')])
-    about_me = TextAreaField(u'关于我', validators=[Length(0, 64)])
+    about_me = TextAreaField(u'关于我')
     submit = SubmitField(u'提交')
 
     def __init__(self, user, *args, **kwargs):
@@ -63,6 +63,11 @@ class EditProfileAdminForm(Form):
         if field.data != self.user.username and \
         User.query.filter_by(username=field.data).first():
             raise ValidationError(u'用户名已被注册，换一个吧。')
+
+
+class CommentForm(Form):
+    body = TextAreaField(u'留言', validators=[Required(u'内容不能为空！')], render_kw={'rows': 5})
+    submit = SubmitField(u'提交')
 
 
 class TagForm(Form):

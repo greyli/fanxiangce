@@ -39,7 +39,7 @@
     }
 
 #author {
-    background: #ccff99;
+    background: #ffe6b3;
     padding: 20px;
     }
 
@@ -78,25 +78,32 @@
 
 {% block page_content %}
 
-<div class="container">
-<div id="posts" class="row">
+<div class="row">
             {% for photo in photos %}
-            <div class="col-md-8 photo">
-                <a href="{{ photo.path }}" title="">
+            <div class="col-md-8">
+                <div class="photo">
+                <a href="{{ url_for('.like', id=photo.id) }}" title="">
                     <img src="{{ photo.path }}">
                 </a>
+                </div>
+                <hr>
+                {{ wtf.quick_form(form) }}
+                {% for comment in comments %}
+                {{ comment }}
+                {% endfor %}
               </div>
             <div class="info col-md-4" >
                 <div class="pagination">
-                    {{ macros.pagination_widget(pagination, '.photo', id=photo_index) }}
+                    {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
                     <p>
                     {% if photo.path in like_list and current_user.is_authenticated %}
-                        <span class="badge">123</span>
-                        <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+                    <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+                    <span class="badge">123</span>
                     {% else %}
                     <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
                     {% endif %}
                     </p>
+                    <br>
                     <p>第{{ pagination.page }}张 / 共{{ album.photos.count() }}张</p>
                     <p>创建于{{ moment(album.timestamp).format('L') }}</p>
                 </div>
@@ -121,7 +128,6 @@
 
             </div>
             {% endfor %}
-  </div>
 </div>
 
 

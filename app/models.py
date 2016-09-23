@@ -71,6 +71,8 @@ class Photo(db.Model):
     liked = db.relationship('Like', foreign_keys=[Like.like_id],
                                backref=db.backref('like', lazy='joined'),
                             lazy='dynamic', cascade='all, delete-orphan')
+    comments = db.relationship('Comment', backref='photo', lazy='dynamic')
+
 
     def is_liked_by(self, user):
         return self.liked.filter_by(like_id=user.id).first() is not None
@@ -85,6 +87,18 @@ class Album(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     photos = db.relationship('Photo', backref='album', lazy='dynamic')
+
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    # body_html = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    photo_id = db.Column(db.Integer, db.ForeignKey('photos.id'))
+
 
 
 class User(UserMixin, db.Model):
@@ -104,6 +118,7 @@ class User(UserMixin, db.Model):
     avatar_hash = db.Column(db.String(32))
     albums = db.relationship('Album', backref='author', lazy='dynamic')
     photos = db.relationship('Photo', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
     likes = db.relationship('Like', foreign_keys=[Like.liked_id],
                             backref=db.backref('liked', lazy='joined'),
                             lazy='dynamic', cascade='all, delete-orphan')

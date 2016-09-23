@@ -3,13 +3,13 @@
     <li {% if not pagination.has_prev %} class="disabled" {% endif %}>
         <a href="{% if pagination.has_prev %}{{ url_for(endpoint,
 page = pagination.page - 1, **kwargs) }}{% else %}#{% endif %}">
-            &laquo;
+            上一张
         </a>
     </li>
     <li {% if not pagination.has_next %} class="disabled" {% endif %}>
         <a href="{% if pagination.has_next %}{{ url_for(endpoint,
             page = pagination.page + 1, **kwargs) }}{% else %}#{% endif %}">
-            &raquo;
+            下一张
         </a>
     </li>
 </ul>

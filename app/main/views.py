@@ -8,9 +8,9 @@ from werkzeug import secure_filename
 
 
 from . import main
-from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm
+from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm, CommentForm
 from .. import db
-from ..models import User, Role, Permission, Album, Photo, Like
+from ..models import User, Role, Permission, Album, Photo, Like, Comment
 from tag import glue
 from wall import wall
 from ..decorators import admin_required, permission_required
@@ -85,10 +85,11 @@ def album(id):
                            like_list=like_list, likes=likes, liked_count=[liked_count])
 
 
-@main.route('/photo/<int:id>')
+@main.route('/photo/<int:id>', methods=['GET', 'POST'])
 def photo(id):
     photo = Photo.query.get_or_404(id)
     album = photo.album
+    form = CommentForm()
     photo_index = [p.id for p in album.photos.order_by(Photo.timestamp.asc())].index(photo.id) + 1
     page = request.args.get('page', photo_index, type=int)
     pagination = album.photos.order_by(Photo.timestamp.asc()).paginate(
@@ -105,7 +106,16 @@ def photo(id):
         likes = ""
         like_list = []
 
-    return render_template('photo.html', album=album, photos=photos, like_list=like_list, pagination=pagination, photo_index=photo_index)
+    if form.validate_on_submit() and current_user.is_authenticated:
+        comment = Comment(body=form.body.data,
+                          photo=photo,
+                          author=current_user._get_current_object())
+        db.session.add(comment)
+        flash(u'你的评论已经发表。')
+        return redirect(url_for('photo', id=photo.id, page=-1))
+    comments = photo.comments.order_by(Comment.timestamp.asc()).all()
+    return render_template('photo.html', form=form, album=album, photos=photos,
+                           like_list=like_list, pagination=pagination, comments=comments, photo_index=photo_index)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
@@ -204,6 +214,7 @@ def wall():
     return render_template('create/wall.html', form=form)
 
 @main.route('/create-normal', methods=['GET', 'POST'])
+@login_required
 def normal():
     from flask_uploads import UploadSet, configure_uploads, IMAGES
     app = current_app._get_current_object()
