@@ -8,6 +8,7 @@
     </div>
     <div class="profile-header col-md-4">
         <h1>{{ user.username }}</h1>
+        {% if user.status %}<p>{{ user.status }}</p>{% endif %}
         {% if user.name or user.location %}
         <p>
             {% if user.name %}<b>{{ user.name }}</b><br>{% endif %}

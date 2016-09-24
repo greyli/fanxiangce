@@ -49,7 +49,7 @@ def likes(username):
         abort(404)
     likes = user.likes.order_by(Like.timestamp.desc()).all()
     like_count = len(likes)
-    likes = [{'user': like.like, 'timestamp': like.timestamp, 'path':like.like.path} for like in likes]
+    likes = [{'photo': like.like, 'timestamp': like.timestamp, 'path':like.like.path} for like in likes]
     return render_template('likes.html', user=user, likes=likes, like_count=like_count)
 
 @main.route('/album/<int:id>')
@@ -60,11 +60,6 @@ def album(id):
         page, per_page=20, error_out=False
     )
     photos = pagination.items
-
-    for photo in photos:
-        liked_count = []
-        liked = photo.liked.order_by(Like.timestamp.desc()).all()
-        liked_count.append(len(liked))
 
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
@@ -82,7 +77,7 @@ def album(id):
         html = wall()
         return render_template('wall.html', album=album, html=html)
     return render_template('album.html', album=album, photos=photos, pagination=pagination,
-                           like_list=like_list, likes=likes, liked_count=[liked_count])
+                           like_list=like_list, likes=likes)
 
 
 @main.route('/photo/<int:id>', methods=['GET', 'POST'])
@@ -100,7 +95,7 @@ def photo(id):
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.likes.order_by(Like.timestamp.desc()).all()
-        likes = [{'id': like.like, 'timestamp': like.timestamp, 'path': like.like.path} for like in likes]
+        likes = [{'id': like.like, 'timestamp': like.timestamp, 'path': like.like.path, 'liked':like.liked} for like in likes]
         like_list = [like['path'] for like in likes]
     else:
         likes = ""
@@ -112,10 +107,11 @@ def photo(id):
                           author=current_user._get_current_object())
         db.session.add(comment)
         flash(u'你的评论已经发表。')
-        return redirect(url_for('photo', id=photo.id, page=-1))
+        return redirect(url_for('.photo', id=photo.id))
     comments = photo.comments.order_by(Comment.timestamp.asc()).all()
     return render_template('photo.html', form=form, album=album, photos=photos,
-                           like_list=like_list, pagination=pagination, comments=comments, photo_index=photo_index)
+                           like_list=like_list, pagination=pagination,
+                           comments=comments, photo_index=photo_index)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
@@ -123,6 +119,7 @@ def edit_profile():
     form = EditProfileForm()
     if form.validate_on_submit():
         current_user.name = form.name.data
+        current_user.status = form.status.data
         current_user.location = form.location.data
         current_user.website = form.website.data
         current_user.about_me = form.about_me.data
@@ -250,16 +247,41 @@ def normal():
 #@permission_required(Permission.FOLLOW)# todo follow > like
 def like(id):
     photo = Photo.query.filter_by(id=id).first()
-    album = photo.album_id
+    album = photo.album
     if photo is None:
         flash(u'无效的图片。')
         return redirect(url_for('.album', id=album))
     if current_user.is_like(photo):
         current_user.unlike(photo)
-        return (''), 204
+        redirect(url_for('.photo', id=id))
+        #return (''), 204
     current_user.like(photo)
+    return redirect(url_for('.photo', id=id))
+
+@main.route('/unlike/<id>')
+@login_required
+#@permission_required(Permission.FOLLOW)# todo follow > like
+def unlike(id):
+    photo = Photo.query.filter_by(id=id).first()
+    if photo is None:
+        flash(u'无效的图片。')
+        return redirect(url_for('.likes', username=current_user.username))
+    if current_user.is_like(photo):
+        current_user.unlike(photo)
     return (''), 204
 
+@main.route('/delete/<id>')
+@login_required
+#@permission_required(Permission.FOLLOW)# todo follow > like
+def delete_photo(id):
+    photo = Photo.query.filter_by(id=id).first()
+    album = photo.album
+    if photo is None:
+        flash(u'无效的图片。')
+        return redirect(url_for('.index', username=current_user.username))
+    db.session.delete(photo)
+    db.session.commit()
+    return redirect(url_for('.album', id=album.id))
 
 @main.route('/base', methods=['GET','POST'])
 def test():

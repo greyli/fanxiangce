@@ -13,23 +13,6 @@
 	border-color:#c9c9c9;
 }
 
-.post {
-margin: 20px 40px;
-}
-
-.post h4 {
-  margin-bottom: 9px;
-}
-
-.post h4 a {
-  color: #333;
-}
-
-.post img.image {
-  max-width: 400px;
-  margin-top: 9px;
-}
-
 .info {
 	padding:4px;
 }
@@ -142,6 +125,11 @@ margin: 20px 40px;
     background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
     }
 
+  .info {
+    margin: 5px;
+    cursor: pointer;
+  }
+
 
 .thumbnail {
   position: relative;
@@ -167,30 +155,33 @@ margin: 20px 40px;
 {% endblock %}
 {% block page_content %}
 <div class="page-header">
-    <h1>翻相册 > {{ user.username }}的喜欢（{{ like_count }}）</h1>
+    <h3>{{ user.name }}的喜欢</h3>
+    <p>{{ user.likes.count() }}张图片
+        <span class="pull-right">批量修改 | 添加照片 | 排序 | <a href="{{ url_for('.albums', username=user.username) }}">返回{{ user.name }}的相册主页</a></span>
+</p>
 </div>
 
 <div class="container">
     {% if album_count == 0 %}
     <h2>你还没有标记过喜欢，快来<a href="{{ url_for('.normal') }}">探索</a>一下吧！</h2>
     {% endif %}
-<div id="posts" class="row">
+<div class="row">
             {% for like in likes %}
-            <div class="post item span3">
-              <div class="well">
-                <a class="thumbnail" href="{{ url_for('.photo', id=like.user.id) }}" >
+            <div class="col-md-4">
+                <div class="well">
+                <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}" >
                     <img class="img-responsive portrait" src="{{ like.path }}">
                 </a>
                 <div class="info">
                   <span>标记于{{ moment(like.timestamp).format('L') }}</span>
-                    <a href="{{ url_for('.like', id=like.user.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-                    <span class="badge"></span>
+                    {% if current_user.username == user.username %}
+                    <a href="{{ url_for('.unlike', id=like.photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</a>
+                    {% endif %}
                 </div>
               </div>
             </div>
             {% endfor %}
   </div>
-
 </div>
 {% endblock %}
 
@@ -213,4 +204,9 @@ $.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function()
     });
 </script>
 
+<script>
+$( ".fav-btn" ).click(function() {
+  $( this ).parent().parent().parent().slideUp();
+});
+</script>
 {% endblock %}

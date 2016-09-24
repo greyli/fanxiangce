@@ -142,12 +142,13 @@ margin: 40px;
 {% endblock %}
 {% block page_content %}
 <div class="page-header">
-    <h1>翻相册 > {{ user.username }}的相册（{{ album_count }}）</h1>
+    <h3><a href="{{ url_for('.user', username=user.username) }}">{{ user.name }}</a>的相册</h3>
+    <p>-<span class="pull-right"><a href="{{ url_for('.user', username=user.username) }}">返回{{ user.name }}的主页</a></span></p>
 </div>
 
 <div class="container">
     {% if album_count == 0 %}
-    <h2>您还没有相册，快来<a href="{{ url_for('.normal') }}">创建</a>一个吧！</h2>
+    <h3>您还没有相册，快来<a href="{{ url_for('.normal') }}">创建</a>一个吧！</h3>
     {% endif %}
 <div id="posts" class="row">
             {% for album in albums %}

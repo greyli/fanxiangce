@@ -106,6 +106,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
+    status = db.Column(db.String(64))
     password_hash = db.Column(db.String(64))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean, default=False)
@@ -189,6 +190,10 @@ class User(UserMixin, db.Model):
     def generate_confirmation_token(self, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'confirm': self.id})
+
+    def generate_email_change_token(self, new_email, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'change_email': self.id, 'new_email': new_email})
 
     def confirm(self, token):
         s = Serializer(current_app.config['SECRET_KEY'])

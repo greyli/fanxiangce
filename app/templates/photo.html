@@ -73,6 +73,41 @@
     width:expression(this.offsetWidth > 800 ? "800px" : "auto");
     max-height: 600px;
 }
+
+
+ul.comments {
+    list-style-type: none;
+    padding: 0px;
+    margin: 16px 0px 0px 0px;
+}
+ul.comments li.comment {
+    margin-left: 32px;
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+ul.comments li.comment:nth-child(1) {
+    border-top: 1px solid #e0e0e0;
+}
+ul.comments li.comment:hover {
+    background-color: #f0f0f0;
+}
+div.comment-date {
+    float: right;
+}
+div.comment-author {
+    font-weight: bold;
+}
+div.comment-thumbnail {
+    position: absolute;
+}
+div.comment-content {
+    margin-left: 48px;
+    min-height: 48px;
+}
+div.comment-form {
+    margin: 16px 0px 16px 32px;
+}
+
 </style>
 {% endblock %}
 
@@ -82,46 +117,49 @@
             {% for photo in photos %}
             <div class="col-md-8">
                 <div class="photo">
-                <a href="{{ url_for('.like', id=photo.id) }}" title="">
+                <a href="" title="">
                     <img src="{{ photo.path }}">
                 </a>
+                    <br>
+                    <br>
+                <span class="pull-left">推荐</span>
+                <span class="pull-right"><a href="{{ url_for('.delete_photo', id=photo.id) }}">删除</a></span>
                 </div>
                 <hr>
                 {{ wtf.quick_form(form) }}
-                {% for comment in comments %}
-                {{ comment }}
-                {% endfor %}
+                <div id="comment">
+                {% include '_comments.html' %}
+                </div>
               </div>
+
             <div class="info col-md-4" >
+                <span class="pull-right"><a href="{{ url_for('.album', id=photo.album.id) }}"> > 返回相册</a></span>
                 <div class="pagination">
                     {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
                     <p>
                     {% if photo.path in like_list and current_user.is_authenticated %}
                     <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-                    <span class="badge">123</span>
                     {% else %}
                     <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
                     {% endif %}
+                    <span class="badge">{{ photo.liked.count() }}</span>
                     </p>
                     <br>
                     <p>第{{ pagination.page }}张 / 共{{ album.photos.count() }}张</p>
-                    <p>创建于{{ moment(album.timestamp).format('L') }}</p>
+                    <p>上传于{{ moment(album.timestamp).format('L') }}</p>
                 </div>
                 <br>
-                <br>
-                <br>
+                <hr>
                 <div id="author">
                     <div class="col-md-4">
                         <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
                     </div>
-                <h4>{{ album.author.username }}</h4>
+                <h4>{{ album.author.name }}</h4>
                 {% if album.author.about_me %}<p>{{ album.author.about_me }}</p>{% else %}<p>-</p>{% endif %}
                 </div>
                 <br>
-                <br>
-                <br>
-                <br>
-                <p>属于相册 </p>
+                <hr>
+                <p><a href="{{ url_for('.album', id=album.id) }}">{{ album.author.name}}的相册</a> - {{ album.title }}（{{ album.photos.count() }}张照片）</p>
                 <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
                     <img  class="img-responsive  portrait" src="{{ album.cover }}">
                 </a>

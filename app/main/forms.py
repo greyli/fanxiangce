@@ -15,20 +15,21 @@ from ..models import User, Role
 
 class EditProfileForm(Form):
     name = StringField(u'姓名或昵称', validators=[Length(0, 64)])
+    status = StringField(u'签名档', validators=[Length(0, 64)])
     location = StringField(u'城市', validators=[Length(0,64)])
     website = StringField(u'网站', validators=[Length(0,64), Optional(),
-                         URL(message= u'请输入有效的地址，比如：http://withlihui.com')], render_kw={"placeholder": "<i class = glyphicon glyphicon-user form-control-feedback></i>"})
+                         URL(message= u'请输入有效的地址，比如：http://withlihui.com')],
+                          render_kw={"placeholder": "http://..."})
     about_me = TextAreaField(u'关于我', validators=[Length(0,64)], render_kw={"placeholder": u"我是......"})
     submit = SubmitField(u'提交')
 
+    def validate_website(self, field):
+        if "http://" not in field.data:
+            raise ValidationError(u'请输入有效的地址，比如：http://withlihui.com')
 
-class TESTForm(Form):
-    url = StringField("Enter URL",
-                   validators=[URL(), Required()],
-                   )
-    submit = SubmitField('Search')
+class TESTForm(EditProfileForm):
 
-    def validate_url(self, field):
+    def validate_website(self, field):
         if "http://" not in field.data:
             raise ValidationError(u'请输入有效的地址，比如：http://withlihui.com')
 

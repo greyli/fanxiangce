@@ -147,9 +147,11 @@ margin: 10px;
 
 {% block page_content %}
 <div class="page-header">
-    <h1>{{ current_user.username }} > {{ album.title }}</h1>
+    <h3>{{ album.author.name }}的相册 - {{ album.title }}</h3>
     <h4>{{ album.about }}</h4>
-    <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}</p>
+    <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
+        <span class="pull-right">编辑相册 | 添加照片 | 排序 | <a href="{{ url_for('.albums', username=album.author.username) }}">返回{{ album.author.name }}的相册主页</a></span>
+</p>
 </div>
 
 <div class="container">
@@ -157,23 +159,19 @@ margin: 10px;
             {% for photo in photos %}
             <div class="post item span3">
               <div class="well">
+                  {{ photo.id }}
                 <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
                 <div class="info">
-                    {% if photo.path in like_list and current_user.is_authencated %}
-                    <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn fav-cancel" title="标记为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-                    <span class="badge"></span>
-                    {% else %}
-                    <a href="{{ url_for('.like', id=photo.id) }}" class="fav-btn" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-                    {% endif %}
-                </div>
+                    <a class="comment" href="{{ url_for('.photo', id=photo.id) }}#comment">评论<span class="badge">{{ photo.comments.count() }}</span></a>
+                    喜欢<span class="badge">{{ photo.liked.count() }}</span>
               </div>
             </div>
+            </div>
             {% endfor %}
-  </div>
-
 </div>
+    <p>删除相册 推荐 | 喜欢</p>
 
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.album', id=album.id) }}
