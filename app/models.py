@@ -51,11 +51,29 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
-class Like(db.Model):
-    __tablename__ = 'like'
-    like_id = db.Column(db.Integer, db.ForeignKey('photos.id'),
+class LikePhoto(db.Model):
+    __tablename__ = 'like_photo'
+    like_photo_id = db.Column(db.Integer, db.ForeignKey('photos.id'),
                          primary_key=True)
-    liked_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+    photo_liked_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                         primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+
+
+class LikeAlbum(db.Model):
+    __tablename__ = 'like_album'
+    like_album_id = db.Column(db.Integer, db.ForeignKey('albums.id'),
+                         primary_key=True)
+    album_liked_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                         primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
+
+
+class Follow(db.Model):
+    __tablename__ = 'follows'
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                        primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'),
                          primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
 
@@ -68,14 +86,12 @@ class Photo(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     album_id = db.Column(db.Integer, db.ForeignKey('albums.id'))
-    liked = db.relationship('Like', foreign_keys=[Like.like_id],
-                               backref=db.backref('like', lazy='joined'),
+    photo_liked = db.relationship('LikePhoto', foreign_keys=[LikePhoto.like_photo_id],
+                            backref=db.backref('like_photo', lazy='joined'),
                             lazy='dynamic', cascade='all, delete-orphan')
+
     comments = db.relationship('Comment', backref='photo', lazy='dynamic')
 
-
-    def is_liked_by(self, user):
-        return self.liked.filter_by(like_id=user.id).first() is not None
 
 class Album(db.Model):
     __tablename__ = 'albums'
@@ -87,6 +103,9 @@ class Album(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     photos = db.relationship('Photo', backref='album', lazy='dynamic')
+    album_liked = db.relationship('LikeAlbum', foreign_keys=[LikeAlbum.like_album_id],
+                                  backref=db.backref('like_album', lazy='joined'),
+                                  lazy='dynamic', cascade='all, delete-orphan')
 
 
 class Comment(db.Model):
@@ -120,8 +139,17 @@ class User(UserMixin, db.Model):
     albums = db.relationship('Album', backref='author', lazy='dynamic')
     photos = db.relationship('Photo', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
-    likes = db.relationship('Like', foreign_keys=[Like.liked_id],
-                            backref=db.backref('liked', lazy='joined'),
+    photo_likes = db.relationship('LikePhoto', foreign_keys=[LikePhoto.photo_liked_id],
+                            backref=db.backref('photo_liked', lazy='joined'),
+                            lazy='dynamic', cascade='all, delete-orphan')
+    album_likes = db.relationship('LikeAlbum', foreign_keys=[LikeAlbum.album_liked_id],
+                            backref=db.backref('album_liked', lazy='joined'),
+                            lazy='dynamic', cascade='all, delete-orphan')
+    followers = db.relationship('Follow', foreign_keys=[Follow.followed_id],
+                            backref=db.backref('followed', lazy='joined'),
+                            lazy='dynamic', cascade='all, delete-orphan')
+    followed = db.relationship('Follow', foreign_keys=[Follow.follower_id],
+                            backref=db.backref('follower', lazy='joined'),
                             lazy='dynamic', cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
@@ -207,20 +235,49 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         return True
 
-    def like(self, photo):
-        if not self.is_like(photo):
-            print photo
-            p = Like(liked=self, like=photo)
+    def follow(self, user):
+        if not self.is_following(user):
+            f = Follow(follower=self, followed=user)
+            db.session.add(f)
+
+    def unfollow(self, user):
+        f = self.followed.filter_by(followed_id=user.id).first()
+        if f:
+            db.session.delete(f)
+
+    def is_following(self, user):
+        return self.followed.filter_by(
+            followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        return self.followers.filter_by(
+            follower_id=user.id).first() is not None
+
+    def like_photo(self, photo):
+        if not self.is_like_photo(photo):
+            p = LikePhoto(photo_liked=self, like_photo=photo)
             db.session.add(p)
 
-    def unlike(self, photo):
-        p = self.likes.filter_by(like_id=photo.id).first()
+    def like_album(self, album):
+        if not self.is_like_photo(album):
+            a = LikeAlbum(album_liked=self, like_album=album)
+            db.session.add(a)
+
+    def unlike_photo(self, photo):
+        p = self.photo_likes.filter_by(like_photo_id=photo.id).first()
         if p:
             db.session.delete(p)
 
-    def is_like(self, photo):
-        return self.likes.filter_by(like_id=photo.id).first() is not None
+    def unlike_album(self, album):
+        p = self.album_likes.filter_by(like_album_id=album.id).first()
+        if p:
+            db.session.delete(p)
 
+    def is_like_photo(self, photo):
+        return self.photo_likes.filter_by(like_photo_id=photo.id).first() is not None
+
+    def is_like_album(self, album):
+        return self.album_likes.filter_by(like_album_id=album.id).first() is not None
 
     def __repr__(self):
         return '<Role %r>' % self.name

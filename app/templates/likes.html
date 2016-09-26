@@ -156,7 +156,7 @@
 {% block page_content %}
 <div class="page-header">
     <h3>{{ user.name }}的喜欢</h3>
-    <p>{{ user.likes.count() }}张图片
+    <p>{{ user.photo_likes.count() }}张图片
         <span class="pull-right">批量修改 | 添加照片 | 排序 | <a href="{{ url_for('.albums', username=user.username) }}">返回{{ user.name }}的相册主页</a></span>
 </p>
 </div>
@@ -175,7 +175,7 @@
                 <div class="info">
                   <span>标记于{{ moment(like.timestamp).format('L') }}</span>
                     {% if current_user.username == user.username %}
-                    <a href="{{ url_for('.unlike', id=like.photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</a>
+                    <a href="{{ url_for('.unlike_photo', id=like.photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</a>
                     {% endif %}
                 </div>
               </div>

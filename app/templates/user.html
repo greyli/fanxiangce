@@ -2,10 +2,26 @@
 {% block title %}Flasky - {{ user.username }}{% endblock %}
 
 {% block page_content %}
-<div class="page-header">
+<div class="row">
     <div class="col-md-4">
         <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
+    <p>
+        <br>
+        {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
+            {% if not current_user.is_following(user) %}
+            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+            {% else %}
+            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">Unfollow</a>
+            {% endif %}
+        {% endif %}
+        <a href="{{ url_for('.followers', username=user.username) }}">Followers: <span class="badge">{{ user.followers.count() + 1 }}</span></a>
+        <a href="{{ url_for('.followed_by', username=user.username) }}">Following: <span class="badge">{{ user.followed.count() + 1 }}</span></a>
+        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+        | <span class="label label-default">Follows you</span>
+        {% endif %}
+    </p>
     </div>
+
     <div class="profile-header col-md-4">
         <h1>{{ user.username }}</h1>
         {% if user.status %}<p>{{ user.status }}</p>{% endif %}
@@ -34,9 +50,29 @@
         </p>
     </div>
     <div class="col-md-4">
-        <h1>{{ album_count }}</h1>&nbsp;&nbsp;喜欢
+        <h1>{{ album_count }}</h1>&nbsp;&nbsp;被喜欢
         <h1>{{ album_count }}</h1>&nbsp;&nbsp;相册
         <h1>{{ photo_count }}</h1>&nbsp;&nbsp;照片
     </div>
+</div>
+<hr>
+<div class="row">
+    <h3>我创建的相册</h3>
+
+</div>
+<hr>
+<div class="row">
+    <h3>我参与的相册</h3>
+
+</div>
+<hr>
+<div class="row">
+    <h3>我的喜欢</h3>
+
+</div>
+<hr>
+<div class="row">
+    <h3>留言板</h3>
+
 </div>
 {% endblock %}

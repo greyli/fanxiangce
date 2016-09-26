@@ -143,7 +143,7 @@ margin: 40px;
 {% block page_content %}
 <div class="page-header">
     <h3><a href="{{ url_for('.user', username=user.username) }}">{{ user.name }}</a>的相册</h3>
-    <p>-<span class="pull-right"><a href="{{ url_for('.user', username=user.username) }}">返回{{ user.name }}的主页</a></span></p>
+    <p>{{ album_count }}个相册，234个关注，2535个喜欢<span class="pull-right"><a href="{{ url_for('.user', username=user.username) }}">返回{{ user.name }}的主页</a></span></p>
 </div>
 
 <div class="container">
