@@ -37,7 +37,8 @@ def logout():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data,
+        user = User(name=form.name.data,
+                    email=form.email.data,
                     username=form.username.data,
                     password=form.password.data)
         db.session.add(user)

@@ -15,9 +15,10 @@ class LoginForm(Form):
     submit = SubmitField(u'登录')
 
 class RegisterForm(Form):
+    name = StringField(u'昵称', validators=[Required(message= u'昵称不能为空'), Length(1, 64)])
     email = StringField(u'邮箱', validators=[Required(message= u'邮箱不能为空'), Length(1, 64),
                                            Email(message= u'请输入有效的邮箱地址，比如：username@domain.com')])
-    username = StringField(u'用户名', validators=[Required(message= u'用户名不能为空'), Length(1, 64),
+    username = StringField(u'ID', validators=[Required(message= u'用户名不能为空'), Length(1, 64),
                                            Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                                                   u'用户名只能有字母，'
                                                     u'数字，点和下划线组成。')])

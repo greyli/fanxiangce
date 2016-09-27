@@ -10,7 +10,7 @@ from werkzeug import secure_filename
 from . import main
 from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm, CommentForm
 from .. import db
-from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum
+from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
 from tag import glue
 from wall import wall
 from ..decorators import admin_required, permission_required
@@ -22,15 +22,32 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/user/<username>')
+@main.route('/user/<username>', methods=['GET', 'POST'])
 def user(username):
     user = User.query.filter_by(username=username).first()
+    form = CommentForm()
     if user is None:
         abort(404)
     albums = user.albums.order_by(Album.timestamp.desc()).all()
     album_count = len(albums)
     photo_count = sum([len(album.photos.order_by(Photo.timestamp.asc()).all()) for album in albums])
-    return render_template('user.html', user=user, albums=albums, album_count=album_count, photo_count=photo_count)
+    photo_likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
+    album_likes = user.album_likes.order_by(LikeAlbum.timestamp.desc()).all()
+    photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path': like.like_photo.path} for like in
+                   photo_likes[:2]]
+    album_likes = [{'album': like.like_album, 'photo': like.like_album.photos,
+                    'timestamp': like.timestamp, 'cover': like.like_album.cover} for like in album_likes[:2]]
+
+    if form.validate_on_submit() and current_user.is_authenticated:
+        comment = Message(body=form.body.data,
+                          user=user,
+                          author=current_user._get_current_object())
+        db.session.add(comment)
+        flash(u'你的评论已经发表。')
+        return redirect(url_for('.user', username=username))
+    comments = user.messages.order_by(Message.timestamp.asc()).all()
+    return render_template('user.html', form=form, user=user, photo_likes=photo_likes, album_likes=album_likes,
+                           albums=albums, comments=comments, album_count=album_count, photo_count=photo_count)
 
 
 @main.route('/user/<username>/albums')
@@ -47,10 +64,12 @@ def likes(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         abort(404)
-    likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
-    like_count = len(likes)
-    likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path':like.like_photo.path} for like in likes]
-    return render_template('likes.html', user=user, likes=likes, like_count=like_count)
+    photo_likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
+    album_likes = user.album_likes.order_by(LikeAlbum.timestamp.desc()).all()
+    photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path':like.like_photo.path} for like in photo_likes]
+    album_likes = [{'album': like.like_album, 'photo': like.like_album.photos,
+                    'timestamp': like.timestamp, 'cover':like.like_album.cover} for like in album_likes]
+    return render_template('likes.html', user=user, photo_likes=photo_likes, album_likes=album_likes)
 
 @main.route('/album/<int:id>')
 def album(id):
@@ -70,6 +89,8 @@ def album(id):
         likes = ""
         like_list = []
 
+    is_liked = album.is_liked_by(current_user)
+
     if album.type == 1:
         files = []
         for photo in photos:
@@ -77,7 +98,7 @@ def album(id):
         html = wall()
         return render_template('wall.html', album=album, html=html)
     return render_template('album.html', album=album, photos=photos, pagination=pagination,
-                           like_list=like_list, likes=likes)
+                           like_list=like_list, likes=likes, is_liked=is_liked)
 
 
 @main.route('/photo/<int:id>', methods=['GET', 'POST'])
@@ -288,7 +309,7 @@ def followers(username):
         error_out=False)
     follows = [{'user': item.follower, 'timestamp': item.timestamp}
                for item in pagination.items]
-    return render_template('followers.html', user=user, title=u"关注我的人",
+    return render_template('followers.html', user=user, title=u"的关注者",
                            endpoint='.followers', pagination=pagination,
                            follows=follows)
 
@@ -322,8 +343,8 @@ def like_photo(id):
     if current_user.is_like_photo(photo):
         current_user.unlike_photo(photo)
         redirect(url_for('.photo', id=id))
-        #return (''), 204
-    current_user.like_photo(photo)
+    else:
+        current_user.like_photo(photo)
     return redirect(url_for('.photo', id=id))
 
 @main.route('/album/like/<id>')
@@ -336,10 +357,12 @@ def like_album(id):
         return redirect(url_for('.albums', username=album.author.username))
     if current_user.is_like_album(album):
         current_user.unlike_album(album)
-        redirect(url_for('.photo', id=id))
-        #return (''), 204
-    current_user.like_photo(photo)
-    return redirect(url_for('.photo', id=id))
+        flash(u'喜欢已取消。')
+        redirect(url_for('.album', id=id))
+    else:
+        current_user.like_album(album)
+        flash(u'相册已经添加到你的喜欢里了。')
+    return redirect(url_for('.album', id=id))
 
 @main.route('/photo/unlike/<id>')
 @login_required

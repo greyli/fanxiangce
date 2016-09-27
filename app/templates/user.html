@@ -1,6 +1,157 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% block title %}Flasky - {{ user.username }}{% endblock %}
+{% block head %}
+{{ super() }}
+<style>
 
+/* make the well swell */
+.well {
+    height: 290px;
+    width: 290px;
+	border-color:#c9c9c9;
+}
+
+.info {
+	padding:4px;
+}
+
+/* Isotope Transitions
+------------------------------- */
+.isotope,
+.isotope .item {
+  -webkit-transition-duration: 0.8s;
+     -moz-transition-duration: 0.8s;
+      -ms-transition-duration: 0.8s;
+       -o-transition-duration: 0.8s;
+          transition-duration: 0.8s;
+}
+
+.isotope {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+      -ms-transition-property: height, width;
+       -o-transition-property: height, width;
+          transition-property: height, width;
+}
+
+.isotope .item {
+  -webkit-transition-property: -webkit-transform, opacity;
+     -moz-transition-property:    -moz-transform, opacity;
+      -ms-transition-property:     -ms-transform, opacity;
+       -o-transition-property:         top, left, opacity;
+          transition-property:         transform, opacity;
+}
+
+
+/* responsive media queries */
+
+@media (max-width: 480px) {
+
+}
+
+@media (max-width: 768px) {
+  header h1 small {
+    display: block;
+  }
+
+  header div.description {
+    padding-top: 9px;
+    padding-bottom: 4px;
+  }
+
+  .isotope .item {
+    position: static ! important;
+    -webkit-transform: translate(0px, 0px) ! important;
+       -moz-transform: translate(0px, 0px) ! important;
+            transform: translate(0px, 0px) ! important;
+  }
+}
+
+@media (max-width: 980px) {
+  header p.lead span {
+    display: block;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 768px) {
+
+}
+
+
+@media (min-width: 768px) and (max-width: 980px) {
+  .span3 {
+    width: 352px;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1200px) {
+  .span3 {
+    width: 300px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .span3 {
+    width: 270px;
+  }
+}
+
+.fav-btn {
+      border: 1px solid black;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+      }
+
+.fav-btn:link, .fav-btn:hover  {
+    text-decoration: none;
+    }
+
+.fav-btn, .fav-btn:link, .fav-btn:hover {
+      border: 1px solid lightgrey;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px 5px;
+    }
+.fav-cancel, .fav-cancel:link, .fav-cancel:hover {
+    border: 1px solid lightgrey;
+      padding: 4px 8px;
+      border-radius: 3px;
+      text-decoration: none;
+
+    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
+    }
+
+  .info {
+    margin: 5px;
+    cursor: pointer;
+  }
+
+
+.thumbnail {
+  position: relative;
+  width: 250px;
+  height: 200px;
+  overflow: hidden;
+}
+.thumbnail img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 100%;
+  width: auto;
+  -webkit-transform: translate(-50%,-50%);
+      -ms-transform: translate(-50%,-50%);
+          transform: translate(-50%,-50%);
+}
+.thumbnail img.portrait {
+  width: 100%;
+  height: auto;
+}
+</style>
+{% endblock %}
 {% block page_content %}
 <div class="row">
     <div class="col-md-4">
@@ -9,15 +160,15 @@
         <br>
         {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
             {% if not current_user.is_following(user) %}
-            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
             {% else %}
-            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">Unfollow</a>
+            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">取消关注</a>
             {% endif %}
         {% endif %}
-        <a href="{{ url_for('.followers', username=user.username) }}">Followers: <span class="badge">{{ user.followers.count() + 1 }}</span></a>
-        <a href="{{ url_for('.followed_by', username=user.username) }}">Following: <span class="badge">{{ user.followed.count() + 1 }}</span></a>
+        <a href="{{ url_for('.followers', username=user.username) }}">被关注: <span class="badge">{{ user.followers.count() }}</span></a>
+        <a href="{{ url_for('.followed_by', username=user.username) }}">关注: <span class="badge">{{ user.followed.count() }}</span></a>
         {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-        | <span class="label label-default">Follows you</span>
+        | <span class="label label-default">他/她在关注你</span>
         {% endif %}
     </p>
     </div>
@@ -57,22 +208,70 @@
 </div>
 <hr>
 <div class="row">
-    <h3>我创建的相册</h3>
+    <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}创建的相册</h3>
+        {% for album in albums[:2] %}
+           <div class="col-md-4">
+                <div class="post item span3">
 
+              <div class="well">
+                <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}" >
+                    <img class="img-responsive portrait" src="{{ album.cover }}">
+                </a>
+                <div class="info">
+                  <h5>{{ album.title }}</h5>
+                  <span>{{ album.photos.count() }}张图片</span>
+                  <span>创建于{{ moment(album.timestamp).format('L') }}</span>
+                </div>
+              </div>
+            </div>
+            </div>
+            {% endfor %}
 </div>
 <hr>
-<div class="row">
-    <h3>我参与的相册</h3>
 
-</div>
-<hr>
-<div class="row">
-    <h3>我的喜欢</h3>
+<h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</h3><span>{{ user.photo_likes.count() }}张图片 {{ user.album_likes.count() }}个相册 </span>
 
+<div class="row">
+    {% for like in album_likes %}
+        <div class="col-md-4">
+            <div class="post item span3">
+              <div class="well">
+                <a class="thumbnail" href="{{ url_for('.album', id=like.album.id) }}" >
+                    <img class="img-responsive portrait" src="{{ like.cover }}">
+                </a>
+                <div class="info">
+                  {{ like.album.title }}
+                  <span>{{ like.photo.count() }}张图片</span><br>
+                  <span>标记于{{ moment(like.timestamp).format('L') }}</span>
+                    {% if current_user.username == user.username %}
+                    {% endif %}
+                </div>
+              </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% for like in photo_likes %}
+            <div class="col-md-4">
+                <div class="well">
+                <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}" >
+                    <img class="img-responsive portrait" src="{{ like.path }}">
+                </a>
+                <div class="info">
+                  <span>标记于{{ moment(like.timestamp).format('L') }}</span>
+                    {% if current_user.username == user.username %}
+                    {% endif %}
+                </div>
+              </div>
+                </div>
+            {% endfor %}
 </div>
 <hr>
 <div class="row">
     <h3>留言板</h3>
-
+    {{ wtf.quick_form(form) }}
+    <div id="comment">
+    {% include '_comments.html' %}
+    </div>
 </div>
 {% endblock %}

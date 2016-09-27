@@ -54,27 +54,27 @@ class Role(db.Model):
 class LikePhoto(db.Model):
     __tablename__ = 'like_photo'
     like_photo_id = db.Column(db.Integer, db.ForeignKey('photos.id'),
-                         primary_key=True)
+                              primary_key=True)
     photo_liked_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                         primary_key=True)
+                               primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
 
 
 class LikeAlbum(db.Model):
     __tablename__ = 'like_album'
     like_album_id = db.Column(db.Integer, db.ForeignKey('albums.id'),
-                         primary_key=True)
+                              primary_key=True)
     album_liked_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                         primary_key=True)
+                               primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
 
 
 class Follow(db.Model):
     __tablename__ = 'follows'
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                        primary_key=True)
+                            primary_key=True)
     followed_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                         primary_key=True)
+                            primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow())
 
 
@@ -87,10 +87,14 @@ class Photo(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     album_id = db.Column(db.Integer, db.ForeignKey('albums.id'))
     photo_liked = db.relationship('LikePhoto', foreign_keys=[LikePhoto.like_photo_id],
-                            backref=db.backref('like_photo', lazy='joined'),
-                            lazy='dynamic', cascade='all, delete-orphan')
+                                  backref=db.backref('like_photo', lazy='joined'),
+                                  lazy='dynamic', cascade='all, delete-orphan')
 
     comments = db.relationship('Comment', backref='photo', lazy='dynamic')
+
+    def is_liked_by(self, user):
+        return self.photo_liked.filter_by(
+            photo_liked_id=user.id).first() is not None
 
 
 class Album(db.Model):
@@ -107,6 +111,10 @@ class Album(db.Model):
                                   backref=db.backref('like_album', lazy='joined'),
                                   lazy='dynamic', cascade='all, delete-orphan')
 
+    def is_liked_by(self, user):
+        return self.album_liked.filter_by(
+            album_liked_id=user.id).first() is not None
+
 
 class Comment(db.Model):
     __tablename__ = 'comments'
@@ -118,6 +126,16 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     photo_id = db.Column(db.Integer, db.ForeignKey('photos.id'))
 
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    # body_html = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 class User(UserMixin, db.Model):
@@ -139,18 +157,20 @@ class User(UserMixin, db.Model):
     albums = db.relationship('Album', backref='author', lazy='dynamic')
     photos = db.relationship('Photo', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    messages = db.relationship('Message', backref='user', lazy='dynamic', foreign_keys='[Message.user_id]')
+    message_from = db.relationship('Message', backref='author', lazy='dynamic', foreign_keys='[Message.author_id]')
     photo_likes = db.relationship('LikePhoto', foreign_keys=[LikePhoto.photo_liked_id],
-                            backref=db.backref('photo_liked', lazy='joined'),
-                            lazy='dynamic', cascade='all, delete-orphan')
+                                  backref=db.backref('photo_liked', lazy='joined'),
+                                  lazy='dynamic', cascade='all, delete-orphan')
     album_likes = db.relationship('LikeAlbum', foreign_keys=[LikeAlbum.album_liked_id],
-                            backref=db.backref('album_liked', lazy='joined'),
-                            lazy='dynamic', cascade='all, delete-orphan')
+                                  backref=db.backref('album_liked', lazy='joined'),
+                                  lazy='dynamic', cascade='all, delete-orphan')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id],
-                            backref=db.backref('followed', lazy='joined'),
-                            lazy='dynamic', cascade='all, delete-orphan')
+                                backref=db.backref('followed', lazy='joined'),
+                                lazy='dynamic', cascade='all, delete-orphan')
     followed = db.relationship('Follow', foreign_keys=[Follow.follower_id],
-                            backref=db.backref('follower', lazy='joined'),
-                            lazy='dynamic', cascade='all, delete-orphan')
+                               backref=db.backref('follower', lazy='joined'),
+                               lazy='dynamic', cascade='all, delete-orphan')
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -162,7 +182,6 @@ class User(UserMixin, db.Model):
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = hashlib.md5(
                 self.email.encode('utf-8')).hexdigest()
-
 
     def change_email(self, token):
         s = Serializer(current_app.config['SECRET_KEY'])
@@ -202,7 +221,6 @@ class User(UserMixin, db.Model):
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
-
 
     @property
     def password(self):
@@ -290,10 +308,10 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
+
 login_manager.anonymous_user = AnonymousUser
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-

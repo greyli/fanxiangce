@@ -174,7 +174,13 @@ margin: 10px;
         {% if current_user == album.author %}
         <span class="pull-right"><a href="{{ url_for('.delete_album', id=album.id) }}">删除相册</a></span>
         {% endif %}
-     推荐 | 喜欢
+     推荐 |
+            {% if is_liked and current_user.is_authenticated %}
+            <a href="{{ url_for('.like_album', id=album.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+            {% else %}
+            <a href="{{ url_for('.like_album', id=album.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+            {% endif %}
+            <span class="badge">{{ album.album_liked.count() }}人喜欢</span>
     </p>
 
 <div class="pagination">

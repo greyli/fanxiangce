@@ -156,7 +156,7 @@
 {% block page_content %}
 <div class="page-header">
     <h3>{{ user.name }}的喜欢</h3>
-    <p>{{ user.photo_likes.count() }}张图片
+    <p>{{ user.photo_likes.count() }}张图片 {{ user.album_likes.count() }}个相册
         <span class="pull-right">批量修改 | 添加照片 | 排序 | <a href="{{ url_for('.albums', username=user.username) }}">返回{{ user.name }}的相册主页</a></span>
 </p>
 </div>
@@ -166,7 +166,25 @@
     <h2>你还没有标记过喜欢，快来<a href="{{ url_for('.normal') }}">探索</a>一下吧！</h2>
     {% endif %}
 <div class="row">
-            {% for like in likes %}
+            {% for like in album_likes %}
+        <div class="col-md-4">
+              <div class="well">
+                <a class="thumbnail" href="{{ url_for('.album', id=like.album.id) }}" >
+                    <img class="img-responsive portrait" src="{{ like.cover }}">
+                </a>
+                <div class="info">
+                  {{ like.album.title }}
+                  <span>{{ like.photo.count() }}张图片</span><br>
+                  <span>标记于{{ moment(like.timestamp).format('L') }}</span>
+                    {% if current_user.username == user.username %}
+                    <a href="{{ url_for('.unlike_album', id=like.album.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</a>
+                    {% endif %}
+                </div>
+              </div>
+        </div>
+            {% endfor %}
+
+            {% for like in photo_likes %}
             <div class="col-md-4">
                 <div class="well">
                 <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}" >

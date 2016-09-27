@@ -150,7 +150,7 @@ margin: 40px;
     {% if album_count == 0 %}
     <h3>您还没有相册，快来<a href="{{ url_for('.normal') }}">创建</a>一个吧！</h3>
     {% endif %}
-<div id="posts" class="row">
+        <div id="posts" class="row">
             {% for album in albums %}
             <div class="post item span3">
               <div class="well">

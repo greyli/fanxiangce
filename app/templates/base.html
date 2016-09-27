@@ -31,6 +31,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('main.albums', username=current_user.username) }}">主页</a></li>
                 <li><a href="{{ url_for('main.albums', username=current_user.username) }}">相册</a></li>
                 <li><a href="{{ url_for('main.likes', username=current_user.username) }}">喜欢</a></li>
                 <li><a href="{{ url_for('main.albums', username=current_user.username) }}">集体相册</a></li>
@@ -56,7 +57,7 @@
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     <span></span>
                     <img src="{{ current_user.gravatar(size=18) }}">
-                    {{ current_user.email }} <strong class="caret"></strong>
+                    {{ current_user.name }} <strong class="caret"></strong>
                     </a>
                     <ul class="dropdown-menu">
                         {% if current_user.confirmed %}
