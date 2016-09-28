@@ -154,10 +154,18 @@
 </style>
 {% endblock %}
 {% block page_content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+  <li class="active"><a href="{{ url_for('.user', username=user.username) }}">{{ user.name }}的主页</a></li>
+  <li><a href="{{ url_for('.albums', username=user.username) }}">{{ user.name }}的相册</a></li>
+  <li class="active">{{ user.name }}的喜欢</li>
+  <li class="pull-right"><a href="{{ url_for('.albums', username=user.username) }}">返回{{ user.name }}的相册主页</a></li>
+</ol>
+
 <div class="page-header">
     <h3>{{ user.name }}的喜欢</h3>
     <p>{{ user.photo_likes.count() }}张图片 {{ user.album_likes.count() }}个相册
-        <span class="pull-right">批量修改 | 添加照片 | 排序 | <a href="{{ url_for('.albums', username=user.username) }}">返回{{ user.name }}的相册主页</a></span>
+        <span class="pull-right">批量修改 | 添加照片 | 排序</span>
 </p>
 </div>
 

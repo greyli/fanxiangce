@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% block title %}Flasky - {{ user.username }}{% endblock %}
+{% block title %}翻相册 - {{ user.username }}{% endblock %}
 {% block head %}
 {{ super() }}
 <style>
@@ -150,9 +150,56 @@
   width: 100%;
   height: auto;
 }
+
+ul.comments {
+    list-style-type: none;
+    padding: 0px;
+    margin: 16px 0px 0px 0px;
+}
+ul.comments li.comment {
+    margin-left: 32px;
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+ul.comments li.comment:nth-child(1) {
+    border-top: 1px solid #e0e0e0;
+}
+ul.comments li.comment:hover {
+    background-color: #f0f0f0;
+}
+div.comment-date {
+    float: right;
+}
+div.comment-author {
+    font-weight: bold;
+}
+div.comment-thumbnail {
+    position: absolute;
+}
+div.comment-content {
+    margin-left: 48px;
+    min-height: 48px;
+}
+div.comment-form {
+    margin: 16px 0px 16px 32px;
+}
 </style>
 {% endblock %}
 {% block page_content %}
+<!--div class="nav navbar">
+<ul>
+    <li><a href="{{ url_for('main.albums', username=current_user.username) }}">照片</a></li>
+    <li><a href="{{ url_for('main.albums', username=current_user.username) }}">相册</a></li>
+    <li><a href="{{ url_for('main.likes', username=current_user.username) }}">喜欢</a></li>
+</ul>
+</div-->
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+  <li class="active">{{ user.name }}的主页</li>
+  <li class="pull-right"><a href="{{ url_for('.albums', username=user.username) }}">{{ user.name }}的相册</a></li>
+  <li class="pull-right"><a href="{{ url_for('main.likes', username=user.username) }}">{{ user.name }}的喜欢</a></li>
+</ol>
+<hr>
 <div class="row">
     <div class="col-md-4">
         <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
@@ -174,16 +221,14 @@
     </div>
 
     <div class="profile-header col-md-4">
-        <h1>{{ user.username }}</h1>
+        <h1>{{ user.name }}</h1>
         {% if user.status %}<p>{{ user.status }}</p>{% endif %}
-        {% if user.name or user.location %}
         <p>
-            {% if user.name %}<b>{{ user.name }}</b><br>{% endif %}
+            ID: {{ user.username }}<br>
             {% if user.location %}
                 来自 <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
             {% endif %}
         </p>
-        {% endif %}
         {% if current_user.is_administrator() %}
         <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
         {% endif %}
@@ -207,20 +252,20 @@
     </div>
 </div>
 <hr>
+
 <div class="row">
     <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}创建的相册</h3>
         {% for album in albums[:2] %}
            <div class="col-md-4">
                 <div class="post item span3">
-
               <div class="well">
                 <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}" >
                     <img class="img-responsive portrait" src="{{ album.cover }}">
                 </a>
                 <div class="info">
-                  <h5>{{ album.title }}</h5>
+                  《{{ album.title }}》
                   <span>{{ album.photos.count() }}张图片</span>
-                  <span>创建于{{ moment(album.timestamp).format('L') }}</span>
+                  <!--span>创建于{{ moment(album.timestamp).format('L') }}</span-->
                 </div>
               </div>
             </div>

@@ -141,9 +141,22 @@ margin: 40px;
 </style>
 {% endblock %}
 {% block page_content %}
+
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+  <li><a href="{{ url_for('.user', username=user.username) }}">{{ user.name }}的主页</a></li>
+  <li class="active">{{ user.name }}的相册</li>
+  <li class="pull-right"><a href="{{ url_for('.user', username=user.username) }}">返回{{ user.name }}的主页</a></li>
+    <li class="pull-right"><a href="{{ url_for('main.likes', username=user.username) }}">{{ user.name }}的喜欢</a></li>
+</ol>
+
 <div class="page-header">
-    <h3><a href="{{ url_for('.user', username=user.username) }}">{{ user.name }}</a>的相册</h3>
-    <p>{{ album_count }}个相册，234个关注，2535个喜欢<span class="pull-right"><a href="{{ url_for('.user', username=user.username) }}">返回{{ user.name }}的主页</a></span></p>
+        <!--img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=40) }}"-->
+    <h3>{{ user.name }}的相册</h3>
+    <p>{{ album_count }}个相册，234个关注，2535个喜欢
+        <span class="pull-right"><a href="#">新建相册 + </a></span>
+</p>
+
 </div>
 
 <div class="container">

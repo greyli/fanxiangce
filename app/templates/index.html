@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Tag{% endblock %}
-
 {% block head%}
 
 {{ super() }}
@@ -22,33 +20,14 @@
 {% block page_content %}
 
 {% if current_user.is_authenticated %}
+<ol class="breadcrumb">
+  <li class="active">翻相册</li>
+  <li class="pull-right"><a href="{{ url_for('.user', username=current_user.username) }}">{{ current_user.name }}的主页</a></li>
+  <li class="pull-right"><a href="{{ url_for('.albums', username=current_user.username) }}">{{ current_user.name }}的相册</li>
+    <li class="pull-right"><a href="{{ url_for('main.likes', username=current_user.username) }}">{{ current_user.name }}的喜欢</a></li>
+</ol>
 <div class="container">
-    <h1>我的相册(FAKE)</h1>
-    <hr>
-      <!-- Three columns of text below the carousel -->
-      <div class="row">
-        <div class="col-lg-4">
-          <h2>照片墙DEMO</h2>
-          <a href="demo1/index.html" target="_blank"><img class="img-rounded img-responsive" src="{{ url_for('static', filename='images/wall.jpg') }}" height="250"></a>
-          <br><br>
-          <p>一个照片墙示例。点击图片拉近后，点击箭头图标移动照片，点击全景按钮返回全景。</p>
-          <!--p><a class="btn btn-success" href="demo1/index.html" target="_blank" role="button">翻开 »</a></p-->
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4">
-          <h2>Miss瑶的日常记录</h2>
-          <a href="demo2/index.html" target="_blank"><img class="img-rounded img-responsive" src="{{ url_for('static', filename='images/yao.jpg') }}" height="250"></a>
-          <br><br>
-          <p>一个立体相册示例。点击图片拉近后，点击箭头图标或方向键移动照片，点击全景按钮返回全景。</p>
-          <!--p><a class="btn btn-success" href="demo2/index.html" target="_blank" role="button">翻开 »</a></p-->
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-4">
-          <h2>三年二班</h2>
-          <a href="demo3/index.html" target="_blank"><img class="img-rounded img-responsive" src="{{ url_for('static', filename='images/tag.jpg') }}" height="250"></a>
-          <br><br>
-          <p>一个集体标签云相册示例。鼠标在标签附近停留会使标签旋转，点击标签打开图片。</p>
-          <!--p><a class="btn btn-success" href="demo3/index.html" target="_blank" role="button">翻开 »</a></p-->
-        </div><!-- /.col-lg-4 -->
-      </div><!-- /.row -->
+    <h3>我的关注</h3>
       </div>
 {% else %}
 <div class="jumbotron" style="background: #fff; height: 500px;">
@@ -159,15 +138,6 @@
 </div>
 {% endif %}
 
-<hr class="featurette-divider">
-<footer >
-  <p class="pull-right"><a class="shake shake-vertical" id="totop" href="#">返回顶部</a></p>
-  <p>© 2016 <b>
-    <span style="color: #f79d00">翻</span>
-    <span style="color: #8b3fb2">相</span>
-    <span style="color: #4CAF50">册</span>
-    </b> · <a href="#terms">隐私权和条款</a> · <a href="#contact">联系我们</a> · <a target="_blank" href="http://withlihui.com">李辉的书桌</a></p>
-</footer>
 {% endblock %}
 
 {% block scripts %}

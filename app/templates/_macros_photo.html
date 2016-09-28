@@ -1,12 +1,12 @@
 {% macro pagination_widget(pagination, endpoint) %}
 <ul class="pagination">
-    <li {% if not pagination.has_prev %} class="disabled" {% endif %}>
+    <li {% if not pagination.has_prev %} class="disabled" title="已经是第一页啦！" {% endif %}>
         <a href="{% if pagination.has_prev %}{{ url_for(endpoint,
 page = pagination.page - 1, **kwargs) }}{% else %}#{% endif %}">
             上一张
         </a>
     </li>
-    <li {% if not pagination.has_next %} class="disabled" {% endif %}>
+    <li {% if not pagination.has_next %} class="disabled" title="已经是最后一页啦！" {% endif %}>
         <a href="{% if pagination.has_next %}{{ url_for(endpoint,
             page = pagination.page + 1, **kwargs) }}{% else %}#{% endif %}">
             下一张

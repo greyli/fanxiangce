@@ -71,7 +71,7 @@
 .photo img{
     max-width:100%;
     width:expression(this.offsetWidth > 800 ? "800px" : "auto");
-    max-height: 600px;
+    max-height: 500px;
 }
 
 
@@ -112,8 +112,19 @@ div.comment-form {
 {% endblock %}
 
 {% block page_content %}
+<ol class="breadcrumb" id="navigation">
+  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+  <li><a href="{{ url_for('.user', username=album.author.username) }}">{{ album.author.name }}的主页</a></li>
+  <li><a href="{{ url_for('.albums', username=album.author.username) }}">{{ album.author.name }}的相册</a></li>
+  <li><a href="{{ url_for('.album', id=album.id) }}">《{{ album.title }}》</a></li>
+  <li class="active">第{{ pagination.page }}张</li>
+  <li class="active">共{{ album.photos.count() }}张</li>
+    <li class="pull-right"><a href="{{ url_for('.album', id=album.id) }}">返回上一级</a></li>
+    <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{{ album.author.name }}的喜欢</a></li>
 
-<div class="row">
+</ol>
+
+<div class="row" id="image">
             {% for photo in photos %}
             <div class="col-md-8">
                 <div class="photo">
@@ -135,7 +146,9 @@ div.comment-form {
               </div>
 
             <div class="info col-md-4" >
-                <span class="pull-right"><a href="{{ url_for('.album', id=photo.album.id) }}"> > 返回相册</a></span>
+                <div class="view pull-right">
+                    <a href="{{ photo.path }}" data-lightbox="view">大图</a>
+                </div>
                 <div class="pagination">
                     {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
                     <p>
@@ -156,12 +169,12 @@ div.comment-form {
                     <div class="col-md-4">
                         <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
                     </div>
-                <h4>{{ album.author.name }}</h4>
-                {% if album.author.about_me %}<p>{{ album.author.about_me }}</p>{% else %}<p>-</p>{% endif %}
+                <h4><a href="{{ url_for('.user', username=album.author.username) }}">{{ album.author.name }}</a></h4>
+                {% if album.author.status %}<p>{{ album.author.status }}</p>{% else %}<p>-</p>{% endif %}
                 </div>
                 <br>
                 <hr>
-                <p><a href="{{ url_for('.album', id=album.id) }}">{{ album.author.name}}的相册</a> - {{ album.title }}（{{ album.photos.count() }}张照片）</p>
+                <p>{{ album.title }}（{{ album.photos.count() }}张照片）</p>
                 <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
                     <img  class="img-responsive  portrait" src="{{ album.cover }}">
                 </a>
@@ -175,10 +188,21 @@ div.comment-form {
 
 {% block scripts %}
 {{ super() }}
+<script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
+
 <script>
     $(".fav-btn").click(function(event) {
       $(event.target).toggleClass("fav-cancel");
     });
+</script>
+<script>
+    var $= jQuery.noConflict();
+    lightbox.option({
+      'resizeDuration': 300,
+      'wrapAround': true,
+      'maxWidth': 1000,
+      'disableScrolling': true,
+    })
 </script>
 
 {% endblock %}

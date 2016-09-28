@@ -8,7 +8,7 @@ from werkzeug import secure_filename
 
 
 from . import main
-from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm, CommentForm
+from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm, TEST2Form,  CommentForm
 from .. import db
 from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
 from tag import glue
@@ -423,13 +423,17 @@ def delete_album(id):
 @main.route('/base', methods=['GET','POST'])
 def test():
     name = None
-    form = TESTForm()
+    form1 = TESTForm()
+    form2 = TEST2Form()
 
-    if form.validate_on_submit():
-        name = form.name.data
-        session['name'] = form.name.data
-        return redirect(url_for('base'))
-
-    return render_template('test.html', form=form)
+    if form1.validate_on_submit() and form1.submit.data:
+        name = form1.name.data
+        print name
+        abort(404)
+    if form2.validate_on_submit() and form2.ok.data:
+        name = form2.name.data
+        print name
+        return redirect(url_for('.index'))
+    return render_template('test.html', form1=form1, form2=form2)
 
 #filename = photos.save(request.files['photo'])

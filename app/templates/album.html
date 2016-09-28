@@ -146,11 +146,25 @@ margin: 10px;
 {% endblock %}
 
 {% block page_content %}
+
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+  <li><a href="{{ url_for('.user', username=album.author.username) }}">{{ album.author.name }}的主页</a></li>
+  <li><a href="{{ url_for('.albums', username=album.author.username) }}">{{ album.author.name }}的相册</a></li>
+  <li class="active">《{{ album.title }}》</li>
+  <li class="pull-right"><a href="{{ url_for('.albums', username=album.author.username) }}">返回上一级</a></li>
+  <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{{ album.author.name }}的喜欢</a></li>
+
+</ol>
+
 <div class="page-header">
-    <h3>{{ album.author.name }}的相册 - {{ album.title }}</h3>
+    <h3>{{ album.title }}</h3>
     <h4>{{ album.about }}</h4>
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
-        <span class="pull-right">编辑相册 | 添加照片 | 排序 | <a href="{{ url_for('.albums', username=album.author.username) }}">返回{{ album.author.name }}的相册主页</a></span>
+        {% if current_user == album.author %}
+        <span class="pull-right">  &nbsp;编辑相册 | 添加照片 | 排序</span>
+        {% endif %}
+        <span>幻灯片 | 对齐 | 瀑布流</span>
 </p>
 </div>
 

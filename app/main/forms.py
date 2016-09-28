@@ -18,20 +18,25 @@ class EditProfileForm(Form):
     status = StringField(u'签名档', validators=[Length(0, 64)])
     location = StringField(u'城市', validators=[Length(0,64)])
     website = StringField(u'网站', validators=[Length(0,64), Optional(),
-                         URL(message= u'请输入有效的地址，比如：http://withlihui.com')],
+                         ],
                           render_kw={"placeholder": "http://..."})
     about_me = TextAreaField(u'关于我', validators=[Length(0,64)], render_kw={"placeholder": u"我是......"})
     submit = SubmitField(u'提交')
 
     def validate_website(self, field):
-        if "http://" not in field.data:
-            raise ValidationError(u'请输入有效的地址，比如：http://withlihui.com')
+        if field.data[:4] != "http":
+            print field.data[:4]
+            field.data="http://"+field.data
+            ## raise ValidationError(u'请输入有效的地址，比如：http://withlihui.com')
 
-class TESTForm(EditProfileForm):
+class TESTForm(Form):
+    name = StringField(u'F1昵称', validators=[Length(0, 64)])
+    submit = SubmitField(u'提交')
 
-    def validate_website(self, field):
-        if "http://" not in field.data:
-            raise ValidationError(u'请输入有效的地址，比如：http://withlihui.com')
+class TEST2Form(Form):
+    name = StringField(u'F2姓名', validators=[Length(0, 64)])
+    ok = SubmitField(u'ok')
+
 
 class EditProfileAdminForm(Form):
     email = StringField(u'邮箱', validators=[Required(message= u'邮件不能为空'), Length(1, 64),
