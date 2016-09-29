@@ -30,12 +30,12 @@ class EditProfileForm(Form):
             ## raise ValidationError(u'请输入有效的地址，比如：http://withlihui.com')
 
 class TESTForm(Form):
-    name = StringField(u'F1昵称', validators=[Length(0, 64)])
-    submit = SubmitField(u'提交')
+    name1 = StringField(u'F1昵称', validators=[Required(), Length(0, 64)])
+    submit1 = SubmitField(u'提交')
 
 class TEST2Form(Form):
-    name = StringField(u'F2姓名', validators=[Length(0, 64)])
-    ok = SubmitField(u'ok')
+    name2 = StringField(u'F2姓名', validators=[Required(), Length(0, 64)])
+    submit2 = SubmitField(u'ok')
 
 
 class EditProfileAdminForm(Form):

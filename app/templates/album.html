@@ -164,7 +164,7 @@ margin: 10px;
         {% if current_user == album.author %}
         <span class="pull-right">  &nbsp;编辑相册 | 添加照片 | 排序</span>
         {% endif %}
-        <span>幻灯片 | 对齐 | 瀑布流</span>
+        <span class="pull-right">幻灯片 | 对齐 | 瀑布流</span>
 </p>
 </div>
 
@@ -177,8 +177,8 @@ margin: 10px;
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
                 <div class="info">
-                    <a class="comment" href="{{ url_for('.photo', id=photo.id) }}#comment">评论<span class="badge">{{ photo.comments.count() }}</span></a>
-                    喜欢<span class="badge">{{ photo.photo_liked.count() }}</span>
+                    <a class="comment" href="{{ url_for('.photo', id=photo.id) }}#comment">评论 <span class="badge">{{ photo.comments.count() }}</span></a>
+                    喜欢 <span class="badge">{{ photo.photo_liked.count() }}</span>
               </div>
             </div>
             </div>

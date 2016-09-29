@@ -107,6 +107,7 @@ def photo(id):
     album = photo.album
     form = CommentForm()
     photo_index = [p.id for p in album.photos.order_by(Photo.timestamp.asc())].index(photo.id) + 1
+    #index = [i for i in xrange(len(album.photos))]
     page = request.args.get('page', photo_index, type=int)
     pagination = album.photos.order_by(Photo.timestamp.asc()).paginate(
         page, per_page=1, error_out=False
@@ -388,6 +389,13 @@ def unlike_album(id):
         current_user.unlike_album(album)
     return (''), 204
 
+def redirect_url(default='index'):
+    return request.args.get('next') or \
+           request.referrer or \
+           url_for(default)
+
+# usage: return redirect(redirect_url())
+
 @main.route('/delete/photo/<id>')
 @login_required
 #@permission_required(Permission.FOLLOW)# todo follow > like
@@ -426,12 +434,17 @@ def test():
     form1 = TESTForm()
     form2 = TEST2Form()
 
-    if form1.validate_on_submit() and form1.submit.data:
+    if form1.submit1.data and form1.validate_on_submit():
+        print form1.submit1.data
         name = form1.name.data
+        print "hi"
         print name
-        abort(404)
-    if form2.validate_on_submit() and form2.ok.data:
+        return redirect(url_for('.index'))
+    print "here"
+    if form2.submit2.data and form2.validate_on_submit():
+        #print form2.submit.data
         name = form2.name.data
+        print "ho"
         print name
         return redirect(url_for('.index'))
     return render_template('test.html', form1=form1, form2=form2)

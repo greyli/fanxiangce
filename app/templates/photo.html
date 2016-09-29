@@ -69,9 +69,9 @@
     }
 
 .photo img{
-    max-width:100%;
-    width:expression(this.offsetWidth > 800 ? "800px" : "auto");
-    max-height: 500px;
+    max-height: 600px;
+    max-width: 600px;
+    width: expression(this.offsetWidth > 400 ? "400px" : "auto"); /* IE6 */
 }
 
 
@@ -133,9 +133,28 @@ div.comment-form {
                 </a>
                     <br>
                     <br>
+                    <input type="reset" value="REFRESH">
                 <span class="pull-left">推荐</span>
                 {% if current_user == photo.author %}
-                <span class="pull-right"><a href="{{ url_for('.delete_photo', id=photo.id) }}">删除</a></span>
+                    <!-- Button trigger modal -->
+                    <span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal">
+                      删除
+                    </button></span>
+                <!--span class="pull-right"><a href="{{ url_for('.delete_photo', id=photo.id) }}">删除</a></span-->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+                      <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                确定要删除这张图片？
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <a href="{{ url_for('.delete_photo', id=photo.id) }}"><button type="button" class="btn btn-danger">确认</button></a>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
                 {% endif %}
                 </div>
                 <hr>
@@ -147,7 +166,7 @@ div.comment-form {
 
             <div class="info col-md-4" >
                 <div class="view pull-right">
-                    <a href="{{ photo.path }}" data-lightbox="view">大图</a>
+                    <a href="{{ photo.path }}" data-lightbox="view"><i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;</a>
                 </div>
                 <div class="pagination">
                     {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
