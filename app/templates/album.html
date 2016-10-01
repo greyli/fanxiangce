@@ -149,11 +149,11 @@ margin: 10px;
 
 <ol class="breadcrumb">
   <li><a href="{{ url_for('.index') }}">翻相册</a></li>
-  <li><a href="{{ url_for('.user', username=album.author.username) }}">{{ album.author.name }}的主页</a></li>
-  <li><a href="{{ url_for('.albums', username=album.author.username) }}">{{ album.author.name }}的相册</a></li>
+  <li><a href="{{ url_for('.user', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的主页</a></li>
+  <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
   <li class="active">《{{ album.title }}》</li>
-  <li class="pull-right"><a href="{{ url_for('.albums', username=album.author.username) }}">返回上一级</a></li>
-  <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{{ album.author.name }}的喜欢</a></li>
+  <li class="pull-right"><a href="{{ url_for('.albums', username=album.author.username) }}">返回</a></li>
+  <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的喜欢</a></li>
 
 </ol>
 
@@ -186,7 +186,24 @@ margin: 10px;
 </div>
     <p>
         {% if current_user == album.author %}
-        <span class="pull-right"><a href="{{ url_for('.delete_album', id=album.id) }}">删除相册</a></span>
+        <!-- Button trigger modal -->
+                    <span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal">
+                      删除相册
+                    </button></span>
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+                      <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                确定要删除这张图片？
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <a href="{{ url_for('.delete_album', id=album.id) }}"><button type="button" class="btn btn-danger">确认</button></a>
+                          </div>
+                        </div><!-- /.modal-content -->
+                      </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
         {% endif %}
      推荐 |
             {% if is_liked and current_user.is_authenticated %}

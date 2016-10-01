@@ -22,9 +22,9 @@
 {% if current_user.is_authenticated %}
 <ol class="breadcrumb">
   <li class="active">翻相册</li>
-  <li class="pull-right"><a href="{{ url_for('.user', username=current_user.username) }}">{{ current_user.name }}的主页</a></li>
-  <li class="pull-right"><a href="{{ url_for('.albums', username=current_user.username) }}">{{ current_user.name }}的相册</li>
-    <li class="pull-right"><a href="{{ url_for('main.likes', username=current_user.username) }}">{{ current_user.name }}的喜欢</a></li>
+  <li class="pull-right"><a href="{{ url_for('.user', username=current_user.username) }}">我的主页</a></li>
+  <li class="pull-right"><a href="{{ url_for('.albums', username=current_user.username) }}">我的相册</li>
+    <li class="pull-right"><a href="{{ url_for('main.likes', username=current_user.username) }}">我的喜欢</a></li>
 </ol>
 <div class="container">
     <h3>我的关注</h3>

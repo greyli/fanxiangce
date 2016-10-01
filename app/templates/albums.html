@@ -144,15 +144,15 @@ margin: 40px;
 
 <ol class="breadcrumb">
   <li><a href="{{ url_for('.index') }}">翻相册</a></li>
-  <li><a href="{{ url_for('.user', username=user.username) }}">{{ user.name }}的主页</a></li>
-  <li class="active">{{ user.name }}的相册</li>
-  <li class="pull-right"><a href="{{ url_for('.user', username=user.username) }}">返回{{ user.name }}的主页</a></li>
-    <li class="pull-right"><a href="{{ url_for('main.likes', username=user.username) }}">{{ user.name }}的喜欢</a></li>
+  <li><a href="{{ url_for('.user', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的主页</a></li>
+  <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</li>
+  <li class="pull-right"><a href="{{ url_for('.user', username=user.username) }}">返回</a></li>
+    <li class="pull-right"><a href="{{ url_for('main.likes', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</a></li>
 </ol>
 
 <div class="page-header">
         <!--img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=40) }}"-->
-    <h3>{{ user.name }}的相册</h3>
+    <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</h3>
     <p>{{ album_count }}个相册，234个关注，2535个喜欢
         <span class="pull-right"><a href="#">新建相册 + </a></span>
 </p>

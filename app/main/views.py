@@ -265,6 +265,22 @@ def normal():
         return redirect(url_for('.album', id=album.id))
     return render_template('create/normal.html', form=form)
 
+# @main.route('/edit-album/<int:id>')
+# def edit_album(id):
+#     album = Album.query.filter_by(id=id).first()
+#     form = EditAlbumForm()
+#     if form.validate_on_submit():
+#         title = form.title.data
+#         about = form.about.data
+#         private = form.private.data
+#         comment = form.comment.data
+#     form.title.data = album.title
+#     form.about.data = album.about
+#     form.private.data = album.private
+#     form.comment.data = album.comment
+
+
+
 
 @main.route('/follow/<username>')
 @login_required
