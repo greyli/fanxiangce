@@ -183,6 +183,18 @@ div.comment-content {
 div.comment-form {
     margin: 16px 0px 16px 32px;
 }
+
+.title {
+        width: 100%;
+        margin: 20px;
+        padding-left: 20px;
+        border-left: 7px solid orange;
+    }
+.count {
+    width: 100%;
+    margin: 20px;
+    padding-left: 20px;
+}
 </style>
 {% endblock %}
 {% block page_content %}
@@ -196,13 +208,14 @@ div.comment-form {
 <ol class="breadcrumb">
   <li><a href="{{ url_for('.index') }}">翻相册</a></li>
   <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的主页</li>
-  <li class="pull-right"><a href="{{ url_for('.albums', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</a></li>
-  <li class="pull-right"><a href="{{ url_for('main.likes', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</a></li>
+  <li><a href="{{ url_for('.albums', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</a></li>
+  <li><a href="{{ url_for('main.likes', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</a></li>
+    <li class="pull-right"><a href="{{ url_for('.edit_profile') }}">编辑资料</a></li>
 </ol>
 <hr>
 <div class="row">
-    <div class="col-md-4">
-        <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
+    <div class="col-md-3"><br><br><br><br>
+        <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=200) }}">
     <p>
         <br>
         {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
@@ -220,9 +233,26 @@ div.comment-form {
     </p>
     </div>
 
-    <div class="profile-header col-md-4">
+    <div class="col-md-5">
         <h1>{{ user.name }}</h1>
         {% if user.status %}<p>{{ user.status }}</p>{% endif %}
+        <div style="height: 300px; width: 400px; overflow: auto;">
+        {% if user.about_me %}{{ user.about_me }}{% endif %}</div>
+        <p>
+            {% if user == current_user %}
+            <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">编辑</a>
+            {% endif %}
+            {% if current_user.is_administrator() %}
+            <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑 [Admin]</a>
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="col-md-4">
+        <h2>{{ album_count }}&nbsp;&nbsp;
+        {{ album_count }}&nbsp;&nbsp;
+        {{ photo_count }}&nbsp;&nbsp;</h2>
+        <br>被喜欢相册照片<br>
         <p>
             ID: {{ user.username }}<br>
             {% if user.location %}
@@ -233,28 +263,18 @@ div.comment-form {
         <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
         {% endif %}
         {% if user.website %}<p>网站：<a href="{{ user.website }}" target="_blank">{{ user.website }}</a></p>{% endif %}
-        {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
         <p>注册时间：{{ moment(user.member_since).format('L') }}。 </p>
-        <p>最后上线：{{ moment(user.last_seen).fromNow() }}。</p>
-        <p>
-            {% if user == current_user %}
-            <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">编辑</a>
-            {% endif %}
-            {% if current_user.is_administrator() %}
-            <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑 [Admin]</a>
-            {% endif %}
-        </p>
+        <p>最后见到：{{ moment(user.last_seen).fromNow() }}。</p>
     </div>
-    <div class="col-md-4">
-        <h1>{{ album_count }}</h1>&nbsp;&nbsp;被喜欢
-        <h1>{{ album_count }}</h1>&nbsp;&nbsp;相册
-        <h1>{{ photo_count }}</h1>&nbsp;&nbsp;照片
-    </div>
+
+
+
 </div>
 <hr>
 
 <div class="row">
-    <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}创建的相册</h3>
+    <h3 class="title">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}创建的相册</h3>
+    <h5 class="count">两个相册，共345张图片</h5>
         {% for album in albums[:2] %}
            <div class="col-md-4">
                 <div class="post item span3">
@@ -274,9 +294,11 @@ div.comment-form {
 </div>
 <hr>
 
-<h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</h3><span>{{ user.photo_likes.count() }}张图片 {{ user.album_likes.count() }}个相册 </span>
+
 
 <div class="row">
+    <h3 class="title">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</h3>
+<h5 class="count">{{ user.photo_likes.count() }}张图片 {{ user.album_likes.count() }}个相册 </h5>
     {% for like in album_likes %}
         <div class="col-md-4">
             <div class="post item span3">
