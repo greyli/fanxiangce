@@ -44,7 +44,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         token = user.generate_confirmation_token()
-        send_email(user.email, u'确认你的翻相册账户',
+        send_email(user.email, u'确认你的账户',
                    'auth/email/confirm', user=user, token=token)
         flash(u'确认邮件已经发送到您的邮箱，请查收。')
         return redirect(url_for('auth.login'))
@@ -56,7 +56,7 @@ def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     if current_user.confirm(token):
-        flash(u'你的账户已经确认，欢迎来到翻相册！')
+        flash(u'你的账户已经确认，欢迎！')
     else:
         flash(u'抱歉，验证链接无效或已经过期。')
     return redirect(url_for('main.index'))
@@ -81,7 +81,7 @@ def unconfirmed():
 @login_required
 def resend_confirmation():
     token = current_user.generate_confirmation_token()
-    send_email(current_user.email, u'确认你的翻相册账户',
+    send_email(current_user.email, u'确认你的账户',
                'auth/email/confirm', user=current_user, token=token)
     flash(u'新的确认邮件已经发送到您的邮箱，请查收。')
     return redirect(url_for('main.index'))

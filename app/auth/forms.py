@@ -15,7 +15,6 @@ class LoginForm(Form):
     submit = SubmitField(u'登录')
 
 class RegisterForm(Form):
-    name = StringField(u'昵称', validators=[Required(message= u'昵称不能为空'), Length(1, 64)])
     email = StringField(u'邮箱', validators=[Required(message= u'邮箱不能为空'), Length(1, 64),
                                            Email(message= u'请输入有效的邮箱地址，比如：username@domain.com')])
     username = StringField(u'ID', validators=[Required(message= u'用户名不能为空'), Length(1, 64),
@@ -39,7 +38,7 @@ class RegisterForm(Form):
 class ChangePasswordForm(Form):
     old_password = PasswordField(u'旧密码', validators=[Required(message= u'密码不能为空')])
     password = PasswordField(u'新密码', validators=[
-        Required(message= u'密码不能为空'), EqualTo('passwuord2', message=u'密码必须匹配。')])
+        Required(message= u'密码不能为空'), EqualTo('password2', message=u'密码必须匹配。')])
     password2 = PasswordField(u'确认新密码', validators=[Required(message= u'密码不能为空')])
     submit = SubmitField(u'更改')
 

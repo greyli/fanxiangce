@@ -173,7 +173,7 @@ margin: 10px;
             {% for photo in photos %}
             <div class="post item span3">
               <div class="well">
-                <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
+                <a class="thumbnail" href="{{ url_for('.photo_test', id=photo.id) }}" title="">
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
                 <div class="info">

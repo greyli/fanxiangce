@@ -22,6 +22,17 @@ def index():
     return render_template('index.html')
 
 
+@main.route('/photo-test/<int:id>')
+def photo_test(id):
+    photo = Photo.query.get_or_404(id)
+    album = photo.album
+    photos = album.photos
+    position = list(photos).index(photo)
+    print position
+    return render_template('test.html', photo=photo, photos=photos, position=position)
+
+
+
 @main.route('/user/<username>', methods=['GET', 'POST'])
 def user(username):
     user = User.query.filter_by(username=username).first()
@@ -104,16 +115,9 @@ def album(id):
 @main.route('/photo/<int:id>', methods=['GET', 'POST'])
 def photo(id):
     photo = Photo.query.get_or_404(id)
-    album = photo.album
+    photos = photo.album.photos
+    photo_index = list(photos).index(photo)
     form = CommentForm()
-    photo_index = [p.id for p in album.photos.order_by(Photo.timestamp.asc())].index(photo.id) + 1
-    #index = [i for i in xrange(len(album.photos))]
-    page = request.args.get('page', photo_index, type=int)
-    pagination = album.photos.order_by(Photo.timestamp.asc()).paginate(
-        page, per_page=1, error_out=False
-    )
-    photos = pagination.items
-
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
@@ -131,10 +135,33 @@ def photo(id):
         flash(u'你的评论已经发表。')
         return redirect(url_for('.photo', id=photo.id))
     comments = photo.comments.order_by(Comment.timestamp.asc()).all()
-    return render_template('photo.html', form=form, album=album, photos=photos,
-                           like_list=like_list, pagination=pagination,
+    return render_template('photo.html', form=form, album=album,
+                           like_list=like_list,
                            comments=comments, photo_index=photo_index)
 
+@main.route('/photo/n/<int:id>')
+def photo_next(id):
+    photo_now = Photo.query.get_or_404(id)
+    album = photo_now.album
+    photos = album.photos
+    position = list(photos).index(photo_now) + 1
+    if position == len(list(photos)):
+        position = None
+        return render_template('test.html', position=position, photo=photo_now)
+    photo = photos[position]
+    return redirect(url_for('.photo_test', id=photo.id))
+
+@main.route('/photo/p/<int:id>')
+def photo_previous(id):
+    photo_now = Photo.query.get_or_404(id)
+    album = photo_now.album
+    photos = album.photos
+    position = list(photos).index(photo_now) - 1
+    if position == -1:
+        position = None
+        return render_template('test.html', position=position, photo=photo_now)
+    photo = photos[position]
+    return redirect(url_for('.photo_test', id=photo.id))
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
