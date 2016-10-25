@@ -126,7 +126,7 @@ div.comment-form {
 <div class="row" id="image">
             <div class="col-md-8">
                 <div class="photo">
-                <a href="" title="">
+                <a href="{{ url_for('.photo_next', id=photo.id)}}" title="下一张？">
                     <img src="{{ photo.path }}">
                 </a>
                     <br>
@@ -164,11 +164,17 @@ div.comment-form {
 
             <div class="info col-md-4" >
                 <div class="view pull-right">
-                    <a href="{{ photo.path }}" data-lightbox="view"><i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;</a>
+                    <a  class="btn" href="{{ photo.path }}" data-lightbox="view" title="">
+                        <i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;
+                    </a>
                 </div>
                 <div class="pagination">
-                    <a href="{{ url_for('.photo_next', id=photo.id)}}">Next</a>
-                    <a href="{{ url_for('.photo_previous', id=photo.id)}}">Previous</a>
+                    <p>
+                    <a class="btn btn-default" href="{{ url_for('.photo_previous', id=photo.id)}}">上一张</a>
+                    <a class="btn btn-default" href="{{ url_for('.photo_next', id=photo.id)}}">下一张</a>
+                        &nbsp;第{{ photo_index }}张 / 共{{ photo_sum }}张
+                    </p>
+                    <br>
                     <p>
                     {% if photo.path in like_list and current_user.is_authenticated %}
                     <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
@@ -178,7 +184,6 @@ div.comment-form {
                     <span class="badge">{{ photo.photo_liked.count() }}</span>
                     </p>
                     <br>
-                    <p>第{{ photo_index }}张 / 共{{ album.photos.count() }}张</p>
                     <p>上传于{{ moment(album.timestamp).format('L') }}</p>
                 </div>
                 <br>

@@ -173,7 +173,7 @@ margin: 10px;
             {% for photo in photos %}
             <div class="post item span3">
               <div class="well">
-                <a class="thumbnail" href="{{ url_for('.photo_test', id=photo.id) }}" title="">
+                <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
                 <div class="info">
@@ -212,7 +212,7 @@ margin: 10px;
             <a href="{{ url_for('.like_album', id=album.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
             {% endif %}
             <span class="badge">{{ album.album_liked.count() }}人喜欢</span>
-    </p>
+    </div>
 
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.album', id=album.id) }}

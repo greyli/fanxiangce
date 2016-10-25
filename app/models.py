@@ -84,6 +84,7 @@ class Photo(db.Model):
     path = db.Column(db.Text)
     about = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    order = db.Column(db.Integer)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     album_id = db.Column(db.Integer, db.ForeignKey('albums.id'))
     photo_liked = db.relationship('LikePhoto', foreign_keys=[LikePhoto.like_photo_id],

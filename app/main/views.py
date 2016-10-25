@@ -21,6 +21,16 @@ from ..decorators import admin_required, permission_required
 def index():
     return render_template('index.html')
 
+@main.route('/edit-photos/<int:id>', methods=['GET', 'POST'])
+def edit_photos(id):
+    album = Album.query.get_or_404(id)
+    photos = album.photos
+    for photo in photos:
+        photo.about = request.form[photo.id]
+        photo.order = request.form[photo.order]
+        db.session.add(photo)
+    return render_template('edit_photo.html', photos=photos)
+
 
 @main.route('/photo-test/<int:id>')
 def photo_test(id):
@@ -30,7 +40,6 @@ def photo_test(id):
     position = list(photos).index(photo)
     print position
     return render_template('test.html', photo=photo, photos=photos, position=position)
-
 
 
 @main.route('/user/<username>', methods=['GET', 'POST'])
@@ -111,13 +120,13 @@ def album(id):
     return render_template('album.html', album=album, photos=photos, pagination=pagination,
                            like_list=like_list, likes=likes, is_liked=is_liked)
 
-
 @main.route('/photo/<int:id>', methods=['GET', 'POST'])
 def photo(id):
     photo = Photo.query.get_or_404(id)
-    photos = photo.album.photos
-    photo_index = list(photos).index(photo)
+    album = photo.album
+    photo_sum = len(list(album.photos))
     form = CommentForm()
+    photo_index = [p.id for p in album.photos.order_by(Photo.timestamp.asc())].index(photo.id) + 1
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
@@ -136,32 +145,37 @@ def photo(id):
         return redirect(url_for('.photo', id=photo.id))
     comments = photo.comments.order_by(Comment.timestamp.asc()).all()
     return render_template('photo.html', form=form, album=album,
-                           like_list=like_list,
-                           comments=comments, photo_index=photo_index)
+                           like_list=like_list, photo=photo,
+                           comments=comments, photo_index=photo_index, photo_sum=photo_sum)
+
 
 @main.route('/photo/n/<int:id>')
 def photo_next(id):
+    "reditrct to next imgae"
     photo_now = Photo.query.get_or_404(id)
     album = photo_now.album
     photos = album.photos
     position = list(photos).index(photo_now) + 1
     if position == len(list(photos)):
         position = None
-        return render_template('test.html', position=position, photo=photo_now)
+        flash(u'已经是最后一张了。', 'info')
+        return redirect(url_for('.photo', id=id))
     photo = photos[position]
-    return redirect(url_for('.photo_test', id=photo.id))
+    return redirect(url_for('.photo', id=photo.id))
 
 @main.route('/photo/p/<int:id>')
 def photo_previous(id):
+    "reditrct to previous imgae"
     photo_now = Photo.query.get_or_404(id)
     album = photo_now.album
     photos = album.photos
     position = list(photos).index(photo_now) - 1
     if position == -1:
         position = None
-        return render_template('test.html', position=position, photo=photo_now)
+        flash(u'已经是第一张了。')
+        return redirect(url_for('.photo', id=id))
     photo = photos[position]
-    return redirect(url_for('.photo_test', id=photo.id))
+    return redirect(url_for('.photo', id=photo.id))
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -455,6 +469,7 @@ def delete_photo(id):
     flash(u'删除成功。')
     return redirect(url_for('.album', id=album.id))
 
+
 @main.route('/delete/album/<id>')
 @login_required
 #@permission_required(Permission.FOLLOW)# todo follow > like
@@ -472,7 +487,7 @@ def delete_album(id):
 
 
 @main.route('/base', methods=['GET','POST'])
-def test():
+def test2():
     name = None
     form1 = TESTForm()
     form2 = TEST2Form()
