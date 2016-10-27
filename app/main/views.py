@@ -21,25 +21,23 @@ from ..decorators import admin_required, permission_required
 def index():
     return render_template('index.html')
 
+
 @main.route('/edit-photos/<int:id>', methods=['GET', 'POST'])
 def edit_photos(id):
     album = Album.query.get_or_404(id)
     photos = album.photos
-    for photo in photos:
-        photo.about = request.form[photo.id]
-        photo.order = request.form[photo.order]
-        db.session.add(photo)
-    return render_template('edit_photo.html', photos=photos)
+    return render_template('edit_photo.html', album=album, photos=photos)
 
 
-@main.route('/photo-test/<int:id>')
-def photo_test(id):
-    photo = Photo.query.get_or_404(id)
-    album = photo.album
+@main.route('/save-edit/<int:id>', methods=['GET', 'POST'])
+def save_edit(id):
+    album = Album.query.get_or_404(id)
     photos = album.photos
-    position = list(photos).index(photo)
-    print position
-    return render_template('test.html', photo=photo, photos=photos, position=position)
+    for photo in photos:
+        photo.about = request.form[str(photo.id)]
+        db.session.add(photo)
+    flash(u'更改已保存。', 'success')
+    return redirect(url_for('.album', id=id))
 
 
 @main.route('/user/<username>', methods=['GET', 'POST'])
@@ -79,6 +77,7 @@ def albums(username):
     album_count = len(albums)
     return render_template('albums.html', user=user, albums=albums, album_count=album_count)
 
+
 @main.route('/user/<username>/likes')
 def likes(username):
     user = User.query.filter_by(username=username).first()
@@ -90,6 +89,7 @@ def likes(username):
     album_likes = [{'album': like.like_album, 'photo': like.like_album.photos,
                     'timestamp': like.timestamp, 'cover':like.like_album.cover} for like in album_likes]
     return render_template('likes.html', user=user, photo_likes=photo_likes, album_likes=album_likes)
+
 
 @main.route('/album/<int:id>')
 def album(id):
@@ -119,6 +119,7 @@ def album(id):
         return render_template('wall.html', album=album, html=html)
     return render_template('album.html', album=album, photos=photos, pagination=pagination,
                            like_list=like_list, likes=likes, is_liked=is_liked)
+
 
 @main.route('/photo/<int:id>', methods=['GET', 'POST'])
 def photo(id):
@@ -487,7 +488,7 @@ def delete_album(id):
 
 
 @main.route('/base', methods=['GET','POST'])
-def test2():
+def tests():
     name = None
     form1 = TESTForm()
     form2 = TEST2Form()

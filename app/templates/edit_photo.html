@@ -3,43 +3,45 @@
 
 {% block title %}翻相册 - 上传图片/新建相册{% endblock %}
 {% block head %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='js/ui-lightness/jquery-ui-1.8.14.custom.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/core.css') }}">
+{{super()}}
+<link href="{{ url_for('static', filename='core.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" rel="stylesheet" type="text/css" />
 {% endblock %}
 {% block page_content %}
 <div class="page-header">
     <h1>批量编辑</h1>
 </div>
 
-<div class="row">
-<div class="col-md-12">
+<form class="" action="{{ url_for('.save_edit', id=album.id) }}" method="POST">
+    <div class="row sort-area">
+    <div class="col-md-12">
     <section id="wrapper">
-
 	<ul id="images">
         {% for photo in photos %}
 		<li><img src="{{ photo.path }}" alt="Some description"
-			width="200" height="200" />
-            <form action="{{ url_for('.index') }}" method="post">
-                <input type="text" name="{{ photo.id }}" value="{{ photo.about }}">
-            </form>
-            <!--input name="{{ photo.id + photo.order }}" value="{{ photo.order }}"-->
-            <span>{{ photo.order }}</span>
+			width="180" height="180" />
+            <textarea name="{{ photo.id }}" placeholder="添加描述" rows="3"></textarea>
+            <p>{{ photo.id }}</p>
         </li>
         {% endfor %}
 	</ul>
-</section>
-</div>
-</div>
+    </section>
+    </div>
+    </div>
+    <div class="row">
+    <input class="btn btn-success" type="submit" name="submit" value="提交">
+    </div>
+</form>
+
 
 <div class="row">
 <div class="col-md-8">
-    {{ wtf.quick_form(form) }}
 </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 {{super()}}
-<script src="{{ url_for('static', filename='js/ui-lightness/jquery-ui-1.8.14.custom.min.js') }}" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='/js/core.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='core.js') }}" type="text/javascript"></script>
 {% endblock %}

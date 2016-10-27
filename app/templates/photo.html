@@ -69,9 +69,9 @@
     }
 
 .photo img{
-    max-height: 600px;
-    max-width: 600px;
-    width: expression(this.offsetWidth > 600 ? "600px" : "auto"); /* IE6 */
+    max-height: 650px;
+    max-width: 700px;
+    width: expression(this.offsetWidth > 700 ? "700px" : "auto"); /* IE6 */
 }
 
 
@@ -113,96 +113,104 @@ div.comment-form {
 
 {% block page_content %}
 <ol class="breadcrumb" id="navigation">
-  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
-  <li><a href="{{ url_for('.user', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的主页</a></li>
-  <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
-  <li><a href="{{ url_for('.album', id=album.id) }}">《{{ album.title }}》</a></li>
-  <li class="active">第{{ photo_index }}张</li>
+    <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+    <li><a href="{{ url_for('.user', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的主页</a></li>
+    <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
+    <li><a href="{{ url_for('.album', id=album.id) }}">《{{ album.title }}》</a></li>
+    <li class="active">第{{ photo_index }}张</li>
     <li class="pull-right"><a href="{{ url_for('.album', id=album.id) }}">返回</a></li>
     <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的喜欢</a></li>
-
 </ol>
 
 <div class="row" id="image">
-            <div class="col-md-8">
-                <div class="photo">
-                <a href="{{ url_for('.photo_next', id=photo.id)}}" title="下一张？">
-                    <img src="{{ photo.path }}">
-                </a>
-                    <br>
-                    <br>
-                    <br>
-                <span class="pull-left"><button type="button" class="btn btn-default btn-sm">推荐</button></span>
-                {% if current_user == photo.author %}
-                    <!-- Button trigger modal -->
-                    <span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal">
-                      删除
-                    </button></span>
-                <!--span class="pull-right"><a href="{{ url_for('.delete_photo', id=photo.id) }}">删除</a></span-->
-                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
-                      <div class="modal-dialog modal-sm" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                确定要删除这张图片？
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            <a href="{{ url_for('.delete_photo', id=photo.id) }}"><button type="button" class="btn btn-danger">确认</button></a>
-                          </div>
-                        </div><!-- /.modal-content -->
-                      </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-                {% endif %}
+    <div class="col-md-8">
+        <div class="photo">
+        <a href="{{ url_for('.photo_next', id=photo.id)}}" title="下一张？">
+            <img src="{{ photo.path }}">
+        </a>
+            <br>
+            <br>
+            <br>
+        {% if photo.about %}<p>{{ photo.about }}</p>{% endif %}
+            <div>
+        <p><span class="pull-left"><button type="button" class="btn btn-default btn-sm">推荐</button></span></p>
+        {% if current_user == photo.author %}
+            <!-- Button trigger modal -->
+            <p><span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#DeleteModal">
+              删除
+            </button></span></p>
+        <!-- 删除确认弹窗 -->
+        <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    确定要删除这张图片？
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <hr>
-                {{ wtf.quick_form(form) }}
-                <div id="comment">
-                {% include '_comments.html' %}
-                </div>
+                <div class="modal-body">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a href="{{ url_for('.delete_photo', id=photo.id) }}"><button type="button" class="btn btn-danger">确认</button></a>
               </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        {% endif %}
+        </div>
+    </div>
+        <div class="comment">
+        {{ wtf.quick_form(form) }}
+        <div id="comment">
+        {% include '_comments.html' %}
+        </div>
+        </div>
+    </div>
 
-            <div class="info col-md-4" >
-                <div class="view pull-right">
-                    <a  class="btn" href="{{ photo.path }}" data-lightbox="view" title="">
-                        <i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;
-                    </a>
-                </div>
-                <div class="pagination">
-                    <p>
-                    <a class="btn btn-default" href="{{ url_for('.photo_previous', id=photo.id)}}">上一张</a>
-                    <a class="btn btn-default" href="{{ url_for('.photo_next', id=photo.id)}}">下一张</a>
-                        &nbsp;第{{ photo_index }}张 / 共{{ photo_sum }}张
-                    </p>
-                    <br>
-                    <p>
-                    {% if photo.path in like_list and current_user.is_authenticated %}
-                    <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-                    {% else %}
-                    <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-                    {% endif %}
-                    <span class="badge">{{ photo.photo_liked.count() }}</span>
-                    </p>
-                    <br>
-                    <p>上传于{{ moment(album.timestamp).format('L') }}</p>
-                </div>
-                <br>
-                <hr>
-                <div id="author">
-                    <div class="col-md-4">
-                        <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
-                    </div>
-                <h4><a href="{{ url_for('.user', username=album.author.username) }}">{{ album.author.name }}</a></h4>
-                {% if album.author.status %}<p>{{ album.author.status }}</p>{% else %}<p>-</p>{% endif %}
-                </div>
-                <br>
-                <hr>
-                <p>{{ album.title }}（{{ album.photos.count() }}张照片）</p>
-                <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
-                    <img  class="img-responsive  portrait" src="{{ album.cover }}">
-                </a>
-
+    <div class="info col-md-4" >
+        <div class="view pull-right">
+            <a  class="btn" href="{{ photo.path }}" data-lightbox="view" title="">
+                <i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;
+            </a>
+        </div>
+        <div class="pagination">
+            <p>
+            <a class="btn btn-default" href="{{ url_for('.photo_previous', id=photo.id)}}">上一张</a>
+            <a class="btn btn-default" href="{{ url_for('.photo_next', id=photo.id)}}">下一张</a>
+                &nbsp;第{{ photo_index }}张 / 共{{ photo_sum }}张
+            </p>
+            <br>
+            <p>
+            {% if photo.path in like_list and current_user.is_authenticated %}
+            <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+            {% else %}
+            <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+            {% endif %}
+            <span class="badge">{{ photo.photo_liked.count() }}</span>
+            </p>
+            <br>
+            <p>上传于{{ moment(album.timestamp).format('L') }}</p>
+        </div>
+        <br>
+        <hr>
+        <div id="author">
+            <div class="col-md-4">
+                <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
             </div>
+        <h4><a href="{{ url_for('.user', username=album.author.username) }}">{{ album.author.name }}</a></h4>
+        {% if album.author.status %}<p>{{ album.author.status }}</p>{% else %}<p>-</p>{% endif %}
+        </div>
+        <br>
+        <hr>
+        <p>{{ album.title }}（{{ album.photos.count() }}张照片）</p>
+        <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
+            <img  class="img-responsive  portrait" src="{{ album.cover }}">
+        </a>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+
+    </div>
 </div>
 
 
