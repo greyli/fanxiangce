@@ -17,11 +17,11 @@
     <div class="col-md-12">
     <section id="wrapper">
 	<ul id="images">
-        {% for photo in photos %}
-		<li><img src="{{ photo.path }}" alt="Some description"
+        {% for photo in test %}
+		<li><img src="{{ photo[1].path }}" alt="Some description"
 			width="180" height="180" />
-            <textarea name="{{ photo.id }}" placeholder="添加描述" rows="3"></textarea>
-            <p>{{ photo.id }}</p>
+            <textarea name="{{ photo[1].id }}" placeholder="添加描述" rows="3">{{ photo[1].about }}</textarea>
+            <input type="hidden" name="order-{{ photo[1].id }}" value="{{ photo[0] + 1 }}">
         </li>
         {% endfor %}
 	</ul>

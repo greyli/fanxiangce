@@ -25,8 +25,12 @@ def index():
 @main.route('/edit-photos/<int:id>', methods=['GET', 'POST'])
 def edit_photos(id):
     album = Album.query.get_or_404(id)
-    photos = album.photos
-    return render_template('edit_photo.html', album=album, photos=photos)
+    photos = album.photos.order_by(Photo.order.asc())
+    test = []
+    for index, photo in enumerate(photos):
+        test.append((index, photo))
+        print index, photo.about
+    return render_template('edit_photo.html', album=album, photos=photos, test=test)
 
 
 @main.route('/save-edit/<int:id>', methods=['GET', 'POST'])
@@ -35,7 +39,10 @@ def save_edit(id):
     photos = album.photos
     for photo in photos:
         photo.about = request.form[str(photo.id)]
+        photo.order = request.form["order-" + str(photo.id)]
+        print "id",photo.id,"order",photo.order, 'des', photo.about
         db.session.add(photo)
+    db.session.commit()
     flash(u'更改已保存。', 'success')
     return redirect(url_for('.album', id=id))
 
@@ -95,14 +102,14 @@ def likes(username):
 def album(id):
     album = Album.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
-    pagination = album.photos.order_by(Photo.timestamp.asc()).paginate(
+    pagination = album.photos.order_by(Photo.order.asc()).paginate(
         page, per_page=20, error_out=False
     )
     photos = pagination.items
 
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
-        likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
+        likes = user.photo_likes.order_by(LikePhoto.timestamp.asc()).all()
         likes = [{'id': like.like_photo, 'timestamp': like.timestamp, 'path': like.like_photo.path} for like in likes]
         like_list = [like['path'] for like in likes]
     else:
@@ -127,7 +134,7 @@ def photo(id):
     album = photo.album
     photo_sum = len(list(album.photos))
     form = CommentForm()
-    photo_index = [p.id for p in album.photos.order_by(Photo.timestamp.asc())].index(photo.id) + 1
+    photo_index = [p.id for p in album.photos.order_by(Photo.order.asc())].index(photo.id) + 1
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
@@ -155,7 +162,7 @@ def photo_next(id):
     "reditrct to next imgae"
     photo_now = Photo.query.get_or_404(id)
     album = photo_now.album
-    photos = album.photos
+    photos = album.photos.order_by(Photo.order.asc())
     position = list(photos).index(photo_now) + 1
     if position == len(list(photos)):
         position = None
@@ -169,7 +176,7 @@ def photo_previous(id):
     "reditrct to previous imgae"
     photo_now = Photo.query.get_or_404(id)
     album = photo_now.album
-    photos = album.photos
+    photos = album.photos.order_by(Photo.order.asc())
     position = list(photos).index(photo_now) - 1
     if position == -1:
         position = None
