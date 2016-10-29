@@ -20,8 +20,8 @@ body {
 #images li {
 	float: left;
 	display: block;
-	width: 200px;
-	height: 270px;
+	width: 170px;
+	height: 280px;
 	background:#fff;
 	margin: 0 55px 55px 0;
 	padding: 10px;
@@ -33,8 +33,12 @@ body {
 	cursor: move;
 }
 
+/*#images>li>div.span3>a.thumbnail>img {
+    max-height: 150px !important;
+}*/
+
 #images textarea {
-	width: 180px;
+	width: 150px;
 }
 
 #images li.active {

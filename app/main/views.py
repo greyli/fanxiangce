@@ -26,11 +26,10 @@ def index():
 def edit_photos(id):
     album = Album.query.get_or_404(id)
     photos = album.photos.order_by(Photo.order.asc())
-    test = []
+    enu_photos = []
     for index, photo in enumerate(photos):
-        test.append((index, photo))
-        print index, photo.about
-    return render_template('edit_photo.html', album=album, photos=photos, test=test)
+        enu_photos.append((index, photo))
+    return render_template('edit_photo.html', album=album, photos=photos, enu_photos=enu_photos)
 
 
 @main.route('/save-edit/<int:id>', methods=['GET', 'POST'])
@@ -40,8 +39,9 @@ def save_edit(id):
     for photo in photos:
         photo.about = request.form[str(photo.id)]
         photo.order = request.form["order-" + str(photo.id)]
-        print "id",photo.id,"order",photo.order, 'des', photo.about
         db.session.add(photo)
+    album.cover = request.form["cover"]
+    db.session.add(album)
     db.session.commit()
     flash(u'更改已保存。', 'success')
     return redirect(url_for('.album', id=id))
@@ -116,7 +116,10 @@ def album(id):
         likes = ""
         like_list = []
 
-    is_liked = album.is_liked_by(current_user)
+    if current_user.is_authenticated:
+        is_liked = album.is_liked_by(current_user)
+    else:
+        is_liked = False
 
     if album.type == 1:
         files = []

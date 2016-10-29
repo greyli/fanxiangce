@@ -6,7 +6,32 @@
 {{super()}}
 <link href="{{ url_for('static', filename='core.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" rel="stylesheet" type="text/css" />
+
+<style>
+.thumbnail {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+}
+.thumbnail img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 100%;
+  width: auto;
+  -webkit-transform: translate(-50%,-50%);
+      -ms-transform: translate(-50%,-50%);
+          transform: translate(-50%,-50%);
+}
+.thumbnail img.portrait {
+  width: 100%;
+  height: auto;
+}
+</style>
 {% endblock %}
+
+
 {% block page_content %}
 <div class="page-header">
     <h1>批量编辑</h1>
@@ -17,11 +42,12 @@
     <div class="col-md-12">
     <section id="wrapper">
 	<ul id="images">
-        {% for photo in test %}
-		<li><img src="{{ photo[1].path }}" alt="Some description"
-			width="180" height="180" />
-            <textarea name="{{ photo[1].id }}" placeholder="添加描述" rows="3">{{ photo[1].about }}</textarea>
+        {% for photo in enu_photos %}
+		<li><div class="thumbnail"><img class="img-responsive portrait" src="{{ photo[1].path }}" height="50px" alt="Some description"/></div>
+            <textarea name="{{ photo[1].id }}" placeholder="添加描述" rows="3">{% if photo[1].about %}{{ photo[1].about }}{% endif %}</textarea>
             <input type="hidden" name="order-{{ photo[1].id }}" value="{{ photo[0] + 1 }}">
+            设为封面<input type="radio" name="cover" value="{{ photo[1].path }}"{% if photo[1].path == album.cover %}checked{% endif %}>
+            <a class="pull-right btn btn-danger btn-xs" href="{{ url_for('.delete_photo', id=photo[1].id)}}">删除</a>
         </li>
         {% endfor %}
 	</ul>

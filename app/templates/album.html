@@ -10,14 +10,16 @@
 <link href="{{ url_for('static', filename='css/lightbox.css') }}" rel="stylesheet">
 <style>
 
-/* make the well swell */
-.well {
-	border-color:#c9c9c9;
-}
-
 .post {
 margin: 10px;
+margin-bottom: 20px;
+
 }
+
+a.thumbnail {
+    margin-bottom: 2px !important;
+}
+
 
 .post h4 {
   margin-bottom: 9px;
@@ -33,35 +35,8 @@ margin: 10px;
 }
 
 .info {
-	padding:4px;
+	padding:2px;
 }
-/* Isotope Transitions
-------------------------------- */
-.isotope,
-.isotope .item {
-  -webkit-transition-duration: 0.8s;
-     -moz-transition-duration: 0.8s;
-      -ms-transition-duration: 0.8s;
-       -o-transition-duration: 0.8s;
-          transition-duration: 0.8s;
-}
-
-.isotope {
-  -webkit-transition-property: height, width;
-     -moz-transition-property: height, width;
-      -ms-transition-property: height, width;
-       -o-transition-property: height, width;
-          transition-property: height, width;
-}
-
-.isotope .item {
-  -webkit-transition-property: -webkit-transform, opacity;
-     -moz-transition-property:    -moz-transform, opacity;
-      -ms-transition-property:     -ms-transform, opacity;
-       -o-transition-property:         top, left, opacity;
-          transition-property:         transform, opacity;
-}
-
 
 /* responsive media queries */
 
@@ -127,7 +102,7 @@ margin: 10px;
     text-decoration: none;
     }
 
-.fav-btn, .fav-btn:link, .fav-btn:hover {
+.fa v-btn, .fav-btn:link, .fav-btn:hover {
       border: 1px solid black;
       padding: 4px 8px;
       border-radius: 3px;
@@ -162,17 +137,17 @@ margin: 10px;
     <h4>{{ album.about }}</h4>
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
         {% if current_user == album.author %}
-        <span class="pull-right">  &nbsp;编辑相册 | 添加照片 | 排序</span>
+        <span class="pull-right">  &nbsp;<a href="{{ url_for('.edit_photos', id=album.id) }}">编辑与排序</a> | 添加照片</span>
         {% endif %}
-        <span class="pull-right">幻灯片 | 对齐 | 瀑布流</span>
+        <span class="pull-right"><a href="{{ photos[0].path }}" data-lightbox="slide">幻灯片</a>  | 对齐 | 瀑布流</span>
 </p>
 </div>
 
 <div class="container">
-<div id="posts" class="row">
+<div class="grid row">
             {% for photo in photos %}
-            <div class="post item span3">
-              <div class="well">
+            <div class="post grid-item span3">
+              <div class="">
                 <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
@@ -223,14 +198,13 @@ margin: 10px;
 {% block scripts %}
 {{ super() }}
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
+<script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/packery.min.js') }}"></script>
 <script>
-$.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function(){
-  /* activate jquery isotope */
-  $('#posts').imagesLoaded( function(){
-    $('#posts').isotope({
-      itemSelector : '.item'
-    });
-  });
+$('.grid').isotope({
+  // options
+  itemSelector: '.grid-item',
+  layout: 'fitRows'
 });
 </script>
 

@@ -201,12 +201,30 @@
                 <div class="info">
                   <span>标记于{{ moment(like.timestamp).format('L') }}</span>
                     {% if current_user.username == user.username %}
-                    <a href="{{ url_for('.unlike_photo', id=like.photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</a>
+                    <p><span class="pull-right"><a href="#" data-href="{{ url_for('.unlike_photo', id=like.photo.id) }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirm-delete">
+              删除
+            </button></a> </span></p>
                     {% endif %}
                 </div>
               </div>
             </div>
             {% endfor %}
+
+            <!-- 删除确认弹窗 -->
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                确定要删除这张图片？
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button type="button" data-dismiss="modal" class="btn btn-danger btn-ok">确认</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
   </div>
 </div>
 {% endblock %}
@@ -233,6 +251,10 @@ $.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function()
 <script>
 $( ".fav-btn" ).click(function() {
   $( this ).parent().parent().parent().slideUp();
+});
+
+$('#confirm-delete').on('show.bs.modal', function(e) {
+    $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
 });
 </script>
 {% endblock %}
