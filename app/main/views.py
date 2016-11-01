@@ -8,28 +8,89 @@ from werkzeug import secure_filename
 
 
 from . import main
-from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, TESTForm, TEST2Form,  CommentForm
+from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, CommentForm, EditAlbumForm, GuessNumberForm
 from .. import db
 from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
-from tag import glue
 from wall import wall
 from ..decorators import admin_required, permission_required
+import random
 
-
+times = 10
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+    global times
+    session['number'] = random.randint(0, 1000)
+    times = 10
     return render_template('index.html')
 
+@main.route('/guess', methods=['GET', 'POST'])
+def guess():
+    global times
+    result = session.get('number')
+    form = GuessNumberForm()
+    if form.validate_on_submit():
+        times -= 1
+        if times == 0:
+            flash(u'你输了！')
+            return redirect(url_for('.index'))
 
-@main.route('/edit-photos/<int:id>', methods=['GET', 'POST'])
-def edit_photos(id):
+        answer = form.number.data
+        print answer
+        if answer > result:
+            flash(u'太大了！你还剩下%s次机会' % times)
+        elif answer < result:
+            flash(u'太小了！你还剩下%s次机会' % times)
+        else:
+            flash(u'你赢了！')
+            return redirect(url_for('.index'))
+            # redirect(url_for('.index'+ '#win'))
+        # redirect(url_for('.index'+ '#fail'))
+    return render_template('guess.html', form=form)
+
+@main.route('/edit-photo/<int:id>', methods=['GET', 'POST'])
+def edit_photo(id):
     album = Album.query.get_or_404(id)
     photos = album.photos.order_by(Photo.order.asc())
     enu_photos = []
     for index, photo in enumerate(photos):
         enu_photos.append((index, photo))
     return render_template('edit_photo.html', album=album, photos=photos, enu_photos=enu_photos)
+
+
+@main.route('/fast-sort/<int:id>', methods=['GET', 'POST'])
+def fast_sort(id):
+    album = Album.query.get_or_404(id)
+    photos = album.photos.order_by(Photo.order.asc())
+    enu_photos = []
+    for index, photo in enumerate(photos):
+        enu_photos.append((index, photo))
+    return render_template('fast_sort.html', album=album, photos=photos, enu_photos=enu_photos)
+
+
+@main.route('/edit-album/<int:id>', methods=['GET', 'POST'])
+def edit_album(id):
+    album = Album.query.get_or_404(id)
+    form = EditAlbumForm()
+    print '--------here'
+
+    if form.validate_on_submit():
+        album = Album(
+            title=form.title.data,
+            about=form.about.data,
+            asc_order=form.asc_order.data,
+            privacy=form.privacy.data,
+            can_comment=form.can_comment.data,
+            author=current_user._get_current_object())
+        db.session.add(album)
+        flash(u'更改已保存。', 'success')
+        return redirect(url_for('.album', id=id))
+    form.title.data = album.title
+    form.about.data = album.about
+    form.asc_order.data = album.asc_order
+    form.can_comment.data = album.can_comment
+    form.privacy.data = album.privacy
+    return render_template('edit_album.html', form=form, album=album)
 
 
 @main.route('/save-edit/<int:id>', methods=['GET', 'POST'])
@@ -42,6 +103,17 @@ def save_edit(id):
         db.session.add(photo)
     album.cover = request.form["cover"]
     db.session.add(album)
+    db.session.commit()
+    flash(u'更改已保存。', 'success')
+    return redirect(url_for('.album', id=id))
+
+@main.route('/save-sort/<int:id>', methods=['GET', 'POST'])
+def save_sort(id):
+    album = Album.query.get_or_404(id)
+    photos = album.photos
+    for photo in photos:
+        photo.order = request.form["order-" + str(photo.id)]
+        db.session.add(photo)
     db.session.commit()
     flash(u'更改已保存。', 'success')
     return redirect(url_for('.album', id=id))
@@ -68,7 +140,7 @@ def user(username):
                           user=user,
                           author=current_user._get_current_object())
         db.session.add(comment)
-        flash(u'你的评论已经发表。')
+        flash(u'你的评论已经发表。', 'success')
         return redirect(url_for('.user', username=username))
     comments = user.messages.order_by(Message.timestamp.asc()).all()
     return render_template('user.html', form=form, user=user, photo_likes=photo_likes, album_likes=album_likes,
@@ -81,6 +153,12 @@ def albums(username):
     if user is None:
         abort(404)
     albums = user.albums.order_by(Album.timestamp.desc()).all()
+    if current_user != user and current_user.is_followed_by(user) == False:
+        albums = user.albums.query.filter_by(privacy='11').order_by(Album.timestamp.desc()).all()
+    elif current_user != user and current_user.is_followed_by(user) == True:
+        albums = user.albums.query.filter_by(privacy='10' or '11').order_by(Album.timestamp.desc()).all()
+    else:
+        albums = user.albums.order_by(Album.timestamp.desc()).all()
     album_count = len(albums)
     return render_template('albums.html', user=user, albums=albums, album_count=album_count)
 
@@ -101,6 +179,13 @@ def likes(username):
 @main.route('/album/<int:id>')
 def album(id):
     album = Album.query.get_or_404(id)
+    error_type = {'10': u'仅好友可见', '00': u'仅自己可见'}
+    if current_user != album.author and album.privacy != '11':
+        if current_user.is_followed_by(album.author) == False or \
+                                current_user.is_followed_by(album.author) == False and \
+                                album.privacy == '00':
+            return render_template('privacy_error.html', error_msg=error_type[album.privacy])
+
     page = request.args.get('page', 1, type=int)
     pagination = album.photos.order_by(Photo.order.asc()).paginate(
         page, per_page=20, error_out=False
@@ -135,6 +220,12 @@ def album(id):
 def photo(id):
     photo = Photo.query.get_or_404(id)
     album = photo.album
+    if current_user != album.author and album.privacy != '11':
+        if current_user.is_followed_by(album.author) == False or \
+                                current_user.is_followed_by(album.author) == True and \
+                                album.privacy == '00':
+            abort(404)
+
     photo_sum = len(list(album.photos))
     form = CommentForm()
     photo_index = [p.id for p in album.photos.order_by(Photo.order.asc())].index(photo.id) + 1
@@ -152,7 +243,7 @@ def photo(id):
                           photo=photo,
                           author=current_user._get_current_object())
         db.session.add(comment)
-        flash(u'你的评论已经发表。')
+        flash(u'你的评论已经发表。', 'success')
         return redirect(url_for('.photo', id=photo.id))
     comments = photo.comments.order_by(Comment.timestamp.asc()).all()
     return render_template('photo.html', form=form, album=album,
@@ -183,7 +274,7 @@ def photo_previous(id):
     position = list(photos).index(photo_now) - 1
     if position == -1:
         position = None
-        flash(u'已经是第一张了。')
+        flash(u'已经是第一张了。', 'info')
         return redirect(url_for('.photo', id=id))
     photo = photos[position]
     return redirect(url_for('.photo', id=photo.id))
@@ -198,7 +289,7 @@ def edit_profile():
         current_user.website = form.website.data
         current_user.about_me = form.about_me.data
         db.session.add(current_user)
-        flash(u'你的资料已经更新。')
+        flash(u'你的资料已经更新。', 'success')
         return redirect(url_for('.user', username=current_user.username))
     form.name.data = current_user.name
     form.location.data = current_user.location
@@ -222,7 +313,7 @@ def edit_profile_admin(id):
         user.website = form.website.data
         user.about_me = form.about_me.data
         db.session.add(current_user)
-        flash(u'资料已经更新。')
+        flash(u'资料已经更新。', 'success')
         return redirect(url_for('.user', username=user.username))
     form.email.data = user.email
     form.username.data = user.username
@@ -407,7 +498,7 @@ def like_photo(id):
     photo = Photo.query.filter_by(id=id).first()
     album = photo.album
     if photo is None:
-        flash(u'无效的图片。')
+        flash(u'无效的图片。', 'warning')
         return redirect(url_for('.album', id=album))
     if current_user.is_like_photo(photo):
         current_user.unlike_photo(photo)
@@ -422,15 +513,15 @@ def like_photo(id):
 def like_album(id):
     album = Album.query.filter_by(id=id).first()
     if album is None:
-        flash(u'无效的相册。')
+        flash(u'无效的相册。', 'warning')
         return redirect(url_for('.albums', username=album.author.username))
     if current_user.is_like_album(album):
         current_user.unlike_album(album)
-        flash(u'喜欢已取消。')
+        flash(u'喜欢已取消。', 'success')
         redirect(url_for('.album', id=id))
     else:
         current_user.like_album(album)
-        flash(u'相册已经添加到你的喜欢里了。')
+        flash(u'相册已经添加到你的喜欢里了。', 'success')
     return redirect(url_for('.album', id=id))
 
 @main.route('/photo/unlike/<id>')
@@ -439,7 +530,7 @@ def like_album(id):
 def unlike_photo(id):
     photo = Photo.query.filter_by(id=id).first()
     if photo is None:
-        flash(u'无效的图片。')
+        flash(u'无效的图片。', 'warning')
         return redirect(url_for('.likes', username=current_user.username))
     if current_user.is_like_photo(photo):
         current_user.unlike_photo(photo)
@@ -451,7 +542,7 @@ def unlike_photo(id):
 def unlike_album(id):
     album = Album.query.filter_by(id=id).first()
     if album is None:
-        flash(u'无效的相册。')
+        flash(u'无效的相册。', 'warning')
         return redirect(url_for('.likes', username=current_user.username))
     if current_user.is_like_album(album):
         current_user.unlike_album(album)
@@ -466,56 +557,44 @@ def redirect_url(default='index'):
 
 @main.route('/delete/photo/<id>')
 @login_required
-#@permission_required(Permission.FOLLOW)# todo follow > like
 def delete_photo(id):
     photo = Photo.query.filter_by(id=id).first()
     album = photo.album
     if photo is None:
-        flash(u'无效的操作。')
+        flash(u'无效的操作。', 'warning')
         return redirect(url_for('.index', username=current_user.username))
     if current_user.username != photo.author.username:
         abort(403)
     db.session.delete(photo)
     db.session.commit()
-    flash(u'删除成功。')
+    flash(u'删除成功。', 'success')
     return redirect(url_for('.album', id=album.id))
+
+@main.route('/delete/edit-photo/<id>')
+@login_required
+def delete_edit_photo(id):
+    photo = Photo.query.filter_by(id=id).first()
+    album = photo.album
+    if photo is None:
+        flash(u'无效的操作。', 'warning')
+        return redirect(url_for('.index', username=current_user.username))
+    if current_user.username != photo.author.username:
+        abort(403)
+    db.session.delete(photo)
+    db.session.commit()
+    return (''), 204
 
 
 @main.route('/delete/album/<id>')
 @login_required
-#@permission_required(Permission.FOLLOW)# todo follow > like
 def delete_album(id):
     album = Album.query.filter_by(id=id).first()
     if album is None:
-        flash(u'无效的操作。')
+        flash(u'无效的操作。', 'warning')
         return redirect(url_for('.index', username=current_user.username))
     if current_user.username != album.author.username:
         abort(403)
     db.session.delete(album)
     db.session.commit()
-    flash(u'删除成功。')
+    flash(u'删除成功。', 'success')
     return redirect(url_for('.albums', username=album.author.username))
-
-
-@main.route('/base', methods=['GET','POST'])
-def tests():
-    name = None
-    form1 = TESTForm()
-    form2 = TEST2Form()
-
-    if form1.submit1.data and form1.validate_on_submit():
-        print form1.submit1.data
-        name = form1.name.data
-        print "hi"
-        print name
-        return redirect(url_for('.index'))
-    print "here"
-    if form2.submit2.data and form2.validate_on_submit():
-        #print form2.submit.data
-        name = form2.name.data
-        print "ho"
-        print name
-        return redirect(url_for('.index'))
-    return render_template('test.html', form1=form1, form2=form2)
-
-#filename = photos.save(request.files['photo'])

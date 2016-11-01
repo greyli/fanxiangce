@@ -4,7 +4,11 @@
 {% block title %}翻相册 - 编辑资料{% endblock %}
 
 {% block page_content %}
+<div class="page-header">
+    <h1>编辑资料</h1>
+</div>
+
 <div class="col-md-4">
-    这个相册被<a href="{{ url_for('.user', username=album.author.username) }}">{{ user.username }}</a>
+    {{ wtf.quick_form(form) }}
 </div>
 {% endblock %}

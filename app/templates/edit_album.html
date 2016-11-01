@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}翻相册 - 编辑相册{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>相册与图片设置</h1>
+</div>
+<ol class="breadcrumb" id="navigation">
+    <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+    <li class="active">编辑相册信息</li>
+    <li><a href="{{ url_for('.edit_photo', id=album.id) }}">照片编辑与排序</a></li>
+    <li><a href="{{ url_for('.fast_sort', id=album.id) }}">快捷排序</a></li>
+    <li class="pull-right"><a href="{{ url_for('.index') }}">添加图片</a></li>
+    <li class="pull-right"><a href="{{ url_for('.album', id=album.id) }}">返回</a></li>
+</ol>
+
+<div class="row">
+    <div class="col-md-8">
+      {{ wtf.quick_form(form) }}
+    </div>
+</div>
+{% endblock %}

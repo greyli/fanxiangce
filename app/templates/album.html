@@ -136,11 +136,23 @@ a.thumbnail {
     <h3>{{ album.title }}</h3>
     <h4>{{ album.about }}</h4>
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
-        {% if current_user == album.author %}
-        <span class="pull-right">  &nbsp;<a href="{{ url_for('.edit_photos', id=album.id) }}">编辑与排序</a> | 添加照片</span>
+        <span class="pull-right">  &nbsp;
+            <a class="btn btn-default btn-xs" href="{{ photos[0].path }}" data-lightbox="slide">幻灯片</a>
+            <a class="btn btn-default btn-xs row-btn">对齐</a>
+            <a class="btn btn-default btn-xs mas-btn">瀑布流</a>
+            {% if current_user == album.author %}
+            <a class="btn" href="{{ url_for('.edit_album', id=album.id) }}" title="编辑相册属性">
+                <i class="glyphicon glyphicon-cog"></i>
+            </a>
+            <a class="btn" href="{{ url_for('.edit_photo', id=album.id) }}" title="照片编辑与排序">
+                <i class="glyphicon glyphicon-sort"></i>
+            </a>
+            <a class="btn" href="{{ url_for('.edit_photo', id=album.id) }}" title="添加照片">
+                <i class="glyphicon glyphicon-plus"></i>
+            </a>
         {% endif %}
-        <span class="pull-right"><a href="{{ photos[0].path }}" data-lightbox="slide">幻灯片</a>  | 对齐 | 瀑布流</span>
-</p>
+        </span>
+    </p>
 </div>
 
 <div class="container">
@@ -200,11 +212,19 @@ a.thumbnail {
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/packery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
+
 <script>
-$('.grid').isotope({
-  // options
-  itemSelector: '.grid-item',
-  layout: 'fitRows'
+$('.grid').imagesLoaded( function(){
+    $('.grid').isotope({
+      itemSelector : '.grid-item',
+    });
+  });
+$(".row-btn").click(function(event) {
+   $('.grid').isotope({ layoutMode: 'fitRows' });
+});
+$(".mas-btn").click(function(event) {
+   $('.grid').isotope({ layoutMode: 'masonry' });
 });
 </script>
 

@@ -1,8 +1,8 @@
 # -*-coding: utf-8-*-
 from flask_wtf import Form
 from wtforms import StringField, SubmitField, RadioField, PasswordField, BooleanField, FileField, \
-                    TextAreaField, SelectField
-from wtforms.validators import Required, Length, Email, Regexp, EqualTo, URL, Optional
+                    TextAreaField, SelectField, IntegerField
+from wtforms.validators import Required, Length, Email, Regexp, EqualTo, URL, Optional, NumberRange
 from wtforms import ValidationError
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_uploads import UploadSet, configure_uploads, IMAGES
@@ -27,15 +27,6 @@ class EditProfileForm(Form):
         if field.data[:4] != "http":
             print field.data[:4]
             field.data="http://"+field.data
-            ## raise ValidationError(u'请输入有效的地址，比如：http://withlihui.com')
-
-class TESTForm(Form):
-    name1 = StringField(u'F1昵称', validators=[Required(), Length(0, 64)])
-    submit1 = SubmitField(u'提交')
-
-class TEST2Form(Form):
-    name2 = StringField(u'F2姓名', validators=[Required(), Length(0, 64)])
-    submit2 = SubmitField(u'ok')
 
 
 class EditProfileAdminForm(Form):
@@ -107,4 +98,21 @@ class NormalForm(Form):
         FileRequired(),
         FileAllowed(photos, u'只能上传图片！')
     ])
+    submit = SubmitField(u'提交')
+
+class EditAlbumForm(Form):
+    title = StringField(u'标题')
+    about = TextAreaField(u'介绍')
+    asc_order = RadioField(u'显示顺序',
+                             choices=[(1, u'按上传时间倒序排列'), (2, u'按上传时间倒序排列')]
+                             , default=1)
+    privacy = RadioField(
+        u'可见性',
+        choices=[(1, u'公开'), (2, u'仅好友可见'), (3, u'仅自己可见')]
+        , default=1)
+    can_comment = BooleanField(u'允许评论', render_kw={'checked': 'True'})
+    submit = SubmitField(u'提交')
+
+class GuessNumberForm(Form):
+    number = IntegerField(u'输入数字：', validators=[Required(u'数字不能为空！'), NumberRange(0, 1000, u'请输入0~1000以内的数字！')])
     submit = SubmitField(u'提交')

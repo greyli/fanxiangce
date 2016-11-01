@@ -124,14 +124,11 @@ div.comment-form {
 
 <div class="row" id="image">
     <div class="col-md-8">
-        <div class="photo">
+        <div class="photo container-fluid">
         <a href="{{ url_for('.photo_next', id=photo.id)}}" title="点击跳到下一张">
             <img src="{{ photo.path }}">
         </a>
-            <br>
-            <br>
-            <br>
-        {% if photo.about %}<p>{{ photo.about }}</p>{% endif %}
+        {% if photo.about %}<p><br>{{ photo.about }}</p>{% endif %}
             <div>
         <p><span class="pull-left"><button type="button" class="btn btn-default btn-sm">推荐</button></span></p>
         {% if current_user == photo.author %}
@@ -157,7 +154,8 @@ div.comment-form {
         {% endif %}
         </div>
     </div>
-        <div class="comment">
+        <hr>
+        <div class="comment container-fluid">
         {{ wtf.quick_form(form) }}
         <div id="comment">
         {% include '_comments.html' %}

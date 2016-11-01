@@ -81,7 +81,7 @@ class Follow(db.Model):
 class Photo(db.Model):
     __tablename__ = 'photos'
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.Text)
+    path = db.Column(db.String(64))
     about = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     order = db.Column(db.Integer)
@@ -90,7 +90,6 @@ class Photo(db.Model):
     photo_liked = db.relationship('LikePhoto', foreign_keys=[LikePhoto.like_photo_id],
                                   backref=db.backref('like_photo', lazy='joined'),
                                   lazy='dynamic', cascade='all, delete-orphan')
-
     comments = db.relationship('Comment', backref='photo', lazy='dynamic')
 
     def is_liked_by(self, user):
@@ -101,10 +100,14 @@ class Photo(db.Model):
 class Album(db.Model):
     __tablename__ = 'albums'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text)
+    title = db.Column(db.String(64))
     about = db.Column(db.Text)
-    cover = db.Column(db.Text)
+    cover = db.Column(db.String(64))
     type = db.Column(db.Integer, default=0)
+    privacy = db.Column(db.String(64), default='11')
+    tag = db.Column(db.String(64))
+    can_comment = db.Column(db.Boolean, default=True)
+    asc_order = db.Column(db.Integer, default=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     photos = db.relationship('Photo', backref='album', lazy='dynamic')
@@ -271,6 +274,12 @@ class User(UserMixin, db.Model):
     def is_followed_by(self, user):
         return self.followers.filter_by(
             follower_id=user.id).first() is not None
+
+    def is_friend(self, user):
+        return self.followed.filter_by(
+            followed_id=user.id).first() is not None and \
+               self.followers.filter_by(
+                   follower_id=user.id).first() is not None
 
     def like_photo(self, photo):
         if not self.is_like_photo(photo):

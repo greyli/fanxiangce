@@ -10,7 +10,7 @@ $(function() {
 				'highlight', 
 				{ color : '#000' }, 1000, function() {
 				$.each($('#images li'), function(index, event) {
-					$(this).children('input').val(parseInt(index, 10)+1);
+					$(this).children('.order').val(parseInt(index, 10)+1);
 				});
 			});
 		}

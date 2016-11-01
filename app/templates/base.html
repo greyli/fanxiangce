@@ -8,9 +8,28 @@
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"-->
 <style>
-        body { padding-top: 70px; }
+    body { padding-top: 70px; }
 
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+    .wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -60px; /* the bottom margin is the negative value of the footer's height */
+}
+.footer, .push {
+    height: 60px; /* .push must be the same height as .footer */
+}
 
+.footer{
+    padding-top: 10px;
+    background-color: #f5f5f5;
+}
 </style>
 {% endblock %}
 
@@ -97,7 +116,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container wrapper">
     {% for message in get_flashed_messages(with_categories=True) %}
     <div class="alert alert-{{ message[0] }}">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -106,21 +125,24 @@
     {% endfor %}
 
     {% block page_content %}{% endblock %}
+
+    <div class="push"></div>  <!-- push the footer so it stay at the bootom of the page -->
 </div>
 
-<footer>
-    <hr>
-    <div class="col-md-8">
-  <p>© 2016 <b>
-    <span style="color: #f79d00">翻</span>
-    <span style="color: #8b3fb2">相</span>
-    <span style="color: #4CAF50">册</span>
-    </b> · <a href="#terms">隐私权和条款</a> · <a href="#contact">联系我们</a> · <a target="_blank" href="http://withlihui.com">李辉的书桌</a></p>
+<div class="footer row">
+    <div class="col-md-2"></div>
+    <div class="col-md-6">
+        <p>© 2016 <b>
+        <span style="color: #f79d00">翻</span>
+        <span style="color: #8b3fb2">相</span>
+        <span style="color: #4CAF50">册</span>
+        </b> · <a href="#terms">隐私权和条款</a> · <a href="#contact">联系我们</a> · <a target="_blank" href="http://withlihui.com">关于翻相册</a></p>
     </div>
-        <div class="col-md-4">
-    <p class="pull-right"><a class="shake shake-vertical" id="totop" href="#">返回顶部</a></p>
-            </div>
-</footer>
+    <div class="col-md-2">
+        <p class="pull-right"><a class="shake shake-vertical" id="totop" href="#">返回顶部</a></p>
+    </div>
+    <div class="col-md-2"></div>
+</div>
 {% endblock %}
 
 {% block scripts %}

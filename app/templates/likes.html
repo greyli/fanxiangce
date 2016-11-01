@@ -13,120 +13,9 @@
 	border-color:#c9c9c9;
 }
 
-.info {
-	padding:4px;
-}
-
-/* Isotope Transitions
-------------------------------- */
-.isotope,
-.isotope .item {
-  -webkit-transition-duration: 0.8s;
-     -moz-transition-duration: 0.8s;
-      -ms-transition-duration: 0.8s;
-       -o-transition-duration: 0.8s;
-          transition-duration: 0.8s;
-}
-
-.isotope {
-  -webkit-transition-property: height, width;
-     -moz-transition-property: height, width;
-      -ms-transition-property: height, width;
-       -o-transition-property: height, width;
-          transition-property: height, width;
-}
-
-.isotope .item {
-  -webkit-transition-property: -webkit-transform, opacity;
-     -moz-transition-property:    -moz-transform, opacity;
-      -ms-transition-property:     -ms-transform, opacity;
-       -o-transition-property:         top, left, opacity;
-          transition-property:         transform, opacity;
-}
-
-
-/* responsive media queries */
-
-@media (max-width: 480px) {
-
-}
-
-@media (max-width: 768px) {
-  header h1 small {
-    display: block;
-  }
-
-  header div.description {
-    padding-top: 9px;
-    padding-bottom: 4px;
-  }
-
-  .isotope .item {
-    position: static ! important;
-    -webkit-transform: translate(0px, 0px) ! important;
-       -moz-transform: translate(0px, 0px) ! important;
-            transform: translate(0px, 0px) ! important;
-  }
-}
-
-@media (max-width: 980px) {
-  header p.lead span {
-    display: block;
-  }
-}
-
-@media (min-width: 480px) and (max-width: 768px) {
-
-}
-
-
-@media (min-width: 768px) and (max-width: 980px) {
-  .span3 {
-    width: 352px;
-  }
-}
-
-@media (min-width: 980px) and (max-width: 1200px) {
-  .span3 {
-    width: 300px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .span3 {
-    width: 270px;
-  }
-}
-
-.fav-btn {
-      border: 1px solid black;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-      }
-
-.fav-btn:link, .fav-btn:hover  {
-    text-decoration: none;
-    }
-
-.fav-btn, .fav-btn:link, .fav-btn:hover {
-      border: 1px solid lightgrey;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px 5px;
-    }
-.fav-cancel, .fav-cancel:link, .fav-cancel:hover {
-    border: 1px solid lightgrey;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-
-    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
-    }
-
   .info {
     margin: 5px;
+    padding:4px;
     cursor: pointer;
   }
 
@@ -165,7 +54,7 @@
 <div class="page-header">
     <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</h3>
     <p>{{ user.photo_likes.count() }}张图片 {{ user.album_likes.count() }}个相册
-        <span class="pull-right">批量修改 | 添加照片 | 排序</span>
+        <a class="btn pull-right"><i class="glyphicon glyphicon-cog"></i></a>
 </p>
 </div>
 
@@ -185,7 +74,7 @@
                   <span>{{ like.photo.count() }}张图片</span><br>
                   <span>标记于{{ moment(like.timestamp).format('L') }}</span>
                     {% if current_user.username == user.username %}
-                    <a href="{{ url_for('.unlike_album', id=like.album.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;删除</a>
+                    <a href="#" data-href="{{ url_for('.unlike_album', id=like.album.id) }}" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete" title="取消喜欢？">删除</a>
                     {% endif %}
                 </div>
               </div>
@@ -201,60 +90,44 @@
                 <div class="info">
                   <span>标记于{{ moment(like.timestamp).format('L') }}</span>
                     {% if current_user.username == user.username %}
-                    <p><span class="pull-right"><a href="#" data-href="{{ url_for('.unlike_photo', id=like.photo.id) }}"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirm-delete">
-              删除
-            </button></a> </span></p>
+                    <a href="#" data-href="{{ url_for('.unlike_photo', id=like.photo.id) }}" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete" title="取消喜欢？">删除</a>
                     {% endif %}
                 </div>
               </div>
             </div>
             {% endfor %}
 
-            <!-- 删除确认弹窗 -->
-    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                确定要删除这张图片？
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="button" data-dismiss="modal" class="btn btn-danger btn-ok">确认</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-  </div>
-</div>
+        <!-- 图片删除确认弹窗 用于喜欢页面和上传页面-->
+        <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    确定要删除这张图片？
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                 <a class="btn btn-danger btn-ok">确定</a>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+      </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script>
-$.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function(){
-  /* activate jquery isotope */
-  $('#posts').imagesLoaded( function(){
-    $('#posts').isotope({
-      itemSelector : '.item'
-    });
-  });
-});
 </script>
 
 <script>
-    $(".fav-btn").click(function(event) {
-      $(event.target).toggleClass("fav-cancel");
-    });
-</script>
-
-<script>
-$( ".fav-btn" ).click(function() {
-  $( this ).parent().parent().parent().slideUp();
-});
-
 $('#confirm-delete').on('show.bs.modal', function(e) {
-    $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+ $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href')); // redirect the url
+ $(".btn-ok").click(function() {
+    $(e.relatedTarget).parent().parent().parent().slideUp(); // delete the photo
+    $('#confirm-delete .close').click(); // close modal
+ });
 });
 </script>
 {% endblock %}
