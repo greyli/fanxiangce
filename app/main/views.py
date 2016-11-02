@@ -15,38 +15,11 @@ from wall import wall
 from ..decorators import admin_required, permission_required
 import random
 
-times = 10
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    global times
-    session['number'] = random.randint(0, 1000)
-    times = 10
     return render_template('index.html')
 
-@main.route('/guess', methods=['GET', 'POST'])
-def guess():
-    global times
-    result = session.get('number')
-    form = GuessNumberForm()
-    if form.validate_on_submit():
-        times -= 1
-        if times == 0:
-            flash(u'你输了！')
-            return redirect(url_for('.index'))
-
-        answer = form.number.data
-        print answer
-        if answer > result:
-            flash(u'太大了！你还剩下%s次机会' % times)
-        elif answer < result:
-            flash(u'太小了！你还剩下%s次机会' % times)
-        else:
-            flash(u'你赢了！')
-            return redirect(url_for('.index'))
-            # redirect(url_for('.index'+ '#win'))
-        # redirect(url_for('.index'+ '#fail'))
-    return render_template('guess.html', form=form)
 
 @main.route('/edit-photo/<int:id>', methods=['GET', 'POST'])
 def edit_photo(id):
@@ -72,16 +45,16 @@ def fast_sort(id):
 def edit_album(id):
     album = Album.query.get_or_404(id)
     form = EditAlbumForm()
-    print '--------here'
-
     if form.validate_on_submit():
-        album = Album(
-            title=form.title.data,
-            about=form.about.data,
-            asc_order=form.asc_order.data,
-            privacy=form.privacy.data,
-            can_comment=form.can_comment.data,
-            author=current_user._get_current_object())
+        album.title=form.title.data
+        album.about=form.about.data
+        album.asc_order=form.asc_order.data
+        album.privacy=form.privacy.data
+        album.can_comment=form.can_comment.data
+        album.author=current_user._get_current_object()
+        print form.asc_order.data
+        print form.privacy.data
+        print form.can_comment.data
         db.session.add(album)
         flash(u'更改已保存。', 'success')
         return redirect(url_for('.album', id=id))
@@ -106,6 +79,20 @@ def save_edit(id):
     db.session.commit()
     flash(u'更改已保存。', 'success')
     return redirect(url_for('.album', id=id))
+
+
+@main.route('/save-photo-edit/<int:id>', methods=['GET', 'POST'])
+def save_photo_edit(id):
+    photo = Photo.query.get_or_404(id)
+    album = photo.album
+    photo.about = request.form["about"]
+    album.cover = request.form["cover"]
+    db.session.add(photo)
+    db.session.add(album)
+    db.session.commit()
+    flash(u'更改已保存。', 'success')
+    return redirect(url_for('.photo', id=id))
+
 
 @main.route('/save-sort/<int:id>', methods=['GET', 'POST'])
 def save_sort(id):

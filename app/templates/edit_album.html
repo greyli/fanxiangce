@@ -12,8 +12,8 @@
     <li class="active">编辑相册信息</li>
     <li><a href="{{ url_for('.edit_photo', id=album.id) }}">照片编辑与排序</a></li>
     <li><a href="{{ url_for('.fast_sort', id=album.id) }}">快捷排序</a></li>
-    <li class="pull-right"><a href="{{ url_for('.index') }}">添加图片</a></li>
     <li class="pull-right"><a href="{{ url_for('.album', id=album.id) }}">返回</a></li>
+    <li class="pull-right"><a href="{{ url_for('.index') }}">添加图片</a></li>
 </ol>
 
 <div class="row">

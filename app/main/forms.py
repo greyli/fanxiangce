@@ -103,13 +103,11 @@ class NormalForm(Form):
 class EditAlbumForm(Form):
     title = StringField(u'标题')
     about = TextAreaField(u'介绍')
-    asc_order = RadioField(u'显示顺序',
-                             choices=[(1, u'按上传时间倒序排列'), (2, u'按上传时间倒序排列')]
-                             , default=1)
-    privacy = RadioField(
-        u'可见性',
-        choices=[(1, u'公开'), (2, u'仅好友可见'), (3, u'仅自己可见')]
-        , default=1)
+    asc_order = SelectField(u'显示顺序',
+                             choices=[('0', u'按上传时间倒序排列'), ('1', u'按上传时间倒序排列')],
+                            render_kw={'width': ''})
+    privacy = SelectField(
+        u'可见性', choices=[('11', u'公开'), ('10', u'仅好友可见'), ('3', u'仅自己可见')])
     can_comment = BooleanField(u'允许评论', render_kw={'checked': 'True'})
     submit = SubmitField(u'提交')
 

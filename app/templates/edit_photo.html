@@ -84,8 +84,8 @@
     <li><a href="{{ url_for('.edit_album', id=album.id) }}">编辑相册信息</a></li>
     <li class="active">照片编辑与排序</li>
     <li><a href="{{ url_for('.fast_sort', id=album.id) }}">快捷排序</a></li>
-    <li class="pull-right"><a href="{{ url_for('.index') }}">添加图片</a></li>
     <li class="pull-right"><a href="{{ url_for('.album', id=album.id) }}">返回</a></li>
+    <li class="pull-right"><a href="{{ url_for('.index') }}">添加图片</a></li>
 </ol>
 
 <form action="{{ url_for('.save_edit', id=album.id) }}" method="POST">
@@ -106,8 +106,10 @@
 	</ul>
     </section>
     </div>
-    <div class="row">
+    <div class="row text-center">
+        <hr>
         <input class="btn btn-success" type="submit" name="submit" value="提交">
+        <a class="btn btn-default pull-right" href="{{ url_for('.album', id=album.id) }}">取消</a>
     </div>
     </div>
 </form>

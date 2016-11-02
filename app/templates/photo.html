@@ -108,6 +108,9 @@ div.comment-form {
     margin: 16px 0px 16px 32px;
 }
 
+.about-btn, .about-form {
+    display: none;
+}
 </style>
 {% endblock %}
 
@@ -128,9 +131,30 @@ div.comment-form {
         <a href="{{ url_for('.photo_next', id=photo.id)}}" title="点击跳到下一张">
             <img src="{{ photo.path }}">
         </a>
-        {% if photo.about %}<p><br>{{ photo.about }}</p>{% endif %}
-            <div>
-        <p><span class="pull-left"><button type="button" class="btn btn-default btn-sm">推荐</button></span></p>
+        <div class="text-left">
+            <br>
+            {% if photo.about %}
+            <p class="about-text">
+                {{ photo.about }}
+                <a class="add-about"><i class="glyphicon glyphicon-edit"></i></a>
+            </p>
+            {% else %}
+            <p class="about-text">
+                <button class="add-about">添加描述</button>
+            </p>
+            {% endif %}
+            <form class="about-form" action="{{ url_for('.save_photo_edit', id=photo.id) }}" method="POST">
+                <textarea class="form-control" name="about" placeholder="添加描述" rows="3" cols="100%">{{ photo.about }}</textarea>
+                <br>
+                <input class="btn btn-success" type="submit" name="submit" value="确定">
+                <input class="cancel-btn btn btn-default" type="button" value="取消">
+                设为封面：<input type="checkbox" name="cover" value="{{ photo.path }}"{% if album.cover == photo.path %}checked{% endif %}>
+            </form>
+        </div>
+        <div>
+        <br>
+            <p class="text-left">上传于{{ moment(album.timestamp).format('L') }}</p>
+            <p><span class="pull-left"><button type="button" class="btn btn-default btn-sm">推荐</button></span></p>
         {% if current_user == photo.author %}
             <!-- Button trigger modal -->
             <p><span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#DeleteModal">
@@ -184,8 +208,6 @@ div.comment-form {
             {% endif %}
             <span class="badge">{{ photo.photo_liked.count() }}</span>
             </p>
-            <br>
-            <p>上传于{{ moment(album.timestamp).format('L') }}</p>
         </div>
         <br>
         <hr>
@@ -222,6 +244,15 @@ div.comment-form {
     $(".fav-btn").click(function(event) {
       $(event.target).toggleClass("fav-cancel");
     });
+    $(".add-about").click(function() {
+      $(".about-text").hide();
+      $(".about-form").show();
+    });
+    $(".cancel-btn").click(function() {
+      $(".about-form").hide();
+      $(".about-text").show();
+    });
+
 </script>
 <script>
     var $= jQuery.noConflict();
