@@ -232,9 +232,16 @@ def photo(id):
         db.session.add(comment)
         flash(u'你的评论已经发表。', 'success')
         return redirect(url_for('.photo', id=photo.id))
-    comments = photo.comments.order_by(Comment.timestamp.asc()).all()
-    return render_template('photo.html', form=form, album=album,
-                           like_list=like_list, photo=photo,
+    page = request.args.get('page', 1, type=int)
+    pagination = photo.comments.order_by(Comment.timestamp.asc()).paginate(
+        page, per_page=current_app.config['FANXIANGCE_COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
+    amount = len(comments)
+    if amount != 0:
+        amount = range(amount)
+    return render_template('photo.html', form=form, album=album, amount=amount,
+                           like_list=like_list, photo=photo, pagination=pagination,
                            comments=comments, photo_index=photo_index, photo_sum=photo_sum)
 
 

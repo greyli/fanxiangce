@@ -10,7 +10,7 @@ class Config:
     FANXIANGCE_MAIL_SENDER = 'mimi_19@sina.com'
     FANXIANGCE_ADMIN = 'withlihui@qq.com' # os.environ.get('FANXIANG_ADMIN')
     UPLOADED_PHOTOS_DEST = r'D:\Projects\fanxiangce\app\static\img'
-
+    FANXIANGCE_COMMENTS_PER_PAGE = 15
     @staticmethod
     def init_app(app):
         pass

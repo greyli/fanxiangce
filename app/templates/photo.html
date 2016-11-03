@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% import "_macros_photo.html" as macros %}
+{% import "_macros.html" as macros %}
 
 {% block title %}翻相册 - 我的相册{% endblock %}
 
@@ -183,6 +183,11 @@ div.comment-form {
         {{ wtf.quick_form(form) }}
         <div id="comment">
         {% include '_comments.html' %}
+        {% if amount != 0 %}
+            <div class="pagination">
+                {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
+            </div>
+        {% endif %}
         </div>
         </div>
     </div>

@@ -107,7 +107,7 @@ class Album(db.Model):
     privacy = db.Column(db.String(64), default='11')
     tag = db.Column(db.String(64))
     can_comment = db.Column(db.Boolean, default=True)
-    asc_order = db.Column(db.Integer, default=True)
+    asc_order = db.Column(db.String(64), default='1')
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     photos = db.relationship('Photo', backref='album', lazy='dynamic')
