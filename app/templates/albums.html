@@ -63,7 +63,7 @@ margin: 40px;
 <div class="page-header">
         <!--img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=40) }}"-->
     <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</h3>
-    <p>{{ album_count }}个相册，234个关注，2535个喜欢
+    <p>{{ album_count }}个相册
         <a class="pull-right btn" href="{{ url_for('.index') }}" title="新建相册">
             <i class="glyphicon glyphicon-plus"></i>
         </a>
@@ -73,7 +73,11 @@ margin: 40px;
 
 <div class="container">
     {% if album_count == 0 %}
-    <h3>您还没有相册，快来<a href="{{ url_for('.normal') }}">创建</a>一个吧！</h3>
+    {% if current_user == user %}
+    <h3>你还没有相册，快来<a href="{{ url_for('.normal') }}">创建</a>一个吧！</h3>
+    {% else %}
+    <h3>他/她还没有创建相册。</h3>
+    {% endif %}
     {% endif %}
         <div id="posts" class="row">
             {% for album in albums %}

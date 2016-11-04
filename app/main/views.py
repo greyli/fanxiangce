@@ -10,7 +10,7 @@ from werkzeug import secure_filename
 from . import main
 from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, CommentForm, EditAlbumForm, GuessNumberForm
 from .. import db
-from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
+from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message, AnonymousUser
 from wall import wall
 from ..decorators import admin_required, permission_required
 import random
@@ -49,20 +49,18 @@ def edit_album(id):
         album.title=form.title.data
         album.about=form.about.data
         album.asc_order=form.asc_order.data
-        album.privacy=form.privacy.data
+        album.privacy=form.is_public.data
         album.can_comment=form.can_comment.data
         album.author=current_user._get_current_object()
-        print form.asc_order.data
-        print form.privacy.data
-        print form.can_comment.data
         db.session.add(album)
+        db.session.commit()
         flash(u'更改已保存。', 'success')
         return redirect(url_for('.album', id=id))
     form.title.data = album.title
     form.about.data = album.about
     form.asc_order.data = album.asc_order
     form.can_comment.data = album.can_comment
-    form.privacy.data = album.privacy
+    form.is_public.data = album.privacy
     return render_template('edit_album.html', form=form, album=album)
 
 
@@ -140,12 +138,8 @@ def albums(username):
     if user is None:
         abort(404)
     albums = user.albums.order_by(Album.timestamp.desc()).all()
-    if current_user != user and current_user.is_followed_by(user) == False:
-        albums = user.albums.query.filter_by(privacy='11').order_by(Album.timestamp.desc()).all()
-    elif current_user != user and current_user.is_followed_by(user) == True:
-        albums = user.albums.query.filter_by(privacy='10' or '11').order_by(Album.timestamp.desc()).all()
-    else:
-        albums = user.albums.order_by(Album.timestamp.desc()).all()
+    if current_user != user:
+        albums = albums.filter_by(is_public=True).all()
     album_count = len(albums)
     return render_template('albums.html', user=user, albums=albums, album_count=album_count)
 
@@ -153,7 +147,7 @@ def albums(username):
 @main.route('/user/<username>/likes')
 def likes(username):
     user = User.query.filter_by(username=username).first()
-    if user is None:
+    if user is None or current_user!= user and not user.like_public:
         abort(404)
     photo_likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
     album_likes = user.album_likes.order_by(LikeAlbum.timestamp.desc()).all()
@@ -166,17 +160,15 @@ def likes(username):
 @main.route('/album/<int:id>')
 def album(id):
     album = Album.query.get_or_404(id)
-    error_type = {'10': u'仅好友可见', '00': u'仅自己可见'}
-    if current_user != album.author and album.privacy != '11':
-        if current_user.is_followed_by(album.author) == False or \
-                                current_user.is_followed_by(album.author) == False and \
-                                album.privacy == '00':
-            return render_template('privacy_error.html', error_msg=error_type[album.privacy])
-
+    if current_user != album.author and album.is_public == False:
+        abort(404)
     page = request.args.get('page', 1, type=int)
-    pagination = album.photos.order_by(Photo.order.asc()).paginate(
-        page, per_page=20, error_out=False
-    )
+    if album.asc_order:
+        pagination = album.photos.order_by(Photo.order.asc()).paginate(
+            page, per_page=20, error_out=False)
+    else:
+        pagination = album.photos.order_by(Photo.order.asc()).paginate(
+            page, per_page=20, error_out=False)
     photos = pagination.items
 
     if current_user.is_authenticated:
@@ -207,11 +199,8 @@ def album(id):
 def photo(id):
     photo = Photo.query.get_or_404(id)
     album = photo.album
-    if current_user != album.author and album.privacy != '11':
-        if current_user.is_followed_by(album.author) == False or \
-                                current_user.is_followed_by(album.author) == True and \
-                                album.privacy == '00':
-            abort(404)
+    if current_user != album.author and album.is_public == False:
+        abort(404)
 
     photo_sum = len(list(album.photos))
     form = CommentForm()
@@ -259,6 +248,7 @@ def photo_next(id):
     photo = photos[position]
     return redirect(url_for('.photo', id=photo.id))
 
+
 @main.route('/photo/p/<int:id>')
 def photo_previous(id):
     "reditrct to previous imgae"
@@ -272,6 +262,7 @@ def photo_previous(id):
         return redirect(url_for('.photo', id=id))
     photo = photos[position]
     return redirect(url_for('.photo', id=photo.id))
+
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -290,6 +281,7 @@ def edit_profile():
     form.website.data = current_user.website
     form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', form=form)
+
 
 @main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -401,22 +393,6 @@ def normal():
         db.session.commit()
         return redirect(url_for('.album', id=album.id))
     return render_template('create/normal.html', form=form)
-
-# @main.route('/edit-album/<int:id>')
-# def edit_album(id):
-#     album = Album.query.filter_by(id=id).first()
-#     form = EditAlbumForm()
-#     if form.validate_on_submit():
-#         title = form.title.data
-#         about = form.about.data
-#         private = form.private.data
-#         comment = form.comment.data
-#     form.title.data = album.title
-#     form.about.data = album.about
-#     form.private.data = album.private
-#     form.comment.data = album.comment
-
-
 
 
 @main.route('/follow/<username>')

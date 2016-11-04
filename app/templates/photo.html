@@ -179,6 +179,7 @@ div.comment-form {
         </div>
     </div>
         <hr>
+        {% if album.can_comment == True %}
         <div class="comment container-fluid">
         {{ wtf.quick_form(form) }}
         <div id="comment">
@@ -190,6 +191,9 @@ div.comment-form {
         {% endif %}
         </div>
         </div>
+        {% else %}
+        <p>评论被作者关闭。</p>
+        {% endif %}
     </div>
 
     <div class="info col-md-4" >

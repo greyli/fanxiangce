@@ -18,7 +18,21 @@
 
 <div class="row">
     <div class="col-md-8">
-      {{ wtf.quick_form(form) }}
+        <form class="form" method="POST">
+          {{ form.hidden_tag() }}
+          {{ wtf.form_field(form.title) }}
+          {{ wtf.form_field(form.about) }}
+          {{ wtf.form_field(form.asc_order) }}
+          {{ wtf.form_field(form.privacy) }}
+            {% if album.can_comment %}
+          {{ wtf.form_field(form.can_comment, checked=True) }}
+            {% else %}
+             {{ wtf.form_field(form.can_comment) }}
+            {% endif %}
+
+             <hr>
+          {{ wtf.form_field(form.submit) }}
+    </form>
     </div>
 </div>
 {% endblock %}
