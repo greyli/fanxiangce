@@ -64,7 +64,7 @@ margin: 40px;
         <!--img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=40) }}"-->
     <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</h3>
     <p>{{ album_count }}个相册
-        <a class="pull-right btn" href="{{ url_for('.index') }}" title="新建相册">
+        <a class="pull-right btn" href="{{ url_for('.new_album') }}" title="新建相册">
             <i class="glyphicon glyphicon-plus"></i>
         </a>
 </p>
@@ -74,7 +74,7 @@ margin: 40px;
 <div class="container">
     {% if album_count == 0 %}
     {% if current_user == user %}
-    <h3>你还没有相册，快来<a href="{{ url_for('.normal') }}">创建</a>一个吧！</h3>
+    <h3>你还没有相册，快来<a href="{{ url_for('.new_album') }}">创建</a>一个吧！</h3>
     {% else %}
     <h3>他/她还没有创建相册。</h3>
     {% endif %}

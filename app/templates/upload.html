@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}翻相册 - 创建{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <h1>创建相册</h1>
+</div>
+
+<div class="col-md-4">
+    <form class="form form-horizontal" method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.title, class="form-control user") }}
+        {{ wtf.form_field(form.about) }}
+        {{ wtf.form_field(form.photo, multiple="multiple") }}
+        {{ wtf.form_field(form.submit) }}
+    </form>
+</div>
+{% endblock %}

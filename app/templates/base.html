@@ -74,9 +74,7 @@ html, body {
                 <li><a href="{{ url_for('main.index') }}">首页</a></li>
                 <li><a href="{{ url_for('main.user', username=current_user.username) }}">我的</a></li>
                 <li><a href="{{ url_for('main.user', username=current_user.username) }}">发现</a></li>
-                <li><a href="{{ url_for('main.albums', username=current_user.username) }}">集体相册</a></li>
-                <li><a href="{{ url_for('main.albums', username=current_user.username) }}">拼贴实验室</a></li>
-                <li><a href="{{ url_for('main.albums', username=current_user.username) }}">消息</a></li>
+                <li><a href="/about">关于</a></li>
                 {% else %}
                 <li><a href="/create">体验</a></li>
                 <li><a href="/about">关于</a></li>
@@ -90,15 +88,8 @@ html, body {
                   <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
                 </form>
             <ul class="nav navbar-nav navbar-right">
-
-                <li class="dropdown">
-                  <button type="button" class="btn btn-default navbar-btn dropdown-toggle"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">创建<span class="caret"></span></button>
-                  <ul class="dropdown-menu">
-                    <li><a target="_blank" href="{{ url_for('main.normal') }}">普通相册</a></li>
-                    <li><a target="_blank" href="{{ url_for('main.tag') }}">标签云相册</a></li>
-                    <li><a target="_blank" href="{{ url_for('main.wall') }}">照片墙</a></li>
-                  </ul>
-                </li>
+                <li><a href="{{ url_for('main.new_album') }}">新建相册</a></li>
+                <li><a href="{{ url_for('main.upload') }}">上传照片</a></li>
                 {% if current_user.is_authenticated %}
                 <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
