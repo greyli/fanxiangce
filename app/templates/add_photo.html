@@ -4,14 +4,19 @@
 {% block title %}翻相册 - 创建{% endblock %}
 {% block page_content %}
 <div class="page-header">
-    <h1>创建相册</h1>
+    <h1>添加照片</h1>
 </div>
-
-<div class="col-md-4">
+<ol class="breadcrumb" id="navigation">
+    <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+    <li><a href="{{ url_for('.user', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的主页</a></li>
+    <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
+    <li><a href="{{ url_for('.album', id=album.id) }}">《{{ album.title }}》</a></li>
+    <li class="active">添加照片</li>
+    <li class="pull-right"><a href="{{ url_for('.album', id=album.id) }}">返回相册</a></li>
+</ol>
+<div class="col-md-6">
     <form class="form form-horizontal" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-        {{ wtf.form_field(form.title, class="form-control user") }}
-        {{ wtf.form_field(form.about) }}
         {{ wtf.form_field(form.photo, multiple="multiple") }}
         {{ wtf.form_field(form.submit) }}
     </form>

@@ -20,7 +20,8 @@ class EditProfileForm(Form):
     website = StringField(u'网站', validators=[Length(0,64), Optional(),
                          ],
                           render_kw={"placeholder": "http://..."})
-    about_me = TextAreaField(u'关于我', validators=[Length(0,2000)], render_kw={"placeholder": u"我是......"})
+    about_me = TextAreaField(u'关于我', validators=[Length(0,2000)],
+                             render_kw={"placeholder": u"我是......", "rows": 5})
     submit = SubmitField(u'提交')
 
     def validate_website(self, field):
@@ -67,33 +68,20 @@ class CommentForm(Form):
     submit = SubmitField(u'提交')
 
 
-class TagForm(Form):
-    title = StringField(u'标题', validators=[Required()])
-    sub_title = StringField(u'副标题')
-    theme = RadioField(
-        u'选择一个主题',
-        choices=[('1', u'黑底白字'), ('2', u'白底黑字'), ('3', u'紫底白字')], default='1')
-    photos = FileField(u'选择图片')
-    submit = SubmitField(u'提交')
-
-
-class WallForm(Form):
+class NewAlbumForm(Form):
     title = StringField(u'标题')
-    about = StringField(u'介绍')
-    theme = RadioField(
-        u'选择一个主题',
-        choices=[('1', u'黑底白字'), ('2', u'白底黑字'), ('3', u'紫底白字')]
-    )
+    about = TextAreaField(u'介绍', render_kw={'rows': 8})
     photo = FileField(u'图片', validators=[
         FileRequired(),
         FileAllowed(photos, u'只能上传图片！')
     ])
+    asc_order = SelectField(u'显示顺序',
+                            choices=[('True', u'按上传时间倒序排列'), ('False', u'按上传时间倒序排列')])
+    is_public = BooleanField(u'私密相册（右侧滑出信息提示：勾选后相册仅自己可见）')
+    can_comment = BooleanField(u'允许评论', render_kw={'checked': True})
     submit = SubmitField(u'提交')
 
-
-class NormalForm(Form):
-    title = StringField(u'标题')
-    about = TextAreaField(u'介绍')
+class AddPhotoForm(Form):
     photo = FileField(u'图片', validators=[
         FileRequired(),
         FileAllowed(photos, u'只能上传图片！')

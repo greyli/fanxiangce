@@ -124,12 +124,10 @@ a.thumbnail {
 
 <ol class="breadcrumb">
   <li><a href="{{ url_for('.index') }}">翻相册</a></li>
-  <li><a href="{{ url_for('.user', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的主页</a></li>
   <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
   <li class="active">《{{ album.title }}》</li>
   <li class="pull-right"><a href="{{ url_for('.albums', username=album.author.username) }}">返回</a></li>
   <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的喜欢</a></li>
-
 </ol>
 
 <div class="page-header">
@@ -158,7 +156,6 @@ a.thumbnail {
     </p>
 </div>
 
-<div class="container">
 <div class="grid row">
             {% for photo in photos %}
             <div class="post grid-item span3">
@@ -202,7 +199,6 @@ a.thumbnail {
             <a href="{{ url_for('.like_album', id=album.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
             {% endif %}
             <span class="badge">{{ album.album_liked.count() }}人喜欢</span>
-    </div>
 
 <div class="text-center">
     {{ macros.pagination_widget(pagination, '.album', id=album.id) }}

@@ -8,9 +8,9 @@ from werkzeug import secure_filename
 
 
 from . import main
-from .forms import TagForm, WallForm, NormalForm, EditProfileForm, EditProfileAdminForm, CommentForm, EditAlbumForm, GuessNumberForm
+from .forms import NewAlbumForm, EditProfileForm, EditProfileAdminForm, CommentForm, EditAlbumForm, AddPhotoForm
 from .. import db
-from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message, AnonymousUser
+from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
 from wall import wall
 from ..decorators import admin_required, permission_required
 import random
@@ -22,6 +22,7 @@ def index():
 
 
 @main.route('/edit-photo/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_photo(id):
     album = Album.query.get_or_404(id)
     photos = album.photos.order_by(Photo.order.asc())
@@ -32,6 +33,7 @@ def edit_photo(id):
 
 
 @main.route('/fast-sort/<int:id>', methods=['GET', 'POST'])
+@login_required
 def fast_sort(id):
     album = Album.query.get_or_404(id)
     photos = album.photos.order_by(Photo.order.asc())
@@ -42,7 +44,8 @@ def fast_sort(id):
 
 
 @main.route('/edit-album/<int:id>', methods=['GET', 'POST'])
-def edit_album(id):
+@login_required
+def edit_album(id):  # todo test if user can edit other people's album
     album = Album.query.get_or_404(id)
     form = EditAlbumForm()
     if form.validate_on_submit():
@@ -65,6 +68,7 @@ def edit_album(id):
 
 
 @main.route('/save-edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def save_edit(id):
     album = Album.query.get_or_404(id)
     photos = album.photos
@@ -96,6 +100,7 @@ def save_photo_edit(id):
 
 
 @main.route('/save-sort/<int:id>', methods=['GET', 'POST'])
+@login_required
 def save_sort(id):
     album = Album.query.get_or_404(id)
     photos = album.photos
@@ -320,7 +325,7 @@ def edit_profile_admin(id):
 def new_album():
     from flask_uploads import UploadSet, configure_uploads, IMAGES
     photos = UploadSet('photos', IMAGES)
-    form = NormalForm()
+    form = NewAlbumForm()
     if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
         if request.method == 'POST' and 'photo' in request.files:
             filename=[]
@@ -344,7 +349,8 @@ def new_album():
                           author=current_user._get_current_object())
             db.session.add(photo)
         db.session.commit()
-        return redirect(url_for('.album', id=album.id))
+        flash(u'相册创建成功！', 'success')
+        return redirect(url_for('.edit_photo', id=album.id))
     return render_template('new_album.html', form=form)
 
 
@@ -353,7 +359,8 @@ def new_album():
 def add_photo(id):
     from flask_uploads import UploadSet, configure_uploads, IMAGES
     photos = UploadSet('photos', IMAGES)
-    form = NormalForm()
+    album = Album.query.get_or_404(id)
+    form = AddPhotoForm()
     if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
         if request.method == 'POST' and 'photo' in request.files:
             filename=[]
@@ -364,55 +371,27 @@ def add_photo(id):
                 url = url.replace("%28", "")
                 url = url.replace("%29", "")
                 filename.append(url)
-        title = form.title.data
-        about = form.about.data
-        author = current_user._get_current_object()
-        album = Album(title=title,
-        about=about, cover=filename[0],
-        author = author)
-        db.session.add(album)
-
         for file in filename:
             photo = Photo(path=file, album=album,
                           author=current_user._get_current_object())
             db.session.add(photo)
         db.session.commit()
+        flash(u'图片添加成功！', 'success')
         return redirect(url_for('.album', id=album.id))
-    return render_template('add_photo.html', form=form)
+    return render_template('add_photo.html', form=form, album=album)
 
 
 @main.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
-    from flask_uploads import UploadSet, configure_uploads, IMAGES
-    photos = UploadSet('photos', IMAGES)
-    form = NormalForm()
-    if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
-        if request.method == 'POST' and 'photo' in request.files:
-            filename=[]
-            for img in request.files.getlist('photo'):
-                photos.save(img)
-                url = photos.url(img.filename)
-                url = url.replace("%20", "_")
-                url = url.replace("%28", "")
-                url = url.replace("%29", "")
-                filename.append(url)
-        title = form.title.data
-        about = form.about.data
-        author = current_user._get_current_object()
-        album = Album(title=title,
-        about=about, cover=filename[0],
-        author = author)
-        db.session.add(album)
+    return render_template('upload.html')
 
-        for file in filename:
-            photo = Photo(path=file, album=album,
-                          author=current_user._get_current_object())
-            db.session.add(photo)
-        db.session.commit()
-        return redirect(url_for('.album', id=album.id))
-    return render_template('upload.html', form=form)
 
+@main.route('/upload-add', methods=['GET', 'POST'])
+@login_required
+def upload_add():
+    id = request.form.get('album')
+    return redirect(url_for('.add_photo', id=id))
 
 @main.route('/follow/<username>')
 @login_required

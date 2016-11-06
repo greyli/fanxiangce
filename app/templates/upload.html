@@ -4,16 +4,33 @@
 {% block title %}翻相册 - 创建{% endblock %}
 {% block page_content %}
 <div class="page-header">
-    <h1>创建相册</h1>
+    <h1>上传照片</h1>
 </div>
 
-<div class="col-md-4">
-    <form class="form form-horizontal" method="POST" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        {{ wtf.form_field(form.title, class="form-control user") }}
-        {{ wtf.form_field(form.about) }}
-        {{ wtf.form_field(form.photo, multiple="multiple") }}
-        {{ wtf.form_field(form.submit) }}
-    </form>
+<ol class="breadcrumb" id="navigation">
+    <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+    <li class="active">上传照片</li>
+    <li class="pull-right"><a href="{{ url_for('.user', username=current_user.username) }}">返回我的主页</a></li>
+</ol>
+
+<div class="row text-center">
+    <div class="col-md-1"></div>
+    <div class="col-md-4 choice">
+        <h2>上传到选定相册</h2>
+        <form action="{{ url_for('.upload_add') }}" method="POST">
+            <select name="album" class="form-control">
+            {% for album in current_user.albums %}
+            <option value="{{ album.id }}">{{ album.title }}</option>
+            {% endfor %}
+            </select><br>
+            <input class="btn btn-primary" type="submit" name="submit" value="提交">&nbsp;&nbsp;
+        </form>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-4 choice">
+        <h2>上传到新相册</h2><br><br><br>
+        <a class="btn btn-success" href="{{ url_for('.new_album') }}">新建相册</a>
+    </div>
 </div>
+
 {% endblock %}

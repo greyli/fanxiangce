@@ -8,16 +8,16 @@
     <h1>相册与图片设置</h1>
 </div>
 <ol class="breadcrumb" id="navigation">
-    <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+    <li><a href="{{ url_for('.index') }}" target="_blank">翻相册</a></li>
     <li class="active">编辑相册信息</li>
-    <li><a href="{{ url_for('.edit_photo', id=album.id) }}">照片编辑与排序</a></li>
-    <li><a href="{{ url_for('.fast_sort', id=album.id) }}">快捷排序</a></li>
+    <li><a href="{{ url_for('.edit_photo', id=album.id) }}" target="_blank">照片编辑与排序</a></li>
+    <li><a href="{{ url_for('.fast_sort', id=album.id) }}" target="_blank">快捷排序</a></li>
     <li class="pull-right"><a href="{{ url_for('.album', id=album.id) }}">返回</a></li>
-    <li class="pull-right"><a href="{{ url_for('.add_photo', id=album.id) }}">添加图片</a></li>
+    <li class="pull-right"><a href="{{ url_for('.add_photo', id=album.id) }}" target="_blank">添加图片</a></li>
 </ol>
 
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-6">
         <form class="form" method="POST">
           {{ form.hidden_tag() }}
           {{ wtf.form_field(form.title) }}
@@ -29,10 +29,9 @@
             {% else %}
              {{ wtf.form_field(form.can_comment) }}
             {% endif %}
-
              <hr>
           {{ wtf.form_field(form.submit) }}
-    </form>
+        </form>
     </div>
 </div>
 {% endblock %}

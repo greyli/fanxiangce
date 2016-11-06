@@ -5,6 +5,10 @@
 {% block head %}
 {{ super() }}
 <style>
+*{
+margin: 0;
+padding: 0;
+}
 .post {
 margin: 40px;
 }
@@ -48,30 +52,105 @@ margin: 40px;
   height: auto;
 }
 
+.user-content {
+    padding-top: 50px;
+    background-image: url(http://127.0.0.1:5000/_uploads/photos/2c0e67b986216c4e40bc94fe609b99f9_r.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: #ccc;
+    color: #fff;
+    }
+
+.user-area {
+    background: linear-gradient(180deg,transparent 0,rgba(0,0,0,.03) 8%,rgba(0,0,0,.11) 21%,rgba(0,0,0,.61) 78%,rgba(0,0,0,.7) 95%,rgba(0,0,0,.7));
+}
+
+.user-area a, .user-area h1 {
+    color: #fff;
+    display: inline;
+}
+
+.user-area p {
+    font-size: 16px;
+}
+.icon-area {
+    padding-top: 80px;
+}
+
+.about-area {
+    padding-top: 120px;
+}
+
+.info-area {
+     padding-top: 160px;
+}
+#likes {
+    color: red;
+}
 </style>
 {% endblock %}
 {% block page_content %}
 
+
+<div class="user-content container-fluid">
+<div class="row user-area">
+    <div class="col-xs-3 icon-area text-center">
+        <p>
+            <img class="img-rounded" src="{{ user.gravatar(size=128) }}">
+        </p>
+    </div>
+    <div class="col-xs-5 about-area">
+        <h1>{{ user.name }}</h1> <i id="likes" class="glyphicon glyphicon-heart"></i> 90<br><br>
+        {% if user.status %}<p>{{ user.status }}</p>{% endif %}
+    </div>
+
+    <div class="col-xs-4 info-area">
+        {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
+            {% if not current_user.is_following(user) %}
+            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
+            {% else %}
+            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">取消关注</a>
+            {% endif %}
+        {% endif %}
+        <a href="{{ url_for('.followers', username=user.username) }}">关注者: <span class="badge">{{ user.followers.count() }}</span></a>
+        <a href="{{ url_for('.followed_by', username=user.username) }}">正在关注: <span class="badge">{{ user.followed.count() }}</span></a>
+        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+        | <span class="label label-default">他/她在关注你</span>
+        {% endif %}<br>
+        {% if user.location %}
+            <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a>
+        {% endif %}
+        {% if current_user.is_administrator() %}
+        <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+        {% endif %}
+        {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
+        {{ moment(user.member_since).format('YYYY/M') }}加入
+    </div>
+</div>
+</div>
+<br>
+
 <ol class="breadcrumb">
   <li><a href="{{ url_for('.index') }}">翻相册</a></li>
-  <li><a href="{{ url_for('.user', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的主页</a></li>
   <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</li>
-  <li class="pull-right"><a href="{{ url_for('.user', username=user.username) }}">返回</a></li>
-    <li class="pull-right"><a href="{{ url_for('main.likes', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</a></li>
+    <li><a href="{{ url_for('main.likes', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</a></li>
+    {% if user == current_user %}
+    <li class="pull-right"><a href="{{ url_for('.edit_profile') }}">编辑资料</a></li>
+    {% endif %}
+    {% if current_user.is_administrator() %}
+    <li class="pull-right"><a href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑 [Admin]</a></li>
+    {% endif %}
 </ol>
-
 <div class="page-header">
-        <!--img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=40) }}"-->
     <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</h3>
-    <p>{{ album_count }}个相册
+    <p>{{ album_count }}个相册 234张照片 1234次浏览
         <a class="pull-right btn" href="{{ url_for('.new_album') }}" title="新建相册">
             <i class="glyphicon glyphicon-plus"></i>
         </a>
-</p>
-
+    </p>
 </div>
 
-<div class="container">
+<div class="text-center container-fluid">
     {% if album_count == 0 %}
     {% if current_user == user %}
     <h3>你还没有相册，快来<a href="{{ url_for('.new_album') }}">创建</a>一个吧！</h3>
@@ -79,7 +158,7 @@ margin: 40px;
     <h3>他/她还没有创建相册。</h3>
     {% endif %}
     {% endif %}
-        <div id="posts" class="row">
+        <div id="posts" class="row text-center">
             {% for album in albums %}
             <div class="post item span3">
               <div class="well">

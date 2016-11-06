@@ -7,12 +7,22 @@
     <h1>创建相册</h1>
 </div>
 
-<div class="col-md-4">
+<ol class="breadcrumb" id="navigation">
+    <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+    <li class="active">新建照片</li>
+    <li class="pull-right"><a href="{{ url_for('.user', username=current_user.username) }}">返回我的主页</a></li>
+</ol>
+
+<div class="col-md-6">
     <form class="form form-horizontal" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         {{ wtf.form_field(form.title, class="form-control user") }}
         {{ wtf.form_field(form.about) }}
         {{ wtf.form_field(form.photo, multiple="multiple") }}
+        {{ wtf.form_field(form.asc_order) }}
+        {{ wtf.form_field(form.is_public) }}
+        {{ wtf.form_field(form.can_comment, checked=True) }}
+         <hr>
         {{ wtf.form_field(form.submit) }}
     </form>
 </div>
