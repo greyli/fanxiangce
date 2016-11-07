@@ -123,7 +123,7 @@ a.thumbnail {
 {% block page_content %}
 
 <ol class="breadcrumb">
-  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+  <li><a href="{{ url_for('.index') }}">首页</a></li>
   <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
   <li class="active">《{{ album.title }}》</li>
   <li class="pull-right"><a href="{{ url_for('.albums', username=album.author.username) }}">返回</a></li>

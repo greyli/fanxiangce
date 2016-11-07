@@ -5,8 +5,16 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>编辑我的资料</h1>
+    <h1>编辑资料</h1>
 </div>
+
+<ol class="breadcrumb" id="navigation">
+    <li><a href="{{ url_for('.index') }}" target="_blank">首页</a></li>
+    <li><a href="{{ url_for('.albums', username=current_user.username) }}">我的相册</a></li>
+    <li class="active">编辑资料</li>
+    <li class="pull-right"><a href="{{ url_for('.albums', username=current_user.username) }}">返回</a></li>
+</ol>
+
 <div class="col-md-6">
     {{ wtf.quick_form(form) }}
 </div>

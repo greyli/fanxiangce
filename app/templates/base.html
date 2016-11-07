@@ -12,6 +12,7 @@
 
 * {
     margin: 0;
+    box-sizing: border-box;
 }
 
 .choice {
@@ -78,8 +79,8 @@ html, body {
             <ul class="nav navbar-nav">
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('main.index') }}">首页</a></li>
-                <li><a href="{{ url_for('main.user', username=current_user.username) }}">我的</a></li>
-                <li><a href="{{ url_for('main.user', username=current_user.username) }}">发现</a></li>
+                <li><a href="{{ url_for('main.albums', username=current_user.username) }}">我的</a></li>
+                <li><a href="{{ url_for('main.index') }}">发现</a></li>
                 <li><a href="/about">关于</a></li>
                 {% else %}
                 <li><a href="/create">体验</a></li>

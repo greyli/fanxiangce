@@ -112,57 +112,54 @@ def save_sort(id):
     return redirect(url_for('.album', id=id))
 
 
-@main.route('/user/<username>', methods=['GET', 'POST'])
-def user(username):
+@main.route('/user/<username>/albums', methods=['GET', 'POST'])
+def albums(username):
     user = User.query.filter_by(username=username).first()
     form = CommentForm()
     if user is None:
         abort(404)
     albums = user.albums.order_by(Album.timestamp.desc()).all()
-    album_count = len(albums)
     photo_count = sum([len(album.photos.order_by(Photo.timestamp.asc()).all()) for album in albums])
-    photo_likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
-    album_likes = user.album_likes.order_by(LikeAlbum.timestamp.desc()).all()
-    photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path': like.like_photo.path} for like in
-                   photo_likes[:2]]
-    album_likes = [{'album': like.like_album, 'photo': like.like_album.photos,
-                    'timestamp': like.timestamp, 'cover': like.like_album.cover} for like in album_likes[:2]]
-
+    if current_user != user:
+        albums = albums.filter_by(is_public=True).all()
+    album_count = len(albums)
     if form.validate_on_submit() and current_user.is_authenticated:
         comment = Message(body=form.body.data,
                           user=user,
                           author=current_user._get_current_object())
         db.session.add(comment)
         flash(u'你的评论已经发表。', 'success')
-        return redirect(url_for('.user', username=username))
+        return redirect(url_for('.albums', username=username))
     comments = user.messages.order_by(Message.timestamp.asc()).all()
-    return render_template('user.html', form=form, user=user, photo_likes=photo_likes, album_likes=album_likes,
-                           albums=albums, comments=comments, album_count=album_count, photo_count=photo_count)
-
-
-@main.route('/user/<username>/albums')
-def albums(username):
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        abort(404)
-    albums = user.albums.order_by(Album.timestamp.desc()).all()
-    if current_user != user:
-        albums = albums.filter_by(is_public=True).all()
-    album_count = len(albums)
-    return render_template('albums.html', user=user, albums=albums, album_count=album_count)
+    return render_template('albums.html', form=form, comments=comments,
+                           user=user, albums=albums, album_count=album_count,
+                           photo_count=photo_count)
 
 
 @main.route('/user/<username>/likes')
 def likes(username):
     user = User.query.filter_by(username=username).first()
-    if user is None or current_user!= user and not user.like_public:
+    if user is None:
         abort(404)
+    if current_user!= user and not user.like_public:
+       return render_template('like_no_public.html', user=user)
     photo_likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
-    album_likes = user.album_likes.order_by(LikeAlbum.timestamp.desc()).all()
     photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path':like.like_photo.path} for like in photo_likes]
+    type = "photo"
+    return render_template('likes.html', user=user, photo_likes=photo_likes, type=type)
+
+@main.route('/user/<username>/likes/album')
+def album_likes(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        abort(404)
+    if current_user!= user and not user.like_public:
+       return render_template('like_no_public.html', user=user)
+    album_likes = user.album_likes.order_by(LikeAlbum.timestamp.desc()).all()
     album_likes = [{'album': like.like_album, 'photo': like.like_album.photos,
                     'timestamp': like.timestamp, 'cover':like.like_album.cover} for like in album_likes]
-    return render_template('likes.html', user=user, photo_likes=photo_likes, album_likes=album_likes)
+    type = "album"
+    return render_template('likes.html', user=user, album_likes=album_likes, type=type)
 
 
 @main.route('/album/<int:id>')

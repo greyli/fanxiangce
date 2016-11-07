@@ -116,7 +116,7 @@ div.comment-form {
 
 {% block page_content %}
 <ol class="breadcrumb" id="navigation">
-    <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+    <li><a href="{{ url_for('.index') }}">首页</a></li>
     <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
     <li><a href="{{ url_for('.album', id=album.id) }}">《{{ album.title }}》</a></li>
     <li class="active">第{{ photo_index }}张</li>
@@ -227,7 +227,7 @@ div.comment-form {
             <div class="col-md-4">
                 <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
             </div>
-        <h4><a href="{{ url_for('.user', username=album.author.username) }}">{{ album.author.name }}</a></h4>
+        <h4><a href="{{ url_for('.albums', username=album.author.username) }}">{{ album.author.name }}</a></h4>
         {% if album.author.status %}<p>{{ album.author.status }}</p>{% else %}<p>-</p>{% endif %}
         </div>
         <br>

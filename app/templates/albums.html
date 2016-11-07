@@ -87,6 +87,61 @@ margin: 40px;
 #likes {
     color: red;
 }
+
+.album-cover, .album-cover:before
+{
+    background: transprent;
+    width: 245px;
+    height: 190px;
+    margin: 5px;
+    border: 3px solid #FFF;
+    box-shadow: 0 0 0 1px #999;
+    position: relative;
+}
+.album-cover:before
+{
+    margin: 0;
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    background: white;
+    z-index: -1;
+}
+
+
+ul.comments {
+    list-style-type: none;
+    padding: 0px;
+    margin: 16px 0px 0px 0px;
+}
+ul.comments li.comment {
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+}
+ul.comments li.comment:nth-child(1) {
+    border-top: 1px solid #e0e0e0;
+}
+ul.comments li.comment:hover {
+    background-color: #f0f0f0;
+}
+div.comment-date {
+    float: right;
+}
+div.comment-author {
+    font-weight: bold;
+}
+div.comment-thumbnail {
+    position: absolute;
+}
+div.comment-content {
+    margin-left: 48px;
+    min-height: 48px;
+}
+div.comment-form {
+    margin: 16px 0px 16px 32px;
+}
+
 </style>
 {% endblock %}
 {% block page_content %}
@@ -112,8 +167,8 @@ margin: 40px;
             <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">取消关注</a>
             {% endif %}
         {% endif %}
-        <a href="{{ url_for('.followers', username=user.username) }}">关注者: <span class="badge">{{ user.followers.count() }}</span></a>
-        <a href="{{ url_for('.followed_by', username=user.username) }}">正在关注: <span class="badge">{{ user.followed.count() }}</span></a>
+        <a href="{{ url_for('.followers', username=user.username) }}"><span class="badge">{{ user.followers.count() }}</span></a>个关注者
+        <a href="{{ url_for('.followed_by', username=user.username) }}">正在关注<span class="badge">{{ user.followed.count() }}</span></a>个人
         {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
         | <span class="label label-default">他/她在关注你</span>
         {% endif %}<br>
@@ -143,7 +198,7 @@ margin: 40px;
 </ol>
 <div class="page-header">
     <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</h3>
-    <p>{{ album_count }}个相册 234张照片 1234次浏览
+    <p>{{ album_count }}个相册 {{ photo_count }}张照片 获得了78个喜欢
         <a class="pull-right btn" href="{{ url_for('.new_album') }}" title="新建相册">
             <i class="glyphicon glyphicon-plus"></i>
         </a>
@@ -161,32 +216,40 @@ margin: 40px;
         <div id="posts" class="row text-center">
             {% for album in albums %}
             <div class="post item span3">
-              <div class="well">
+                  <div class="album-cover">
                 <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}" >
                     <img class="img-responsive portrait" src="{{ album.cover }}">
                 </a>
+                      </div>
                 <div class="info">
                   <h5>{{ album.title }}</h5>
                   <span>{{ album.photos.count() }}张图片</span>
                   <span>创建于{{ moment(album.timestamp).format('L') }}</span>
                 </div>
-              </div>
             </div>
             {% endfor %}
   </div>
 </div>
+
+<hr>
+<div class="row">
+    <h3>留言板</h3>
+    {{ wtf.quick_form(form) }}
+    <div id="comment">
+    {% include '_comments.html' %}
+    </div>
+</div><br>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
+<script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
 <script>
-$.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function(){
-  /* activate jquery isotope */
   $('#posts').imagesLoaded( function(){
     $('#posts').isotope({
       itemSelector : '.item'
     });
   });
-});
 </script>
 {% endblock %}

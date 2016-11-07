@@ -21,18 +21,13 @@
 
 {% if current_user.is_authenticated %}
 <ol class="breadcrumb">
-  <li class="active">翻相册</li>
-  <li class="pull-right"><a href="{{ url_for('.user', username=current_user.username) }}">我的主页</a></li>
-  <li class="pull-right"><a href="{{ url_for('.albums', username=current_user.username) }}">我的相册</li>
-    <li class="pull-right"><a href="{{ url_for('main.likes', username=current_user.username) }}">我的喜欢</a></li>
+  <li class="active">首页</li>
+  <li><a href="{{ url_for('.albums', username=current_user.username) }}">我的相册</a></li>
+    <li><a href="{{ url_for('main.likes', username=current_user.username) }}">我的喜欢</a></li>
 </ol>
 <div class="container">
     <h3>我的关注</h3>
-      </div>
-<form class="form form-control" action="/test" method="post">
-    <input type="text" name="demo">
-    <input type="submit" name="submit" value="submit">
-</form>
+</div>
 {% else %}
 <div class="jumbotron" style="background: #fff; height: 500px;">
   <div class="container" align="center">

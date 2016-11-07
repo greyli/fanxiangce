@@ -12,6 +12,7 @@ class Config:
     UPLOADED_PHOTOS_DEST = r'D:\Projects\fanxiangce\app\static\img'
     # UPLOADS_DEFAULT_URL = 'http://up.imgapi.com/'
     FANXIANGCE_COMMENTS_PER_PAGE = 15
+    # BOOTSTRAP_SERVE_LOCAL = True
     @staticmethod
     def init_app(app):
         pass

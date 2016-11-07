@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}翻相册 - {{ user.username }}的喜欢{% endblock %}
+{% block page_content %}
+<ol class="breadcrumb">
+  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+  <li><a href="{{ url_for('.albums', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</a></li>
+  <li class="active"><a>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</a></li>
+</ol>
+<hr>
+<div class="container">
+    <h2>
+        <a href="{{ url_for('.albums', username=user.username) }}">
+            {{ user.name }}
+        </a>
+    将自己的喜欢设为仅自己可见了，不过你可以看看
+        <a href="{{ url_for('.albums', username=user.username) }}">
+            他/她的相册
+        </a>！
+    </h2>
+</div>
+{% endblock %}

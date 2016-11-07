@@ -13,13 +13,91 @@
 	border-color:#c9c9c9;
 }
 
+.post {
+margin: 40px;
+}
+
+a.thumbnail {
+    margin-bottom: 2px !important;
+}
+
+
+.post h4 {
+  margin-bottom: 9px;
+}
+
+.post h4 a {
+  color: #333;
+}
+
+.post img.image {
+  max-width: 100%;
+  margin-top: 9px;
+}
+
+.info {
+	padding:2px;
+}
+
   .info {
     margin: 5px;
     padding:4px;
     cursor: pointer;
   }
 
+/* responsive media queries */
 
+@media (max-width: 480px) {
+
+}
+
+@media (max-width: 768px) {
+  header h1 small {
+    display: block;
+  }
+
+  header div.description {
+    padding-top: 9px;
+    padding-bottom: 4px;
+  }
+
+  .isotope .item {
+    position: static ! important;
+    -webkit-transform: translate(0px, 0px) ! important;
+       -moz-transform: translate(0px, 0px) ! important;
+            transform: translate(0px, 0px) ! important;
+  }
+}
+
+@media (max-width: 980px) {
+  header p.lead span {
+    display: block;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 768px) {
+
+}
+
+
+@media (min-width: 768px) and (max-width: 980px) {
+  .span3 {
+    width: 352px;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1200px) {
+  .span3 {
+    width: 300px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .span3 {
+    width: 270px;
+  }
+}
+{% if type == 'album' %}
 .thumbnail {
   position: relative;
   width: 250px;
@@ -40,32 +118,61 @@
   width: 100%;
   height: auto;
 }
+
+.album-cover, .album-cover:before
+{
+    background: transprent;
+    width: 245px;
+    height: 190px;
+    margin: 5px;
+    border: 3px solid #FFF;
+    box-shadow: 0 0 0 1px #999;
+    position: relative;
+}
+.album-cover:before
+{
+    margin: 0;
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    background: white;
+    z-index: -1;
+}
+
+.grid-item {
+    margin: 40px;
+    margin-bottom: 60px;
+}
+{% endif %}
 </style>
 {% endblock %}
 {% block page_content %}
 <ol class="breadcrumb">
-  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
-  <li class="active"><a href="{{ url_for('.user', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的主页</a></li>
+  <li><a href="{{ url_for('.index') }}">首页</a></li>
   <li><a href="{{ url_for('.albums', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</a></li>
   <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</li>
   <li class="pull-right"><a href="{{ url_for('.albums', username=user.username) }}">返回</a></li>
 </ol>
 
-<div class="page-header">
-    <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</h3>
-    <p>{{ user.photo_likes.count() }}张图片 {{ user.album_likes.count() }}个相册
-        <a class="btn pull-right"><i class="glyphicon glyphicon-cog"></i></a>
-</p>
+<div class="container-fluid">
+    <h2>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</h2><br>
 </div>
+<ul class="nav nav-tabs">
+    <li {% if type == 'photo' %}class="active"{% endif %}><a href="{{ url_for('.likes', username=user.username) }}">照片<span class="badge">{{ user.photo_likes.count() }}</span></a></li>
+    <li {% if type == 'album' %}class="active"{% endif %}><a href="{{ url_for('.album_likes', username=user.username) }}">相册<span class="badge">{{ user.album_likes.count() }}</span></a></li>
+    <li class="pull-right"><a class="btn pull-right"><i class="glyphicon glyphicon-cog"></i></a></li>
+</ul><br>
 
 <div class="container">
     {% if album_count == 0 %}
-    <h2>你还没有标记过喜欢，快来<a href="{{ url_for('.normal') }}">探索</a>一下吧！</h2>
+    <h2>你还没有标记过喜欢，快来<a href="">探索</a>一下吧！</h2>
     {% endif %}
-<div class="row">
-            {% for like in album_likes %}
-        <div class="col-md-4">
-              <div class="well">
+    <div class="row grid">
+    {% if type == 'album' %}
+        {% for like in album_likes %}
+        <div class="grid-item">
+              <div class="album-cover">
                 <a class="thumbnail" href="{{ url_for('.album', id=like.album.id) }}" >
                     <img class="img-responsive portrait" src="{{ like.cover }}">
                 </a>
@@ -80,12 +187,14 @@
               </div>
         </div>
             {% endfor %}
+    {% endif %}
 
+    {% if type == 'photo' %}
             {% for like in photo_likes %}
-            <div class="col-md-4">
-                <div class="well">
+            <div class="">
+                <div class="post span3 grid-item">
                 <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}" >
-                    <img class="img-responsive portrait" src="{{ like.path }}">
+                    <img class="img-responsive" src="{{ like.path }}">
                 </a>
                 <div class="info">
                   <span>标记于{{ moment(like.timestamp).format('L') }}</span>
@@ -96,7 +205,7 @@
               </div>
             </div>
             {% endfor %}
-
+        {% endif %}
         <!-- 图片删除确认弹窗 用于喜欢页面和上传页面-->
         <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
           <div class="modal-dialog modal-sm" role="document">
@@ -118,15 +227,31 @@
 
 {% block scripts %}
 {{ super() }}
+<script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
 <script>
+$('.grid').imagesLoaded( function(){
+    $('.grid').isotope({
+      itemSelector : '.grid-item',
+      {% if type == 'photo' %}
+      layoutMode: 'masonry',
+      {% endif %}
+    });
+  });
 </script>
 
 <script>
 $('#confirm-delete').on('show.bs.modal', function(e) {
  $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href')); // redirect the url
  $(".btn-ok").click(function() {
-    $(e.relatedTarget).parent().parent().parent().slideUp(); // delete the photo
+    {% if type == 'photo' %}
+    var $removeItem = $(e.relatedTarget).parent().parent();
+    {% else %}
+    var $removeItem = $(e.relatedTarget).parent().parent().parent();
+    {% endif %}
+    $('.grid').isotope( 'remove',  $removeItem );
     $('#confirm-delete .close').click(); // close modal
+    $('.grid').isotope()
  });
 });
 </script>
