@@ -135,7 +135,9 @@ a.thumbnail {
     <p>{{ album.about }}</p>
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
         <span class="pull-right">  &nbsp;
-            <a class="btn btn-default btn-xs" href="{{ photos[0].path }}" data-lightbox="slide">幻灯片</a>
+            {% if not no_pic %}
+            <a class="btn btn-default btn-xs" href="{{ album.photos[0].path }}" data-lightbox="slide">幻灯片</a>
+            {% endif %}
             <a class="btn btn-default btn-xs row-btn">对齐</a>
             <a class="btn btn-default btn-xs mas-btn">瀑布流</a>
             {% if current_user == album.author %}
@@ -155,7 +157,14 @@ a.thumbnail {
         </span>
     </p>
 </div>
-
+<div>
+    <h3>
+        {% if no_pic == True %}
+        这个相册还没有照片，点击右侧按钮上传图片。
+        <br><br><br>
+        {% endif %}
+    </h3>
+</div>
 <div class="grid row">
             {% for photo in photos %}
             <div class="post grid-item span3">

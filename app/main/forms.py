@@ -20,8 +20,6 @@ class EditProfileForm(Form):
     website = StringField(u'网站', validators=[Length(0,64), Optional(),
                          ],
                           render_kw={"placeholder": "http://..."})
-    about_me = TextAreaField(u'关于我', validators=[Length(0,2000)],
-                             render_kw={"placeholder": u"我是......", "rows": 5})
     submit = SubmitField(u'提交')
 
     def validate_website(self, field):

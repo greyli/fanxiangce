@@ -111,6 +111,28 @@ div.comment-form {
 .about-btn, .about-form {
     display: none;
 }
+
+.album-cover, .album-cover:before
+{
+    background: transprent;
+    width: 245px;
+    height: 190px;
+    margin: 5px;
+    border: 3px solid #FFF;
+    box-shadow: 0 0 0 1px #999;
+    position: relative;
+}
+.album-cover:before
+{
+    margin: 0;
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    background: white;
+    z-index: -1;
+}
+
 </style>
 {% endblock %}
 
@@ -229,14 +251,31 @@ div.comment-form {
             </div>
         <h4><a href="{{ url_for('.albums', username=album.author.username) }}">{{ album.author.name }}</a></h4>
         {% if album.author.status %}<p>{{ album.author.status }}</p>{% else %}<p>-</p>{% endif %}
+            {% if album.author != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
+            {% if not current_user.is_following(album.author) %}
+            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
+            {% else %}
+            <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  已关注
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a href="{{ url_for('.unfollow', username=user.username) }}">取消关注</a></li>
+                </ul>
+              </div>
+            {% endif %}
+            {% endif %}
         </div>
+
         <br>
         <hr>
-        <p>{{ album.title }}（{{ album.photos.count() }}张照片）</p>
-        <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
-            <img  class="img-responsive  portrait" src="{{ album.cover }}">
-        </a>
-
+        <p><a href="{{ url_for('.album', id=album.id )}}">{{ album.title }}</a>（{{ album.photos.count() }}张照片）</p>
+        <div class="album-cover">
+            <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
+                <img  class="img-responsive  portrait" src="{{ album.cover }}">
+            </a>
+        </div>
     </div>
 </div>
 <div class="row">

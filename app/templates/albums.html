@@ -144,29 +144,38 @@ div.comment-form {
 
 </style>
 {% endblock %}
+
 {% block page_content %}
-
-
 <div class="user-content container-fluid">
-<div class="row user-area">
-    <div class="col-xs-3 icon-area text-center">
-        <p>
-            <img class="img-rounded" src="{{ user.gravatar(size=128) }}">
-        </p>
-    </div>
-    <div class="col-xs-5 about-area">
-        <h1>{{ user.name }}</h1> <i id="likes" class="glyphicon glyphicon-heart"></i> 90<br><br>
-        {% if user.status %}<p>{{ user.status }}</p>{% endif %}
-    </div>
+    <div class="row user-area">
+        <div class="col-xs-3 icon-area text-center">
+            <p>
+                <img class="img-rounded" src="{{ user.gravatar(size=128) }}">
+            </p>
+        </div>
+        <div class="col-xs-5 about-area">
+            <h1>{{ user.name }}</h1> <i id="likes" class="glyphicon glyphicon-heart"></i> 90<br><br>
+            {% if user.status %}<p>{{ user.status }}</p>{% endif %}
+        </div>
 
-    <div class="col-xs-4 info-area">
-        {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
+        <div class="col-xs-4 info-area">
+            {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
             {% if not current_user.is_following(user) %}
             <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
             {% else %}
-            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">取消关注</a>
-            {% endif %}
+            <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  已关注
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a href="{{ url_for('.unfollow', username=user.username) }}">取消关注</a></li>
+                </ul>
+            </div>
         {% endif %}
+        {% endif %}
+        </div>
+
         <a href="{{ url_for('.followers', username=user.username) }}"><span class="badge">{{ user.followers.count() }}</span></a>个关注者
         <a href="{{ url_for('.followed_by', username=user.username) }}">正在关注<span class="badge">{{ user.followed.count() }}</span></a>个人
         {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
@@ -182,7 +191,6 @@ div.comment-form {
         {{ moment(user.member_since).format('YYYY/M') }}加入
     </div>
 </div>
-</div>
 <br>
 
 <ol class="breadcrumb">
@@ -196,6 +204,7 @@ div.comment-form {
     <li class="pull-right"><a href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑 [Admin]</a></li>
     {% endif %}
 </ol>
+
 <div class="page-header">
     <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</h3>
     <p>{{ album_count }}个相册 {{ photo_count }}张照片 获得了78个喜欢
@@ -213,25 +222,29 @@ div.comment-form {
     <h3>他/她还没有创建相册。</h3>
     {% endif %}
     {% endif %}
-        <div id="posts" class="row text-center">
-            {% for album in albums %}
-            <div class="post item span3">
-                  <div class="album-cover">
+    <div id="posts" class="row text-center">
+        {% for album in albums %}
+        {% if album.is_public %}
+        <div class="post item span3">
+              <div class="album-cover">
                 <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}" >
                     <img class="img-responsive portrait" src="{{ album.cover }}">
                 </a>
-                      </div>
-                <div class="info">
-                  <h5>{{ album.title }}</h5>
+              </div>
+              <div class="info">
+                  <h5><a href="{{ url_for('.album', id=album.id) }}">{{ album.title }}</a></h5>
+                  <p>{{ album.about[:30] }}</p>
                   <span>{{ album.photos.count() }}张图片</span>
-                  <span>创建于{{ moment(album.timestamp).format('L') }}</span>
-                </div>
-            </div>
-            {% endfor %}
-  </div>
+                  <span>创建于{{ moment(album.timestamp).format('L') }}</span><hr>
+              </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
 </div>
 
 <hr>
+
 <div class="row">
     <h3>留言板</h3>
     {{ wtf.quick_form(form) }}

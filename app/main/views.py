@@ -120,8 +120,6 @@ def albums(username):
         abort(404)
     albums = user.albums.order_by(Album.timestamp.desc()).all()
     photo_count = sum([len(album.photos.order_by(Photo.timestamp.asc()).all()) for album in albums])
-    if current_user != user:
-        albums = albums.filter_by(is_public=True).all()
     album_count = len(albums)
     if form.validate_on_submit() and current_user.is_authenticated:
         comment = Message(body=form.body.data,
@@ -147,6 +145,7 @@ def likes(username):
     photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path':like.like_photo.path} for like in photo_likes]
     type = "photo"
     return render_template('likes.html', user=user, photo_likes=photo_likes, type=type)
+
 
 @main.route('/user/<username>/likes/album')
 def album_likes(username):
@@ -175,7 +174,10 @@ def album(id):
         pagination = album.photos.order_by(Photo.order.asc()).paginate(
             page, per_page=20, error_out=False)
     photos = pagination.items
-
+    if len(photos) == 0:
+        no_pic = True
+    else:
+        no_pic = False
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.asc()).all()
@@ -197,7 +199,7 @@ def album(id):
         html = wall()
         return render_template('wall.html', album=album, html=html)
     return render_template('album.html', album=album, photos=photos, pagination=pagination,
-                           like_list=like_list, likes=likes, is_liked=is_liked)
+                           like_list=like_list, likes=likes, is_liked=is_liked, no_pic=no_pic)
 
 
 @main.route('/photo/<int:id>', methods=['GET', 'POST'])
@@ -277,14 +279,13 @@ def edit_profile():
         current_user.status = form.status.data
         current_user.location = form.location.data
         current_user.website = form.website.data
-        current_user.about_me = form.about_me.data
         db.session.add(current_user)
         flash(u'你的资料已经更新。', 'success')
         return redirect(url_for('.user', username=current_user.username))
     form.name.data = current_user.name
     form.location.data = current_user.location
+    form.status.data = current_user.status
     form.website.data = current_user.website
-    form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', form=form)
 
 
@@ -390,6 +391,7 @@ def upload_add():
     id = request.form.get('album')
     return redirect(url_for('.add_photo', id=id))
 
+
 @main.route('/follow/<username>')
 @login_required
 # @permission_required(Permission.FOLLOW)
@@ -489,6 +491,7 @@ def like_album(id):
         flash(u'相册已经添加到你的喜欢里了。', 'success')
     return redirect(url_for('.album', id=id))
 
+
 @main.route('/photo/unlike/<id>')
 @login_required
 #@permission_required(Permission.FOLLOW)# todo follow > like
@@ -500,6 +503,7 @@ def unlike_photo(id):
     if current_user.is_like_photo(photo):
         current_user.unlike_photo(photo)
     return (''), 204
+
 
 @main.route('/album/unlike/<id>')
 @login_required
@@ -513,12 +517,14 @@ def unlike_album(id):
         current_user.unlike_album(album)
     return (''), 204
 
+
 def redirect_url(default='index'):
     return request.args.get('next') or \
            request.referrer or \
            url_for(default)
 
 # usage: return redirect(redirect_url())
+
 
 @main.route('/delete/photo/<id>')
 @login_required
@@ -534,6 +540,7 @@ def delete_photo(id):
     db.session.commit()
     flash(u'删除成功。', 'success')
     return redirect(url_for('.album', id=album.id))
+
 
 @main.route('/delete/edit-photo/<id>')
 @login_required
