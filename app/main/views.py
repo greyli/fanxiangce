@@ -118,7 +118,10 @@ def albums(username):
     form = CommentForm()
     if user is None:
         abort(404)
-    albums = user.albums.order_by(Album.timestamp.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    pagination = user.albums.order_by(Album.timestamp.desc()).paginate(
+            page, per_page=current_app.config['FANXIANGCE_ALBUMS_PER_PAGE'], error_out=False)
+    albums = pagination.items
     photo_count = sum([len(album.photos.order_by(Photo.timestamp.asc()).all()) for album in albums])
     album_count = len(albums)
     if form.validate_on_submit() and current_user.is_authenticated:
@@ -131,7 +134,7 @@ def albums(username):
     comments = user.messages.order_by(Message.timestamp.asc()).all()
     return render_template('albums.html', form=form, comments=comments,
                            user=user, albums=albums, album_count=album_count,
-                           photo_count=photo_count)
+                           photo_count=photo_count, pagination=pagination)
 
 
 @main.route('/user/<username>/likes')
@@ -141,10 +144,14 @@ def likes(username):
         abort(404)
     if current_user!= user and not user.like_public:
        return render_template('like_no_public.html', user=user)
-    photo_likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    pagination = user.photo_likes.order_by(LikePhoto.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FANXIANGCE_PHOTO_LIKES_PER_PAGE'], error_out=False)
+    photo_likes = pagination.items
     photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path':like.like_photo.path} for like in photo_likes]
     type = "photo"
-    return render_template('likes.html', user=user, photo_likes=photo_likes, type=type)
+    return render_template('likes.html', user=user, photo_likes=photo_likes,
+                           pagination=pagination, type=type)
 
 
 @main.route('/user/<username>/likes/album')
@@ -154,11 +161,15 @@ def album_likes(username):
         abort(404)
     if current_user!= user and not user.like_public:
        return render_template('like_no_public.html', user=user)
-    album_likes = user.album_likes.order_by(LikeAlbum.timestamp.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    pagination = user.album_likes.order_by(LikeAlbum.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FANXIANGCE_ALBUM_LIKES_PER_PAGE'], error_out=False)
+    album_likes = pagination.items
     album_likes = [{'album': like.like_album, 'photo': like.like_album.photos,
                     'timestamp': like.timestamp, 'cover':like.like_album.cover} for like in album_likes]
     type = "album"
-    return render_template('likes.html', user=user, album_likes=album_likes, type=type)
+    return render_template('likes.html', user=user, album_likes=album_likes,
+                           pagination=pagination, type=type)
 
 
 @main.route('/album/<int:id>')
@@ -169,10 +180,12 @@ def album(id):
     page = request.args.get('page', 1, type=int)
     if album.asc_order:
         pagination = album.photos.order_by(Photo.order.asc()).paginate(
-            page, per_page=20, error_out=False)
+            page, per_page=current_app.config['FANXIANGCE_PHOTOS_PER_PAGE'],
+            error_out=False)
     else:
         pagination = album.photos.order_by(Photo.order.asc()).paginate(
-            page, per_page=20, error_out=False)
+            page, per_page=current_app.config['FANXIANGCE_PHOTOS_PER_PAGE'],
+            error_out=False)
     photos = pagination.items
     if len(photos) == 0:
         no_pic = True
@@ -234,8 +247,6 @@ def photo(id):
         error_out=False)
     comments = pagination.items
     amount = len(comments)
-    if amount != 0:
-        amount = range(amount)
     return render_template('photo.html', form=form, album=album, amount=amount,
                            like_list=like_list, photo=photo, pagination=pagination,
                            comments=comments, photo_index=photo_index, photo_sum=photo_sum)

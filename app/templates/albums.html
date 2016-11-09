@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
 {% block title %}翻相册 - 我的相册{% endblock %}
 {% block head %}
@@ -233,7 +234,6 @@ div.comment-form {
               </div>
               <div class="info">
                   <h5><a href="{{ url_for('.album', id=album.id) }}">{{ album.title }}</a></h5>
-                  <p>{{ album.about[:30] }}</p>
                   <span>{{ album.photos.count() }}张图片</span>
                   <span>创建于{{ moment(album.timestamp).format('L') }}</span><hr>
               </div>
@@ -242,7 +242,9 @@ div.comment-form {
         {% endfor %}
     </div>
 </div>
-
+<div class="text-center">
+    {{ macros.pagination_widget(pagination, '.albums', username=user.username) }}
+</div>
 <hr>
 
 <div class="row">

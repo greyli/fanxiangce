@@ -69,8 +69,8 @@
     }
 
 .photo img{
-    max-height: 650px;
-    max-width: 700px;
+    max-height: 700px;
+    max-width: 100%;
     width: expression(this.offsetWidth > 700 ? "700px" : "auto"); /* IE6 */
 }
 
@@ -147,7 +147,7 @@ div.comment-form {
 </ol>
 
 <div class="row" id="image">
-    <div class="col-md-8">
+    <div class="col-md-9">
         <div class="photo container-fluid">
         <a href="{{ url_for('.photo_next', id=photo.id)}}" title="点击跳到下一张">
             <img src="{{ photo.path }}">
@@ -205,23 +205,28 @@ div.comment-form {
     </div>
         <hr>
         {% if album.can_comment == True %}
-        <div class="comment container-fluid">
-        {{ wtf.quick_form(form) }}
-        <div id="comment">
-        {% include '_comments.html' %}
-        {% if amount != 0 %}
-            <div class="pagination">
-                {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
-            </div>
-        {% endif %}
-        </div>
-        </div>
+            {% if amount == 0 %}
+                <div class="comment container-fluid">
+                {{ wtf.quick_form(form) }}
+                </div>
+            {% else %}
+                <h4>共{{ amount }}个留言</h4>
+                <div id="comment">
+                {% include '_comments.html' %}
+                <div class="pagination">
+                    {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
+                </div>
+                </div>
+                <div class="comment container-fluid">
+                {{ wtf.quick_form(form) }}
+                </div>
+            {% endif %}
         {% else %}
-        <p>评论被作者关闭。</p>
+            <p>评论被作者关闭。</p>
         {% endif %}
     </div>
 
-    <div class="info col-md-4" >
+    <div class="info col-md-3" >
         <div class="view pull-right">
             <a  class="btn" href="{{ photo.path }}" data-lightbox="view" title="">
                 <i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;

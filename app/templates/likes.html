@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
 {% block title %}翻相册 - 我的相册{% endblock %}
 {% block head %}
@@ -223,6 +224,14 @@ a.thumbnail {
         </div><!-- /.modal -->
       </div>
     </div>
+
+<div class="text-center">
+    {% if type == 'photo' %}
+    {{ macros.pagination_widget(pagination, '.likes', username=user.username) }}
+    {% else %}
+    {{ macros.pagination_widget(pagination, '.album_likes', username=user.username) }}
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}
