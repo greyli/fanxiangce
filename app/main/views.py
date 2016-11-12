@@ -8,7 +8,8 @@ from werkzeug import secure_filename
 
 
 from . import main
-from .forms import NewAlbumForm, EditProfileForm, EditProfileAdminForm, CommentForm, EditAlbumForm, AddPhotoForm
+from .forms import NewAlbumForm, EditProfileAdminForm, \
+    CommentForm, EditAlbumForm, AddPhotoForm, SettingForm
 from .. import db
 from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
 from wall import wall
@@ -282,22 +283,30 @@ def photo_previous(id):
     return redirect(url_for('.photo', id=photo.id))
 
 
-@main.route('/edit-profile', methods=['GET', 'POST'])
-def edit_profile():
-    form = EditProfileForm()
+@main.route('/setting', methods=['GET', 'POST'])
+@login_required
+def setting():
+    form = SettingForm()
     if form.validate_on_submit():
         current_user.name = form.name.data
         current_user.status = form.status.data
         current_user.location = form.location.data
         current_user.website = form.website.data
+        # current_user.like_public = form.like_public.data
         db.session.add(current_user)
-        flash(u'你的资料已经更新。', 'success')
-        return redirect(url_for('.user', username=current_user.username))
+        flash(u'你的设置已经更新。', 'success')
+        return redirect(url_for('.albums', username=current_user.username))
     form.name.data = current_user.name
     form.location.data = current_user.location
     form.status.data = current_user.status
     form.website.data = current_user.website
-    return render_template('edit_profile.html', form=form)
+    return render_template('setting.html', form=form, user=current_user)
+
+
+@main.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    return redirect(url_for('.setting') + '#profile')
 
 
 @main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])

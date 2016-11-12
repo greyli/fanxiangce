@@ -13,13 +13,14 @@ photos = UploadSet('photos', IMAGES)
 from ..models import User, Role
 
 
-class EditProfileForm(Form):
+class SettingForm(Form):
     name = StringField(u'姓名或昵称', validators=[Length(0, 64)])
     status = StringField(u'签名档', validators=[Length(0, 64)])
     location = StringField(u'城市', validators=[Length(0,64)])
     website = StringField(u'网站', validators=[Length(0,64), Optional(),
                          ],
                           render_kw={"placeholder": "http://..."})
+    like_public = BooleanField(u'公开我的喜欢')
     submit = SubmitField(u'提交')
 
     def validate_website(self, field):
@@ -79,12 +80,14 @@ class NewAlbumForm(Form):
     can_comment = BooleanField(u'允许评论', render_kw={'checked': True})
     submit = SubmitField(u'提交')
 
+
 class AddPhotoForm(Form):
     photo = FileField(u'图片', validators=[
         FileRequired(),
         FileAllowed(photos, u'只能上传图片！')
     ])
     submit = SubmitField(u'提交')
+
 
 class EditAlbumForm(Form):
     title = StringField(u'标题')
@@ -94,6 +97,7 @@ class EditAlbumForm(Form):
     is_public = BooleanField(u'私密相册（右侧滑出信息提示：勾选后相册仅自己可见）')
     can_comment = BooleanField(u'允许评论')
     submit = SubmitField(u'提交')
+
 
 class GuessNumberForm(Form):
     number = IntegerField(u'输入数字：', validators=[Required(u'数字不能为空！'), NumberRange(0, 1000, u'请输入0~1000以内的数字！')])
