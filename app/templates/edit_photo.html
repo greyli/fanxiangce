@@ -88,7 +88,7 @@
     <li class="pull-right"><a href="{{ url_for('.add_photo', id=album.id) }}" target="_blank">添加图片</a></li>
 </ol>
 
-<form action="{{ url_for('.save_edit', id=album.id) }}" method="POST">
+<form action="{{ url_for('.edit_photo', id=album.id) }}" method="POST">
     <div class="sort-area">
     <div class="row">
     <section id="wrapper">

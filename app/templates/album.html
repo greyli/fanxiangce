@@ -136,7 +136,7 @@ a.thumbnail {
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
         <span class="pull-right">  &nbsp;
             {% if not no_pic %}
-            <a class="btn btn-default btn-xs" href="{{ album.photos[0].path }}" data-lightbox="slide">幻灯片</a>
+            <a class="btn btn-default btn-xs" href="{{ photos[0].path }}" data-lightbox="slide" title="<a href={{ url_for('.photo', id=photos[0].id) }}>跳转到图片页面</a>">幻灯片</a>
             {% endif %}
             <a class="btn btn-default btn-xs row-btn">对齐</a>
             <a class="btn btn-default btn-xs mas-btn">瀑布流</a>
@@ -168,7 +168,7 @@ a.thumbnail {
 <div class="grid row">
             {% for photo in photos %}
             <div class="post grid-item span3">
-              <div class="">
+                <a style="display:none" href="{{ photo.path}} " data-lightbox="slide" title="<a href={{ url_for('.photo', id=photo.id) }}>跳转到图片页面</a>"></a>
                 <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
@@ -176,7 +176,6 @@ a.thumbnail {
                     <a class="comment" href="{{ url_for('.photo', id=photo.id) }}#comment">评论 <span class="badge">{{ photo.comments.count() }}</span></a>
                     喜欢 <span class="badge">{{ photo.photo_liked.count() }}</span>
               </div>
-            </div>
             </div>
             {% endfor %}
 </div>

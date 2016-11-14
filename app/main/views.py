@@ -27,9 +27,19 @@ def index():
 def edit_photo(id):
     album = Album.query.get_or_404(id)
     photos = album.photos.order_by(Photo.order.asc())
+    if request.method == 'POST':
+        for photo in photos:
+            photo.about = request.form[str(photo.id)]
+            photo.order = request.form["order-" + str(photo.id)]
+            db.session.add(photo)
+        album.cover = request.form["cover"]
+        db.session.add(album)
+        db.session.commit()
+        flash(u'更改已保存。', 'success')
     enu_photos = []
     for index, photo in enumerate(photos):
         enu_photos.append((index, photo))
+
     return render_template('edit_photo.html', album=album, photos=photos, enu_photos=enu_photos)
 
 
@@ -151,6 +161,7 @@ def likes(username):
     photo_likes = pagination.items
     photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path':like.like_photo.path} for like in photo_likes]
     type = "photo"
+    session['email'] = 'example@flask.com'
     return render_template('likes.html', user=user, photo_likes=photo_likes,
                            pagination=pagination, type=type)
 

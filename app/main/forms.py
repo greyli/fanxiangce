@@ -1,5 +1,5 @@
 # -*-coding: utf-8-*-
-from flask_wtf import Form
+from flask_wtf import Form, RecaptchaField
 from wtforms import StringField, SubmitField, RadioField, PasswordField, BooleanField, FileField, \
                     TextAreaField, SelectField, IntegerField
 from wtforms.validators import Required, Length, Email, Regexp, EqualTo, URL, Optional, NumberRange
@@ -21,6 +21,7 @@ class SettingForm(Form):
                          ],
                           render_kw={"placeholder": "http://..."})
     like_public = BooleanField(u'公开我的喜欢')
+    recaptcha = RecaptchaField()
     submit = SubmitField(u'提交')
 
     def validate_website(self, field):

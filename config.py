@@ -16,6 +16,7 @@ class Config:
     FANXIANGCE_PHOTOS_PER_PAGE = 20
     FANXIANGCE_ALBUM_LIKES_PER_PAGE = 12
     FANXIANGCE_PHOTO_LIKES_PER_PAGE = 20
+    RECAPTCHA_PUBLIC_KEY = 'lll'
     # BOOTSTRAP_SERVE_LOCAL = True
     @staticmethod
     def init_app(app):
