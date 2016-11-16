@@ -136,7 +136,7 @@ a.thumbnail {
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
         <span class="pull-right">  &nbsp;
             {% if not no_pic %}
-            <a class="btn btn-default btn-xs" href="{{ photos[0].path }}" data-lightbox="slide" title="<a href={{ url_for('.photo', id=photos[0].id) }}>跳转到图片页面</a>">幻灯片</a>
+            <a class="btn btn-default btn-xs" href="{{ photos[0].path }}" data-lightbox="slide" title="<a href={{ url_for('.photo', id=photos[0].id) }}><br>跳转到图片页面</a>">幻灯片</a>
             {% endif %}
             <a class="btn btn-default btn-xs row-btn">对齐</a>
             <a class="btn btn-default btn-xs mas-btn">瀑布流</a>

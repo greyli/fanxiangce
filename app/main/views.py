@@ -5,6 +5,7 @@ from flask import render_template, session, redirect, \
     url_for, flash, abort, request, current_app
 from flask_login import login_required, current_user
 from werkzeug import secure_filename
+from sqlalchemy.sql import func
 
 
 from . import main
@@ -20,6 +21,28 @@ import random
 @main.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
+
+
+@main.route('/explore', methods=['GET', 'POST'])
+def explore():
+    photos = Photo.query.order_by(Photo.timestamp.desc()).all()
+    type = "new"
+    return render_template('explore.html', photos=photos, type=type)
+
+
+@main.route('/explore/hot', methods=['GET', 'POST'])
+def explore_hot():
+    photos = Photo.query.all()
+    result = {}
+    for photo in photos:
+        result[photo] = len(list(photo.photo_liked))
+    print result
+    sorted_photo = sorted(result.items(), key = lambda x: x[1], reverse=True)
+    temp = []
+    for photo in sorted_photo:
+        temp.append(photo[0])
+    type = "hot"
+    return render_template('explore.html', photos=temp, type=type)
 
 
 @main.route('/edit-photo/<int:id>', methods=['GET', 'POST'])
@@ -241,7 +264,7 @@ def photo(id):
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
         likes = [{'id': like.like_photo, 'timestamp': like.timestamp, 'path': like.like_photo.path, 'liked':like.photo_liked} for like in likes]
-        like_list = [like['path'] for like in likes]
+        like_list = [like['id'] for like in likes]
     else:
         likes = ""
         like_list = []

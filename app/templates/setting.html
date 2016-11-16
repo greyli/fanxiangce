@@ -17,10 +17,16 @@
     <form class="form form-horizontal" method="POST">
         {{ form.hidden_tag() }}
         <h2 id="profile">编辑资料</h2><hr>
-        {{ wtf.form_field(form.name) }}
+        {{ wtf.form_field(form.name, class="form-control user-icon") }}
         {{ wtf.form_field(form.status) }}
         {{ wtf.form_field(form.location) }}
         {{ wtf.form_field(form.website) }}
+        <div class="form-group has-feedback">
+    <label class="control-label">Username</label>
+
+    <input type="text" class="form-control" placeholder="Username" />
+<i class="glyphicon glyphicon-user form-control-feedback"></i>
+</div>
         <h2 id="privacy">隐私设置</h2><hr>
         {% if user.like_public %}
         {{ wtf.form_field(form.like_public, checked=True) }}
@@ -29,7 +35,6 @@
         {% endif %}
         <h2>头像与背景</h2><hr>
         <hr>
-        {{ wtf.form_field(form.recaptcha) }}
         {{ wtf.form_field(form.submit) }}
     </form>
 </div>

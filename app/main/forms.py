@@ -1,5 +1,5 @@
 # -*-coding: utf-8-*-
-from flask_wtf import Form, RecaptchaField
+from flask_wtf import Form
 from wtforms import StringField, SubmitField, RadioField, PasswordField, BooleanField, FileField, \
                     TextAreaField, SelectField, IntegerField
 from wtforms.validators import Required, Length, Email, Regexp, EqualTo, URL, Optional, NumberRange
@@ -21,7 +21,6 @@ class SettingForm(Form):
                          ],
                           render_kw={"placeholder": "http://..."})
     like_public = BooleanField(u'公开我的喜欢')
-    recaptcha = RecaptchaField()
     submit = SubmitField(u'提交')
 
     def validate_website(self, field):
@@ -94,7 +93,7 @@ class EditAlbumForm(Form):
     title = StringField(u'标题')
     about = TextAreaField(u'介绍', render_kw={'rows': 8})
     asc_order = SelectField(u'显示顺序',
-                             choices=[('True', u'按上传时间倒序排列'), ('False', u'按上传时间倒序排列')])
+                             choices=[("1", u'按上传时间倒序排列'), ("0", u'按上传时间倒序排列')])
     is_public = BooleanField(u'私密相册（右侧滑出信息提示：勾选后相册仅自己可见）')
     can_comment = BooleanField(u'允许评论')
     submit = SubmitField(u'提交')
