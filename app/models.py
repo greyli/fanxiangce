@@ -308,6 +308,11 @@ class User(UserMixin, db.Model):
     def is_like_album(self, album):
         return self.album_likes.filter_by(like_album_id=album.id).first() is not None
 
+    @property
+    def followed_photos(self):
+        return Photo.query.join(Follow, Follow.followed_id == Photo.author_id) \
+            .filter(Follow.follower_id == self.id)
+
     def __repr__(self):
         return '<Role %r>' % self.name
 

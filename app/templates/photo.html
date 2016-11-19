@@ -157,13 +157,13 @@ div.comment-form {
             {% if photo.about %}
             <p class="about-text">
                 {{ photo.about }}
-                {% if current_user.is_authenticated %}
+                {% if current_user.is_authenticated and current_user == photo.author %}
                 <a class="add-about label label-xs label-default">修改<i class="glyphicon glyphicon-edit"></i></a>
                 {% endif %}
             </p>
             {% else %}
             <p class="about-text">
-                {% if current_user.is_authenticated %}
+                {% if current_user.is_authenticated and current_user == photo.author %}
                 <a class="add-about label label-xs label-default">添加描述<i class="glyphicon glyphicon-edit"></i></a>
                 {% endif %}
             </p>
@@ -266,7 +266,7 @@ div.comment-form {
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="{{ url_for('.unfollow', username=user.username) }}">取消关注</a></li>
+                  <li><a href="{{ url_for('.unfollow', username=album.author.username) }}">取消关注</a></li>
                 </ul>
               </div>
             {% endif %}

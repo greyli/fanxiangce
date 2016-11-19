@@ -117,6 +117,10 @@ a.thumbnail {
 
     background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
     }
+
+ .hide-photo {
+    display: none;
+}
 </style>
 {% endblock %}
 
@@ -136,7 +140,7 @@ a.thumbnail {
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
         <span class="pull-right">  &nbsp;
             {% if not no_pic %}
-            <a class="btn btn-default btn-xs" href="{{ photos[0].path }}" data-lightbox="slide" title="<a href={{ url_for('.photo', id=photos[0].id) }}><br>跳转到图片页面</a>">幻灯片</a>
+            <a class="btn btn-default btn-xs" href="{{ photos[0].path }}" data-lightbox="slide" title="<br><a href={{ url_for('.photo', id=photos[0].id) }}><br>跳转到图片页面</a>">幻灯片</a>
             {% endif %}
             <a class="btn btn-default btn-xs row-btn">对齐</a>
             <a class="btn btn-default btn-xs mas-btn">瀑布流</a>
@@ -168,7 +172,9 @@ a.thumbnail {
 <div class="grid row">
             {% for photo in photos %}
             <div class="post grid-item span3">
-                <a style="display:none" href="{{ photo.path}} " data-lightbox="slide" title="<a href={{ url_for('.photo', id=photo.id) }}>跳转到图片页面</a>"></a>
+                {% if loop.index != 1 %}
+                <a class="hide-photo" id="firstSlide" href="{{ photo.path}} " data-lightbox="slide" title="<br><a href={{ url_for('.photo', id=photo.id) }}>跳转到图片页面</a>"></a>
+                {% endif %}
                 <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
                     <img class="img-responsive" src="{{ photo.path }}">
                 </a>
@@ -247,6 +253,10 @@ $(".mas-btn").click(function(event) {
 
 <script>
     $(".fav-btn").click(function(event) {
+      $(event.target).toggleClass("fav-cancel");
+    });
+
+    $(".").click(function(event) {
       $(event.target).toggleClass("fav-cancel");
     });
 </script>

@@ -10,7 +10,7 @@
 <ol class="breadcrumb" id="navigation">
     <li><a href="{{ url_for('.index') }}">首页</a></li>
     <li class="active">上传照片</li>
-    <li class="pull-right"><a href="{{ url_for('.user', username=current_user.username) }}">返回我的主页</a></li>
+    <li class="pull-right"><a href="{{ url_for('.albums', username=current_user.username) }}">返回我的主页</a></li>
 </ol>
 
 <div class="row text-center">

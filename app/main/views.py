@@ -5,7 +5,6 @@ from flask import render_template, session, redirect, \
     url_for, flash, abort, request, current_app
 from flask_login import login_required, current_user
 from werkzeug import secure_filename
-from sqlalchemy.sql import func
 
 
 from . import main
@@ -20,7 +19,12 @@ import random
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    if current_user.is_authenticated:
+        photos = current_user.followed_photos
+        print photos
+    else:
+        photos = ""
+    return render_template('index.html', photos=photos)
 
 
 @main.route('/explore', methods=['GET', 'POST'])
@@ -411,6 +415,7 @@ def new_album():
 def add_photo(id):
     from flask_uploads import UploadSet, configure_uploads, IMAGES
     photos = UploadSet('photos', IMAGES)
+
     album = Album.query.get_or_404(id)
     form = AddPhotoForm()
     if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
@@ -455,11 +460,11 @@ def follow(username):
         flash('Invalid user.')
         return redirect(url_for('.index'))
     if current_user.is_following(user):
-        flash('You are already following this user.')
-        return redirect(url_for('.user', username=username))
+        flash(u'你已经关注过该用户了。', 'warning')
+        return redirect(url_for('.alubms', username=username))
     current_user.follow(user)
-    flash('You are now following %s.' % username)
-    return redirect(url_for('.user', username=username))
+    flash(u'成功关注%s。' % username)
+    return redirect(url_for('.albums', username=username))
 
 
 @main.route('/unfollow/<username>')
@@ -471,11 +476,11 @@ def unfollow(username):
         flash('Invalid user.')
         return redirect(url_for('.index'))
     if not current_user.is_following(user):
-        flash('You are not following this user.')
-        return redirect(url_for('.user', username=username))
+        flash(u'你没有关注该用户。', 'warning')
+        return redirect(url_for('.alubms', username=username))
     current_user.unfollow(user)
-    flash('You are not following %s anymore.' % username)
-    return redirect(url_for('.user', username=username))
+    flash(u'取消关注%s。' % username)
+    return redirect(url_for('.albums', username=username))
 
 
 @main.route('/followers/<username>')

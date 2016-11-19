@@ -15,6 +15,93 @@
 <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+<style>
+.post {
+margin: 40px;
+}
+
+a.thumbnail {
+    margin-bottom: 2px !important;
+}
+
+
+.post h4 {
+  margin-bottom: 9px;
+}
+
+.post h4 a {
+  color: #333;
+}
+
+.post img.image {
+  max-width: 100%;
+  margin-top: 9px;
+}
+
+.info {
+	padding:2px;
+}
+
+  .info {
+    margin: 5px;
+    padding:4px;
+    cursor: pointer;
+  }
+
+/* responsive media queries */
+
+@media (max-width: 480px) {
+
+}
+
+@media (max-width: 768px) {
+  header h1 small {
+    display: block;
+  }
+
+  header div.description {
+    padding-top: 9px;
+    padding-bottom: 4px;
+  }
+
+  .isotope .item {
+    position: static ! important;
+    -webkit-transform: translate(0px, 0px) ! important;
+       -moz-transform: translate(0px, 0px) ! important;
+            transform: translate(0px, 0px) ! important;
+  }
+}
+
+@media (max-width: 980px) {
+  header p.lead span {
+    display: block;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 768px) {
+
+}
+
+
+@media (min-width: 768px) and (max-width: 980px) {
+  .span3 {
+    width: 352px;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1200px) {
+  .span3 {
+    width: 300px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .span3 {
+    width: 270px;
+  }
+}
+</style>
 {% endblock %}
 
 {% block page_content %}
@@ -28,6 +115,38 @@
 <div class="container">
     <h3>我的关注</h3>
 </div>
+
+<div class="container">
+    <div class="row grid">
+        {% for photo in photos %}
+        {% if photo.album.is_public == True %}
+            <div class="post span3 grid-item">
+            <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" >
+                <img class="img-responsive" src="{{ photo.path }}">
+            </a>
+            <div class="info">
+              <span>上传于{{ moment(photo.timestamp).format('L') }}</span>
+              <span>作者：<a href="{{ url_for('.albums', username=photo.author.username) }}" >{{ photo.author.name }}</a></span><br>
+              <span>相册：<a href="{{ url_for('.album', id=photo.album.id) }}" >{{ photo.album.title }}</a></span>
+            </div>
+          </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 {% else %}
 <div class="jumbotron" style="background: #fff; height: 500px;">
   <div class="container" align="center">
@@ -145,6 +264,18 @@
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="{{ url_for('static', filename='js/ie10-viewport-bug-workaround.js') }}"></script>
 <script src="{{ url_for('static', filename='js/typing.js') }}"></script>
+<script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
+<script>
+$('.grid').imagesLoaded( function(){
+    $('.grid').isotope({
+      itemSelector : '.grid-item',
+      {% if type == 'photo' %}
+      layoutMode: 'masonry',
+      {% endif %}
+    });
+  });
+</script>
 <script>
   var strings = new Array("特别的", "好玩的", "有趣的", "让人耳目一新的", "独一无二的", "属于大家的", "让人记忆深刻的", "充满欢乐和感动的") ; // multi words
   var typingSpeed = 100;

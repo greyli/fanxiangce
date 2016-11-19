@@ -107,7 +107,7 @@ a.thumbnail {
     <li {% if type == 'hot' %}class="active"{% endif %}><a href="{{ url_for('.explore_hot') }}">热门</a></li>
 </ul><br>
 
-
+<a href="../static/hi2.jpg">hi</a>
 <div class="container">
     <div class="row grid">
         {% for photo in photos %}
@@ -118,7 +118,8 @@ a.thumbnail {
             </a>
             <div class="info">
               <span>上传于{{ moment(photo.timestamp).format('L') }}</span>
-              <span>By <a href="{{ url_for('.albums', username=photo.author.username) }}" >{{ photo.author.name }}</a></span>
+              <span>By <a href="{{ url_for('.albums', username=photo.author.username) }}" >{{ photo.author.name }}</a></span><br>
+              <span>相册：<a href="{{ url_for('.album', id=photo.album.id) }}" >{{ photo.album.title }}</a></span>
             </div>
           </div>
         {% endif %}
