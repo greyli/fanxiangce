@@ -234,15 +234,8 @@ def album(id):
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.asc()).all()
         likes = [{'id': like.like_photo, 'timestamp': like.timestamp, 'path': like.like_photo.path} for like in likes]
-        like_list = [like['path'] for like in likes]
     else:
         likes = ""
-        like_list = []
-
-    if current_user.is_authenticated:
-        is_liked = album.is_liked_by(current_user)
-    else:
-        is_liked = False
 
     if album.type == 1:
         files = []
@@ -251,7 +244,7 @@ def album(id):
         html = wall()
         return render_template('wall.html', album=album, html=html)
     return render_template('album.html', album=album, photos=photos, pagination=pagination,
-                           like_list=like_list, likes=likes, is_liked=is_liked, no_pic=no_pic)
+                           likes=likes, no_pic=no_pic)
 
 
 @main.route('/photo/<int:id>', methods=['GET', 'POST'])
@@ -268,10 +261,8 @@ def photo(id):
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
         likes = [{'id': like.like_photo, 'timestamp': like.timestamp, 'path': like.like_photo.path, 'liked':like.photo_liked} for like in likes]
-        like_list = [like['id'] for like in likes]
     else:
         likes = ""
-        like_list = []
 
     if form.validate_on_submit() and current_user.is_authenticated:
         comment = Comment(body=form.body.data,
@@ -287,7 +278,7 @@ def photo(id):
     comments = pagination.items
     amount = len(comments)
     return render_template('photo.html', form=form, album=album, amount=amount,
-                           like_list=like_list, photo=photo, pagination=pagination,
+                           photo=photo, pagination=pagination,
                            comments=comments, photo_index=photo_index, photo_sum=photo_sum)
 
 

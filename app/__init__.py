@@ -21,6 +21,7 @@ login_manager.login_message = u"请先登录！"
 login_manager.login_message_category = "info"
 
 
+
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
@@ -31,6 +32,9 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
+
+    app.jinja_env.trim_blocks = True
+    app.jinja_env.lstrip_blocks = True
 
     photos = UploadSet('photos', IMAGES)
     configure_uploads(app, (photos,))
