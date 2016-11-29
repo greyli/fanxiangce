@@ -77,7 +77,7 @@ class NewAlbumForm(Form):
     asc_order = SelectField(u'显示顺序',
                             choices=[('True', u'按上传时间倒序排列'), ('False', u'按上传时间倒序排列')])
     is_public = BooleanField(u'私密相册（右侧滑出信息提示：勾选后相册仅自己可见）')
-    can_comment = BooleanField(u'允许评论', render_kw={'checked': True})
+    can_comment = BooleanField(u'允许评论')
     submit = SubmitField(u'提交')
 
 

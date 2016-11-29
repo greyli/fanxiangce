@@ -225,7 +225,7 @@ div.comment-form {
     {% endif %}
     <div id="posts" class="row text-center">
         {% for album in albums %}
-        {% if album.is_public %}
+        {% if album.is_public or current_user == user%}
         <div class="post item span3">
               <div class="album-cover">
                 <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}" >

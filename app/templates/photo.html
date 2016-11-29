@@ -152,7 +152,6 @@ div.comment-form {
         <a href="{{ url_for('.photo_next', id=photo.id)}}" title="点击跳到下一张">
             <img src="{{ photo.path }}">
         </a>
-            {% if photo.is_liked_by(current_user) %} Yes {% endif %}
         <div class="text-left">
             <br>
             {% if photo.about %}

@@ -188,7 +188,6 @@ def likes(username):
     photo_likes = pagination.items
     photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path':like.like_photo.path} for like in photo_likes]
     type = "photo"
-    session['email'] = 'example@flask.com'
     return render_template('likes.html', user=user, photo_likes=photo_likes,
                            pagination=pagination, type=type)
 
@@ -321,7 +320,7 @@ def setting():
         current_user.status = form.status.data
         current_user.location = form.location.data
         current_user.website = form.website.data
-        # current_user.like_public = form.like_public.data
+        current_user.like_public = form.like_public.data
         db.session.add(current_user)
         flash(u'你的设置已经更新。', 'success')
         return redirect(url_for('.albums', username=current_user.username))
@@ -329,6 +328,7 @@ def setting():
     form.location.data = current_user.location
     form.status.data = current_user.status
     form.website.data = current_user.website
+    form.like_public.data = current_user.like_public
     return render_template('setting.html', form=form, user=current_user)
 
 

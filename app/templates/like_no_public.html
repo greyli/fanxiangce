@@ -9,7 +9,7 @@
 </ol>
 <hr>
 <div class="container">
-    <h2>
+    <h5>
         <a href="{{ url_for('.albums', username=user.username) }}">
             {{ user.name }}
         </a>
@@ -17,6 +17,6 @@
         <a href="{{ url_for('.albums', username=user.username) }}">
             他/她的相册
         </a>！
-    </h2>
+    </h5>
 </div>
 {% endblock %}
