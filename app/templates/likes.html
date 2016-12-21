@@ -162,11 +162,13 @@ a.thumbnail {
 <ul class="nav nav-tabs">
     <li {% if type == 'photo' %}class="active"{% endif %}><a href="{{ url_for('.likes', username=user.username) }}">照片<span class="badge">{{ user.photo_likes.count() }}</span></a></li>
     <li {% if type == 'album' %}class="active"{% endif %}><a href="{{ url_for('.album_likes', username=user.username) }}">相册<span class="badge">{{ user.album_likes.count() }}</span></a></li>
+    {% if current_user == user %}
     <li class="pull-right">
         <a class="btn pull-right" href="{{ url_for('.setting') + '#pravicy' }}">
         <i class="glyphicon glyphicon-cog"></i>
         </a>
     </li>
+    {% endif %}
 </ul><br>
 
 <div class="container">

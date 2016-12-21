@@ -14,12 +14,14 @@
 </ol>
 
 <div class="col-md-6 container">
-    <form class="form form-horizontal" method="POST">
+    <form class="form form-horizontal" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         {{ wtf.form_field(form.name, class="form-control user-icon") }}
         {{ wtf.form_field(form.status) }}
         {{ wtf.form_field(form.location) }}
-        {{ wtf.form_field(form.website) }}<br>
+        {{ wtf.form_field(form.website) }}
+        {{ wtf.form_field(form.background) }}
+        <br>
         {% if user.like_public %}
         {{ wtf.form_field(form.like_public, checked) }}
         {% else %}

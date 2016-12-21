@@ -19,7 +19,7 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 login_manager.login_message = u"请先登录！"
 login_manager.login_message_category = "info"
-
+photos = UploadSet('photos', IMAGES)
 
 
 def create_app(config_name):
@@ -32,12 +32,10 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
-
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
 
-    photos = UploadSet('photos', IMAGES)
-    configure_uploads(app, (photos,))
+    configure_uploads(app, photos)
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 

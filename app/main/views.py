@@ -5,7 +5,7 @@ from flask import render_template, session, redirect, \
     url_for, flash, abort, request, current_app
 from flask_login import login_required, current_user
 from werkzeug import secure_filename
-
+from .. import photos
 
 from . import main
 from .forms import NewAlbumForm, EditProfileAdminForm, \
@@ -321,6 +321,8 @@ def setting():
         current_user.location = form.location.data
         current_user.website = form.website.data
         current_user.like_public = form.like_public.data
+        filename = photos.save(form.background.data)
+        current_user.background = photos.url(filename)
         db.session.add(current_user)
         flash(u'你的设置已经更新。', 'success')
         return redirect(url_for('.albums', username=current_user.username))

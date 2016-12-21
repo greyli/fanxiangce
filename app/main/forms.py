@@ -1,38 +1,37 @@
 # -*-coding: utf-8-*-
 from flask_wtf import Form
 from wtforms import StringField, SubmitField, RadioField, PasswordField, BooleanField, FileField, \
-                    TextAreaField, SelectField, IntegerField
-from wtforms.validators import Required, Length, Email, Regexp, EqualTo, URL, Optional, NumberRange
+                    TextAreaField, SelectField, IntegerField, SelectMultipleField
+from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo, URL, Optional, NumberRange
 from wtforms import ValidationError
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from flask_uploads import UploadSet, configure_uploads, IMAGES
 from wtforms.widgets import TextArea
 
-photos = UploadSet('photos', IMAGES)
-
+from .. import photos
 from ..models import User, Role
 
 
 class SettingForm(Form):
     name = StringField(u'姓名或昵称', validators=[Length(0, 64)])
     status = StringField(u'签名档', validators=[Length(0, 64)])
-    location = StringField(u'城市', validators=[Length(0,64)])
-    website = StringField(u'网站', validators=[Length(0,64), Optional(),
+    location = StringField(u'城市', validators=[Length(0, 64)])
+    website = StringField(u'网站', validators=[Length(0, 64), Optional(),
                          ],
                           render_kw={"placeholder": "http://..."})
     like_public = BooleanField(u'公开我的喜欢')
+    background = FileField(u'个人主页背景', validators=[FileAllowed(photos, u'只能上传图片！')])
     submit = SubmitField(u'提交')
 
     def validate_website(self, field):
         if field.data[:4] != "http":
             print field.data[:4]
-            field.data="http://"+field.data
+            field.data = "http://" + field.data
 
 
 class EditProfileAdminForm(Form):
-    email = StringField(u'邮箱', validators=[Required(message= u'邮件不能为空'), Length(1, 64),
+    email = StringField(u'邮箱', validators=[DataRequired(message= u'邮件不能为空'), Length(1, 64),
                                            Email(message= u'请输入有效的邮箱地址，比如：username@domain.com')])
-    username = StringField(u'用户名', validators=[Required(message= u'用户名不能为空'), Length(1, 64),
+    username = StringField(u'用户名', validators=[DataRequired(message= u'用户名不能为空'), Length(1, 64),
                                                Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                                                       u'用户名只能有字母，'
                                                       u'数字，点和下划线组成。')])
@@ -63,7 +62,7 @@ class EditProfileAdminForm(Form):
 
 
 class CommentForm(Form):
-    body = TextAreaField(u'留言', validators=[Required(u'内容不能为空！')], render_kw={'rows': 5})
+    body = TextAreaField(u'留言', validators=[DataRequired(u'内容不能为空！')], render_kw={'rows': 5})
     submit = SubmitField(u'提交')
 
 
@@ -98,7 +97,3 @@ class EditAlbumForm(Form):
     can_comment = BooleanField(u'允许评论')
     submit = SubmitField(u'提交')
 
-
-class GuessNumberForm(Form):
-    number = IntegerField(u'输入数字：', validators=[Required(u'数字不能为空！'), NumberRange(0, 1000, u'请输入0~1000以内的数字！')])
-    submit = SubmitField(u'提交')
