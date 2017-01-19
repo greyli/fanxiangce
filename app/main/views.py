@@ -1,20 +1,20 @@
 # -*-coding: utf-8-*-
 import os
+import time
+import hashlib
+
 from datetime import datetime
 from flask import render_template, session, redirect, \
     url_for, flash, abort, request, current_app
 from flask_login import login_required, current_user
-from werkzeug import secure_filename
-from .. import photos
 
 from . import main
 from .forms import NewAlbumForm, EditProfileAdminForm, \
     CommentForm, EditAlbumForm, AddPhotoForm, SettingForm
-from .. import db
+from .. import db, photos
 from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
 from wall import wall
 from ..decorators import admin_required, permission_required
-import random
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -87,14 +87,12 @@ def edit_album(id):  # todo test if user can edit other people's album
     album = Album.query.get_or_404(id)
     form = EditAlbumForm()
     if form.validate_on_submit():
-        album.title=form.title.data
-        album.about=form.about.data
-        album.asc_order=form.asc_order.data
-        album.is_public=form.is_public.data
-        album.can_comment=form.can_comment.data
-        album.author=current_user._get_current_object()
-        db.session.add(album)
-        db.session.commit()
+        album.title = form.title.data
+        album.about = form.about.data
+        album.asc_order = form.asc_order.data
+        album.is_public = form.is_public.data
+        album.can_comment = form.can_comment.data
+        album.author = current_user._get_current_object()
         flash(u'更改已保存。', 'success')
         return redirect(url_for('.album', id=id))
     form.title.data = album.title
@@ -372,29 +370,24 @@ def edit_profile_admin(id):
 @main.route('/new-album', methods=['GET', 'POST'])
 @login_required
 def new_album():
-    from flask_uploads import UploadSet, configure_uploads, IMAGES
-    photos = UploadSet('photos', IMAGES)
     form = NewAlbumForm()
     if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
         if request.method == 'POST' and 'photo' in request.files:
-            filename=[]
+            images = []
             for img in request.files.getlist('photo'):
-                photos.save(img)
-                url = photos.url(img.filename)
-                url = url.replace("%20", "_")
-                url = url.replace("%28", "")
-                url = url.replace("%29", "")
-                filename.append(url)
+                name = hashlib.md5(current_user.username + str(time.time())).hexdigest()[:7]
+                filename = photos.save(img, name=name+'.')
+                url = photos.url(filename)
+                images.append(url)
         title = form.title.data
         about = form.about.data
         author = current_user._get_current_object()
-        album = Album(title=title,
-        about=about, cover=filename[0],
-        author = author)
+        album = Album(title=title, about=about,
+                      cover=images[0], author=author)
         db.session.add(album)
 
-        for file in filename:
-            photo = Photo(path=file, album=album,
+        for url in images:
+            photo = Photo(path=url, album=album,
                           author=current_user._get_current_object())
             db.session.add(photo)
         db.session.commit()
@@ -406,26 +399,22 @@ def new_album():
 @main.route('/add-photo/<int:id>', methods=['GET', 'POST'])
 @login_required
 def add_photo(id):
-    from flask_uploads import UploadSet, configure_uploads, IMAGES
-    photos = UploadSet('photos', IMAGES)
-
     album = Album.query.get_or_404(id)
     form = AddPhotoForm()
     if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
         if request.method == 'POST' and 'photo' in request.files:
-            filename=[]
+            images = []
             for img in request.files.getlist('photo'):
-                photos.save(img)
-                url = photos.url(img.filename)
-                url = url.replace("%20", "_")
-                url = url.replace("%28", "")
-                url = url.replace("%29", "")
-                filename.append(url)
-        for file in filename:
-            photo = Photo(path=file, album=album,
-                          author=current_user._get_current_object())
-            db.session.add(photo)
-        db.session.commit()
+                name = hashlib.md5(current_user.username + str(time.time())).hexdigest()[:7]
+                filename = photos.save(img, name=name + '.')
+                url = photos.url(filename)
+                images.append(url)
+
+            for url in images:
+                photo = Photo(path=url, album=album,
+                              author=current_user._get_current_object())
+                db.session.add(photo)
+            db.session.commit()
         flash(u'图片添加成功！', 'success')
         return redirect(url_for('.album', id=album.id))
     return render_template('add_photo.html', form=form, album=album)

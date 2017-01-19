@@ -1,6 +1,6 @@
 # -*-coding: utf-8-*-
 
-from flask import Flask, render_template
+from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_mail import Mail
 from flask_moment import Moment
@@ -36,6 +36,7 @@ def create_app(config_name):
     app.jinja_env.lstrip_blocks = True
 
     configure_uploads(app, photos)
+
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
