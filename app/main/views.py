@@ -281,7 +281,7 @@ def photo(id):
 
 @main.route('/photo/n/<int:id>')
 def photo_next(id):
-    "reditrct to next imgae"
+    "redirect to next imgae"
     photo_now = Photo.query.get_or_404(id)
     album = photo_now.album
     photos = album.photos.order_by(Photo.order.asc())
@@ -296,7 +296,7 @@ def photo_next(id):
 
 @main.route('/photo/p/<int:id>')
 def photo_previous(id):
-    "reditrct to previous imgae"
+    "redirect to previous imgae"
     photo_now = Photo.query.get_or_404(id)
     album = photo_now.album
     photos = album.photos.order_by(Photo.order.asc())
@@ -321,7 +321,6 @@ def setting():
         current_user.like_public = form.like_public.data
         filename = photos.save(form.background.data)
         current_user.background = photos.url(filename)
-        db.session.add(current_user)
         flash(u'你的设置已经更新。', 'success')
         return redirect(url_for('.albums', username=current_user.username))
     form.name.data = current_user.name

@@ -240,7 +240,7 @@ div.comment-form {
             </p>
             <br>
             <p>
-            {% if photo.is_liked_by(current_user) and current_user.is_authenticated %}
+            {% if current_user.is_authenticated and photo.is_liked_by(current_user) %}
             <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
             {% else %}
             <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
@@ -263,8 +263,8 @@ div.comment-form {
             <br>
         {% if album.author.status %}<p>{{ album.author.status }}</p>{% else %}<p>-</p>{% endif %}
             {% if album.author != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
-            {% if not current_user.is_following(album.author) %}
-            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
+            {% if not current_user.is_authenticated or not current_user.is_following(album.author) %}
+            <a href="{{ url_for('.follow', username=album.author.username) }}" class="btn btn-primary">关注</a>
             {% else %}
             <div class="btn-group" role="group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

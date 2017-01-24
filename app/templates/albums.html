@@ -162,7 +162,7 @@ div.comment-form {
 
         <div class="col-xs-4 info-area">
             {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
-            {% if not current_user.is_following(user) %}
+            {% if not current_user.is_authenticated or not current_user.is_following(user) %}
             <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
             {% else %}
             <div class="btn-group" role="group">
