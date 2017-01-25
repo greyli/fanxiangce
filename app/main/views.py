@@ -63,6 +63,7 @@ def edit_photo(id):
         db.session.add(album)
         db.session.commit()
         flash(u'更改已保存。', 'success')
+        return redirect(url_for('.album', id=id))
     enu_photos = []
     for index, photo in enumerate(photos):
         enu_photos.append((index, photo))
@@ -211,6 +212,14 @@ def album_likes(username):
 @main.route('/album/<int:id>')
 def album(id):
     album = Album.query.get_or_404(id)
+    # display default cover when an album is empty
+    placeholder = 'http://p1.bpimg.com/567591/15110c0119201359.png'
+    photo_amount = len(list(album.photos))
+    if photo_amount == 0:
+        album.cover = placeholder
+    elif photo_amount != 0 and album.cover == placeholder:
+        album.cover = album.photos[0].path
+
     if current_user != album.author and album.is_public == False:
         abort(404)
     page = request.args.get('page', 1, type=int)
@@ -234,12 +243,6 @@ def album(id):
     else:
         likes = ""
 
-    if album.type == 1:
-        files = []
-        for photo in photos:
-            files.append(photo.path)
-        html = wall()
-        return render_template('wall.html', album=album, html=html)
     return render_template('album.html', album=album, photos=photos, pagination=pagination,
                            likes=likes, no_pic=no_pic)
 
@@ -287,7 +290,6 @@ def photo_next(id):
     photos = album.photos.order_by(Photo.order.asc())
     position = list(photos).index(photo_now) + 1
     if position == len(list(photos)):
-        position = None
         flash(u'已经是最后一张了。', 'info')
         return redirect(url_for('.photo', id=id))
     photo = photos[position]
@@ -302,7 +304,6 @@ def photo_previous(id):
     photos = album.photos.order_by(Photo.order.asc())
     position = list(photos).index(photo_now) - 1
     if position == -1:
-        position = None
         flash(u'已经是第一张了。', 'info')
         return redirect(url_for('.photo', id=id))
     photo = photos[position]
