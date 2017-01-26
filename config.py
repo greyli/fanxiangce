@@ -6,6 +6,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'very hard to guess'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    TOKEN = '520a69e999343680d4ae35ead9c877418bd37510:r8xYTTOPfMFUpxLqbALEFxJwHfI=' \
+            ':eyJkZWFkbGluZSI6MTQ4NTQwMjE0OCwiYWN0aW9uIjoiZ2V0IiwidWlkIjoiNTY3NTkxIiw' \
+            'iYWlkIjoiMTI1MzA4NCIsImZyb20iOiJmaWxlIn0='
     FANXIANGCE_MAIL_SUBJECT_PREFIX = u'[翻相册]'
     FANXIANGCE_MAIL_SENDER = 'mimi_19@sina.com'
     FANXIANGCE_ADMIN = 'withlihui@qq.com' # os.environ.get('FANXIANG_ADMIN')

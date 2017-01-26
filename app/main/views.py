@@ -2,7 +2,11 @@
 import os
 import time
 import hashlib
+import json
 
+from poster.encode import multipart_encode
+from poster.streaminghttp import register_openers
+import urllib2
 from datetime import datetime
 from flask import render_template, session, redirect, \
     url_for, flash, abort, request, current_app
@@ -21,6 +25,7 @@ from ..decorators import admin_required, permission_required
 def index():
     if current_user.is_authenticated:
         photos = current_user.followed_photos
+        photos  = [photo for photo in photos if photo.album.is_public==True]
         print photos
     else:
         photos = ""
@@ -30,23 +35,25 @@ def index():
 @main.route('/explore', methods=['GET', 'POST'])
 def explore():
     photos = Photo.query.order_by(Photo.timestamp.desc()).all()
-    type = "new"
-    return render_template('explore.html', photos=photos, type=type)
+    photos = [photo for photo in photos if photo.album.is_public == True]
+    photo_type = "new"
+    return render_template('explore.html', photos=photos, type=photo_type)
 
 
 @main.route('/explore/hot', methods=['GET', 'POST'])
 def explore_hot():
     photos = Photo.query.all()
+    photos = [photo for photo in photos if photo.album.is_public == True]
     result = {}
     for photo in photos:
         result[photo] = len(list(photo.photo_liked))
     print result
-    sorted_photo = sorted(result.items(), key = lambda x: x[1], reverse=True)
+    sorted_photo = sorted(result.items(), key=lambda x: x[1], reverse=True)
     temp = []
     for photo in sorted_photo:
         temp.append(photo[0])
-    type = "hot"
-    return render_template('explore.html', photos=temp, type=type)
+    photo_type = "hot"
+    return render_template('explore.html', photos=temp, type=photo_type)
 
 
 @main.route('/edit-photo/<int:id>', methods=['GET', 'POST'])
@@ -375,9 +382,13 @@ def new_album():
         if request.method == 'POST' and 'photo' in request.files:
             images = []
             for img in request.files.getlist('photo'):
-                name = hashlib.md5(current_user.username + str(time.time())).hexdigest()[:7]
-                filename = photos.save(img, name=name+'.')
-                url = photos.url(filename)
+                register_openers()
+                sendData = {"Token": current_app.config['TOKEN'], "file": img}
+                datagen, headers = multipart_encode(sendData)
+                request_ = urllib2.Request("http://up.tietuku.com/", datagen, headers)
+                jsondata = urllib2.urlopen(request_).read()
+                data = json.loads(jsondata)
+                url = data[u'linkurl']
                 images.append(url)
         title = form.title.data
         about = form.about.data
@@ -405,9 +416,13 @@ def add_photo(id):
         if request.method == 'POST' and 'photo' in request.files:
             images = []
             for img in request.files.getlist('photo'):
-                name = hashlib.md5(current_user.username + str(time.time())).hexdigest()[:7]
-                filename = photos.save(img, name=name + '.')
-                url = photos.url(filename)
+                register_openers()
+                sendData = {"Token": current_app.config['TOKEN'], "file": img}
+                datagen, headers = multipart_encode(sendData)
+                request_ = urllib2.Request("http://up.tietuku.com/", datagen, headers)
+                jsondata = urllib2.urlopen(request_).read()
+                data = json.loads(jsondata)
+                url = data[u'linkurl']
                 images.append(url)
 
             for url in images:

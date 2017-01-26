@@ -70,7 +70,7 @@ class NewAlbumForm(Form):
     title = StringField(u'标题')
     about = TextAreaField(u'介绍', render_kw={'rows': 8})
     photo = FileField(u'图片', validators=[
-        FileRequired(),
+        FileRequired(u'你还没有选择图片！'),
         FileAllowed(photos, u'只能上传图片！')
     ])
     asc_order = SelectField(u'显示顺序',

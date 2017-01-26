@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}翻相册 - 创建{% endblock %}
+{% block title %}翻相册 - 发现{% endblock %}
 {% block head %}
 {{ super() }}
 <style>
@@ -110,11 +110,10 @@ a.thumbnail {
 <a href="../static/hi2.jpg">hi</a>
 <div class="container">
     <div class="row grid">
-        {% for photo in photos %}
-        {% if photo.album.is_public == True %}
+        {% for photo in photos[:100] %}
             <div class="post span3 grid-item">
             <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" >
-                <img class="img-responsive" src="{{ photo.path }}">
+                <img class="img-responsive lazy" src="{{ photo.path }}">
             </a>
             <div class="info">
               <span>上传于{{ moment(photo.timestamp).format('L') }}</span>
@@ -122,7 +121,6 @@ a.thumbnail {
               <span>相册：<a href="{{ url_for('.album', id=photo.album.id) }}" >{{ photo.album.title }}</a></span>
             </div>
           </div>
-        {% endif %}
         {% endfor %}
       </div>
     </div>
@@ -131,16 +129,17 @@ a.thumbnail {
 
 {% block scripts %}
 {{ super() }}
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
 <script>
-$('.grid').imagesLoaded( function(){
-    $('.grid').isotope({
-      itemSelector : '.grid-item',
-      {% if type == 'photo' %}
-      layoutMode: 'masonry',
-      {% endif %}
+    $('.grid').imagesLoaded( function(){
+        $('.grid').isotope({
+          itemSelector : '.grid-item',
+          {% if type == 'photo' %}
+          layoutMode: 'masonry',
+          {% endif %}
+        });
     });
-  });
 </script>
 {% endblock %}

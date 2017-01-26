@@ -13,6 +13,9 @@
     <li class="pull-right"><a href="{{ url_for('.albums', username=current_user.username) }}">返回我的主页</a></li>
 </ol>
 
+<div class="loader"></div>
+<div class="mask-bg"></div>
+
 <div class="col-md-6">
     <form class="form form-horizontal" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
@@ -26,4 +29,16 @@
         {{ wtf.form_field(form.submit) }}
     </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script>
+    // display loading animation
+    $('#submit').click(function() {
+        $('.mask-bg').show();
+        $('.loader').show();
+    })
+</script>
 {% endblock %}
