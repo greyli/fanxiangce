@@ -380,6 +380,10 @@ def new_album():
     form = NewAlbumForm()
     if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
         if request.method == 'POST' and 'photo' in request.files:
+            photo_amount = len(request.files.getlist('photo'))
+            if photo_amount > 30:
+                flash(u'每次上传不超过30张！', 'warning')
+                return redirect(url_for('.new_album'))
             images = []
             for img in request.files.getlist('photo'):
                 register_openers()
