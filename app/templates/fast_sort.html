@@ -80,7 +80,7 @@
 	<ul id="images">
         {% for photo in enu_photos %}
 		<li><div class="thumbnail">
-                <img class="img-responsive portrait" src="{{ photo[1].path }}" alt="Some description"/>
+                <img class="img-responsive portrait" src="{{ photo[1].path_t }}" alt="Some description"/>
             </div>
             <input class="order" type="hidden" name="order-{{ photo[1].id }}" value="{{ photo[0] + 1 }}">
         </li>

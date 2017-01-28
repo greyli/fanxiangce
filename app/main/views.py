@@ -381,29 +381,32 @@ def new_album():
     if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
         if request.method == 'POST' and 'photo' in request.files:
             photo_amount = len(request.files.getlist('photo'))
-            if photo_amount > 30:
-                flash(u'每次上传不超过30张！', 'warning')
+            if photo_amount > 25:
+                flash(u'抱歉，测试阶段每次上传不超过25张！', 'warning')
                 return redirect(url_for('.new_album'))
             images = []
             for img in request.files.getlist('photo'):
                 register_openers()
-                sendData = {"Token": current_app.config['TOKEN'], "file": img}
-                datagen, headers = multipart_encode(sendData)
-                request_ = urllib2.Request("http://up.tietuku.com/", datagen, headers)
-                jsondata = urllib2.urlopen(request_).read()
-                data = json.loads(jsondata)
+                send_data = {"Token": current_app.config['TOKEN'], "file": img}
+                data_gen, headers = multipart_encode(send_data)
+                request_ = urllib2.Request("http://up.tietuku.com/", data_gen, headers)
+                json_data = urllib2.urlopen(request_).read()
+                data = json.loads(json_data)
                 url = data[u'linkurl']
-                images.append(url)
+                s_url = data[u's_url']
+                t_url = data[u't_url']
+                print url
+                images.append((url, s_url, t_url))
         title = form.title.data
         about = form.about.data
         author = current_user._get_current_object()
         album = Album(title=title, about=about,
-                      cover=images[0], author=author)
+                      cover=images[0][2], author=author)
         db.session.add(album)
 
         for url in images:
-            photo = Photo(path=url, album=album,
-                          author=current_user._get_current_object())
+            photo = Photo(path=url[0], path_s=url[1], path_t=url[2],
+                          album=album, author=current_user._get_current_object())
             db.session.add(photo)
         db.session.commit()
         flash(u'相册创建成功！', 'success')
@@ -421,17 +424,20 @@ def add_photo(id):
             images = []
             for img in request.files.getlist('photo'):
                 register_openers()
-                sendData = {"Token": current_app.config['TOKEN'], "file": img}
-                datagen, headers = multipart_encode(sendData)
-                request_ = urllib2.Request("http://up.tietuku.com/", datagen, headers)
-                jsondata = urllib2.urlopen(request_).read()
-                data = json.loads(jsondata)
-                url = data[u'linkurl']
-                images.append(url)
+                send_data = {"Token": current_app.config['TOKEN'], "file": img}
+                data_gen, headers = multipart_encode(send_data)
+                request_ = urllib2.Request("http://up.tietuku.com/", data_gen, headers)
+                json_data = urllib2.urlopen(request_).read()
+                data = json.loads(json_data)
+                url = data['linkurl']
+                s_url = data['s_url']
+                t_url = data['t_url']
+                print url
+                images.append((url, s_url, t_url))
 
             for url in images:
-                photo = Photo(path=url, album=album,
-                              author=current_user._get_current_object())
+                photo = Photo(path=url[0], path_s=url[1], path_t=url[2],
+                              album=album, author=current_user._get_current_object())
                 db.session.add(photo)
             db.session.commit()
         flash(u'图片添加成功！', 'success')

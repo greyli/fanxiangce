@@ -56,3 +56,4 @@ app/main/views.pyc
 app/static/img/
 venv/
 *.pyc
+*.pyc

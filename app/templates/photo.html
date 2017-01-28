@@ -150,7 +150,7 @@ div.comment-form {
     <div class="col-md-9">
         <div class="photo container-fluid">
         <a href="{{ url_for('.photo_next', id=photo.id)}}" title="点击跳到下一张">
-            <img src="{{ photo.path }}">
+            <img src="{{ photo.path_s }}">
         </a>
         <div class="text-left">
             <br>
@@ -228,7 +228,7 @@ div.comment-form {
 
     <div class="info col-md-3" >
         <div class="view pull-right">
-            <a  class="btn" href="{{ photo.path }}" data-lightbox="view" title="">
+            <a class="btn" href="{{ photo.path }}" data-lightbox="view" title="">
                 <i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;
             </a>
         </div>

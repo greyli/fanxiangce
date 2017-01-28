@@ -82,6 +82,8 @@ class Photo(db.Model):
     __tablename__ = 'photos'
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(64))
+    path_s = db.Column(db.String(64))
+    path_t = db.Column(db.String(64))
     about = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     order = db.Column(db.Integer)

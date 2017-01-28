@@ -95,7 +95,7 @@
 	<ul id="images">
         {% for photo in enu_photos %}
 		<li><div class="thumbnail">
-                <img class="img-responsive portrait" src="{{ photo[1].path }}" alt="Some description"/>
+                <img class="img-responsive portrait" src="{{ photo[1].path_t }}" alt="Some description"/>
             </div>
             <textarea name="{{ photo[1].id }}" placeholder="添加描述" rows="3">{% if photo[1].about %}{{ photo[1].about }}{% endif %}</textarea>
             <input class="order" type="hidden" name="order-{{ photo[1].id }}" value="{{ photo[0] + 1 }}">
