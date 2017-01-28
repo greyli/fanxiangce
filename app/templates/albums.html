@@ -156,7 +156,7 @@ div.comment-form {
             </p>
         </div>
         <div class="col-xs-5 about-area">
-            <h1>{{ user.name }}</h1> <i id="likes" class="glyphicon glyphicon-heart"></i> 90<br><br>
+            <h1>{{ user.name }}</h1> <i id="likes" class="glyphicon glyphicon-heart"></i> {{ user.liked }}<br><br>
             {% if user.status %}<p>{{ user.status }}</p>{% endif %}
         </div>
 
@@ -209,7 +209,7 @@ div.comment-form {
 
 <div class="page-header">
     <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</h3>
-    <p>{{ album_count }}个相册 {{ photo_count }}张照片 获得了78个喜欢
+    <p>{{ album_count }}个相册 {{ photo_count }}张照片
         <a class="pull-right btn" href="{{ url_for('.new_album') }}" title="新建相册">
             <i class="glyphicon glyphicon-plus"></i>
         </a>

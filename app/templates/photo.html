@@ -257,7 +257,7 @@ div.comment-form {
             </div>
                 <div class="col-md-6">
                     <h4><a href="{{ url_for('.albums', username=album.author.username) }}">{{ album.author.name }}</a></h4>
-                    213个喜欢
+                    {{ album.author.liked }}个喜欢 <br> {{ album.author.followed.count() }}人关注
                 </div>
             </div>
             <br>

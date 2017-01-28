@@ -66,7 +66,8 @@ def edit_photo(id):
             photo.about = request.form[str(photo.id)]
             photo.order = request.form["order-" + str(photo.id)]
             db.session.add(photo)
-        album.cover = request.form["cover"]
+        default_value = album.cover
+        album.cover = request.form.get('cover', default_value)
         db.session.add(album)
         db.session.commit()
         flash(u'更改已保存。', 'success')
@@ -120,7 +121,9 @@ def save_edit(id):
         photo.about = request.form[str(photo.id)]
         photo.order = request.form["order-" + str(photo.id)]
         db.session.add(photo)
-    album.cover = request.form["cover"]
+    default_value = album.cover
+    print default_value
+    album.cover = request.form.get('cover', default_value)
     db.session.add(album)
     db.session.commit()
     flash(u'更改已保存。', 'success')
@@ -132,9 +135,10 @@ def save_edit(id):
 def save_photo_edit(id):
     photo = Photo.query.get_or_404(id)
     album = photo.album
-    photo.about = request.form["about"] or ""
+    photo.about = request.form.get('about', '')
     # set default_value to avoid 400 error.
     default_value = album.cover
+    print default_value
     album.cover = request.form.get('cover', default_value)
     db.session.add(photo)
     db.session.add(album)
@@ -166,7 +170,7 @@ def albums(username):
     pagination = user.albums.order_by(Album.timestamp.desc()).paginate(
             page, per_page=current_app.config['FANXIANGCE_ALBUMS_PER_PAGE'], error_out=False)
     albums = pagination.items
-    photo_count = sum([len(album.photos.order_by(Photo.timestamp.asc()).all()) for album in albums])
+    photo_count = sum([len(album.photos.all()) for album in albums])
     album_count = len(albums)
     if form.validate_on_submit() and current_user.is_authenticated:
         comment = Message(body=form.body.data,
@@ -538,6 +542,7 @@ def like_photo(id):
         redirect(url_for('.photo', id=id))
     else:
         current_user.like_photo(photo)
+        current_user.liked += 1
     return redirect(url_for('.photo', id=id))
 
 @main.route('/album/like/<id>')
@@ -568,6 +573,7 @@ def unlike_photo(id):
         return redirect(url_for('.likes', username=current_user.username))
     if current_user.is_like_photo(photo):
         current_user.unlike_photo(photo)
+        current_user.liked += 1
     return (''), 204
 
 
