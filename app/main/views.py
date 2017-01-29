@@ -66,8 +66,7 @@ def edit_photo(id):
             photo.about = request.form[str(photo.id)]
             photo.order = request.form["order-" + str(photo.id)]
             db.session.add(photo)
-        default_value = album.cover
-        album.cover = request.form.get('cover', default_value)
+        album.cover = request.form['cover']
         db.session.add(album)
         db.session.commit()
         flash(u'更改已保存。', 'success')
@@ -99,16 +98,16 @@ def edit_album(id):  # todo test if user can edit other people's album
         album.title = form.title.data
         album.about = form.about.data
         album.asc_order = form.asc_order.data
-        album.is_public = form.is_public.data
-        album.can_comment = form.can_comment.data
+        album.no_public = form.no_public.data
+        album.no_comment = form.no_comment.data
         album.author = current_user._get_current_object()
         flash(u'更改已保存。', 'success')
         return redirect(url_for('.album', id=id))
     form.title.data = album.title
     form.about.data = album.about
     form.asc_order.data = album.asc_order
-    form.can_comment.data = album.can_comment
-    form.is_public.data = album.is_public
+    form.no_comment.data = album.no_comment
+    form.no_public.data = album.no_public
     return render_template('edit_album.html', form=form, album=album)
 
 
@@ -122,7 +121,6 @@ def save_edit(id):
         photo.order = request.form["order-" + str(photo.id)]
         db.session.add(photo)
     default_value = album.cover
-    print default_value
     album.cover = request.form.get('cover', default_value)
     db.session.add(album)
     db.session.commit()
@@ -196,7 +194,7 @@ def likes(username):
     pagination = user.photo_likes.order_by(LikePhoto.timestamp.desc()).paginate(
         page, per_page=current_app.config['FANXIANGCE_PHOTO_LIKES_PER_PAGE'], error_out=False)
     photo_likes = pagination.items
-    photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'path':like.like_photo.path} for like in photo_likes]
+    photo_likes = [{'photo': like.like_photo, 'timestamp': like.timestamp, 'url_t':like.like_photo.url_t} for like in photo_likes]
     type = "photo"
     return render_template('likes.html', user=user, photo_likes=photo_likes,
                            pagination=pagination, type=type)
@@ -250,7 +248,7 @@ def album(id):
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.asc()).all()
-        likes = [{'id': like.like_photo, 'timestamp': like.timestamp, 'path': like.like_photo.path} for like in likes]
+        likes = [{'id': like.like_photo, 'timestamp': like.timestamp, 'url_t': like.like_photo.url_t} for like in likes]
     else:
         likes = ""
 
@@ -262,7 +260,7 @@ def album(id):
 def photo(id):
     photo = Photo.query.get_or_404(id)
     album = photo.album
-    if current_user != album.author and album.is_public == False:
+    if current_user != album.author and album.no_public == True:
         abort(404)
 
     photo_sum = len(list(album.photos))
@@ -271,17 +269,20 @@ def photo(id):
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first()
         likes = user.photo_likes.order_by(LikePhoto.timestamp.desc()).all()
-        likes = [{'id': like.like_photo, 'timestamp': like.timestamp, 'path': like.like_photo.path, 'liked':like.photo_liked} for like in likes]
+        likes = [{'id': like.like_photo, 'timestamp': like.timestamp, 'url': like.like_photo.url, 'liked':like.photo_liked} for like in likes]
     else:
         likes = ""
 
-    if form.validate_on_submit() and current_user.is_authenticated:
-        comment = Comment(body=form.body.data,
-                          photo=photo,
-                          author=current_user._get_current_object())
-        db.session.add(comment)
-        flash(u'你的评论已经发表。', 'success')
-        return redirect(url_for('.photo', id=photo.id))
+    if form.validate_on_submit():
+        if current_user.is_authenticated:
+            comment = Comment(body=form.body.data,
+                              photo=photo,
+                              author=current_user._get_current_object())
+            db.session.add(comment)
+            flash(u'你的评论已经发表。', 'success')
+            return redirect(url_for('.photo', id=photo.id))
+        else:
+            flash(u'请先登录。', 'info')
     page = request.args.get('page', 1, type=int)
     pagination = photo.comments.order_by(Comment.timestamp.asc()).paginate(
         page, per_page=current_app.config['FANXIANGCE_COMMENTS_PER_PAGE'],
@@ -331,8 +332,6 @@ def setting():
         current_user.location = form.location.data
         current_user.website = form.website.data
         current_user.like_public = form.like_public.data
-        filename = photos.save(form.background.data)
-        current_user.background = photos.url(filename)
         flash(u'你的设置已经更新。', 'success')
         return redirect(url_for('.albums', username=current_user.username))
     form.name.data = current_user.name
@@ -403,8 +402,11 @@ def new_album():
         title = form.title.data
         about = form.about.data
         author = current_user._get_current_object()
+        no_public = form.no_public.data
+        no_comment = form.no_comment.data
         album = Album(title=title, about=about,
-                      cover=images[0][2], author=author)
+                      cover=images[0][2], author=author,
+                      no_public=no_public, no_comment=no_comment)
         db.session.add(album)
 
         for url in images:
@@ -466,13 +468,13 @@ def upload_add():
 def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('Invalid user.')
+        flash(u'操作无效。', 'warning')
         return redirect(url_for('.index'))
     if current_user.is_following(user):
         flash(u'你已经关注过该用户了。', 'warning')
         return redirect(url_for('.alubms', username=username))
     current_user.follow(user)
-    flash(u'成功关注%s。' % username)
+    flash(u'成功关注%s。' % username, 'info')
     return redirect(url_for('.albums', username=username))
 
 
@@ -482,13 +484,13 @@ def follow(username):
 def unfollow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('Invalid user.')
+        flash(u'操作无效。', 'warning')
         return redirect(url_for('.index'))
     if not current_user.is_following(user):
         flash(u'你没有关注该用户。', 'warning')
         return redirect(url_for('.alubms', username=username))
     current_user.unfollow(user)
-    flash(u'取消关注%s。' % username)
+    flash(u'取消关注%s。' % username, 'info')
     return redirect(url_for('.albums', username=username))
 
 
@@ -496,7 +498,7 @@ def unfollow(username):
 def followers(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('Invalid user.')
+        flash(u'操作无效。', 'warning')
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     pagination = user.followers.paginate(
@@ -513,7 +515,7 @@ def followers(username):
 def followed_by(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('Invalid user.')
+        flash(u'操作无效。', 'warning')
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     pagination = user.followed.paginate(
@@ -553,7 +555,7 @@ def like_album(id):
         return redirect(url_for('.albums', username=album.author.username))
     if current_user.is_like_album(album):
         current_user.unlike_album(album)
-        flash(u'喜欢已取消。', 'success')
+        flash(u'喜欢已取消。', 'info')
         redirect(url_for('.album', id=id))
     else:
         current_user.like_album(album)

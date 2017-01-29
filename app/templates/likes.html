@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
-{% block title %}翻相册 - 我的相册{% endblock %}
+{% block title %}{{ user.name }} - 翻相册{% endblock %}
 {% block head %}
 {{ super() }}
 <style>
@@ -201,7 +201,7 @@ a.thumbnail {
             <div class="">
                 <div class="post span3 grid-item">
                 <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}" >
-                    <img class="img-responsive" src="{{ like.path }}">
+                    <img class="img-responsive" src="{{ like.url_t }}">
                 </a>
                 <div class="info">
                   <span>标记于{{ moment(like.timestamp).format('L') }}</span>

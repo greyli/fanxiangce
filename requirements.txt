@@ -19,8 +19,13 @@ Jinja2==2.8
 Mako==0.9.1
 Markdown==2.3.1
 MarkupSafe==0.23
+poster==0.8.1
+pyperclip==1.5.27
 six==1.4.1
 SQLAlchemy==0.9.9
 Werkzeug==0.11.11
 wheel==0.24.0
 WTForms==2.1
+gunicorn==18.0
+gevent
+psycopg2

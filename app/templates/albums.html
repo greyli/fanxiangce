@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
-{% block title %}翻相册 - 我的相册{% endblock %}
+{% block title %}{{ user.name }} - 翻相册{% endblock %}
 {% block head %}
 {{ super() }}
 <style>
@@ -56,7 +56,7 @@ margin: 40px;
 /*http://127.0.0.1:5000/_uploads/photos/2c0e67b986216c4e40bc94fe609b99f9_r.png*/
 .user-content {
     padding-top: 50px;
-    background-image: url({{ user.background }});
+    background-image: url(https://image.hitu.me/464fea6caeb3454ead97be332c2e936b/AScwREH4yHUTafkKgFxsJS/large);
     background-repeat: no-repeat;
     background-position: center center;
     background-color: #ccc;
@@ -150,17 +150,23 @@ div.comment-form {
 {% block page_content %}
 <div class="user-content container-fluid">
     <div class="row user-area">
-        <div class="col-xs-3 icon-area text-center">
+        <div class="col-md-1"></div>
+        <div class="col-md-1 col-xs-12 icon-area text-center">
             <p>
                 <img class="img-rounded" src="{{ user.gravatar(size=128) }}">
             </p>
         </div>
-        <div class="col-xs-5 about-area">
-            <h1>{{ user.name }}</h1> <i id="likes" class="glyphicon glyphicon-heart"></i> {{ user.liked }}<br><br>
+        <div class="col-md-4 col-xs-12 about-area text-center">
+            <h1>{{ user.name }}</h1> <!--i id="likes" class="glyphicon glyphicon-heart"></i--> {#{ user.liked }#}<br>
             {% if user.status %}<p>{{ user.status }}</p>{% endif %}
         </div>
-
-        <div class="col-xs-4 info-area">
+        
+        <div class="col-md-4 col-xs-12 info-area text-center">
+            关注者<a href="{{ url_for('.followers', username=user.username) }}"><span class="badge">{{ user.followers.count() }}</span></a>
+        <a href="{{ url_for('.followed_by', username=user.username) }}"> 关注了<span class="badge">{{ user.followed.count() }}</span></a>个人
+        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+        | <span class="label label-default">他/她在关注你</span>
+        {% endif %}
             {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
             {% if not current_user.is_authenticated or not current_user.is_following(user) %}
             <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
@@ -176,13 +182,7 @@ div.comment-form {
             </div>
         {% endif %}
         {% endif %}
-        </div>
-
-        <a href="{{ url_for('.followers', username=user.username) }}"><span class="badge">{{ user.followers.count() }}</span></a>个关注者
-        <a href="{{ url_for('.followed_by', username=user.username) }}">正在关注<span class="badge">{{ user.followed.count() }}</span></a>个人
-        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-        | <span class="label label-default">他/她在关注你</span>
-        {% endif %}<br>
+            <br>
         {% if user.location %}
             <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a>
         {% endif %}
@@ -190,7 +190,8 @@ div.comment-form {
         <a href="mailto:{{ user.email }}">{{ user.email }}</a>
         {% endif %}
         {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
-        {{ moment(user.member_since).format('YYYY/M') }}加入
+            
+        </div>
     </div>
 </div>
 <br>
@@ -226,7 +227,7 @@ div.comment-form {
     {% endif %}
     <div id="posts" class="row text-center">
         {% for album in albums %}
-        {% if album.is_public or current_user == user%}
+        {% if not album.no_public or current_user == user%}
         <div class="post item span3">
               <div class="album-cover">
                 <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}" >
