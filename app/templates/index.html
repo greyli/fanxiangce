@@ -158,124 +158,15 @@ a.thumbnail {
     </h2>
   </div>
 </div>
-
-<div class="container marketing">
-    <h1>相册展示</h1>
-    <hr>
-    <!-- Three columns of text below the carousel -->
-    <div class="row">
-      <div class="col-lg-4">
-        <h2>照片墙DEMO</h2>
-        <a href="demo1/index.html" target="_blank"><img src="{{ url_for('static', filename='images/wall.jpg') }}" height="250"></a>
-        <br><br>
-        <p>一个照片墙示例。点击图片拉近后，点击箭头图标移动照片，点击全景按钮返回全景。</p>
-        <p><a class="btn btn-success" href="demo1/index.html" target="_blank" role="button">翻开 »</a></p>
-      </div><!-- /.col-lg-4 -->
-      <div class="col-lg-4">
-        <h2>Miss瑶的日常记录</h2>
-        <a href="demo2/index.html" target="_blank"><img src="{{ url_for('static', filename='images/yao.jpg') }}" height="250" width="350"></a>
-        <br><br>
-        <p>一个立体相册示例。点击图片拉近后，点击箭头图标或方向键移动照片，点击全景按钮返回全景。</p>
-        <p><a class="btn btn-success" href="demo2/index.html" target="_blank" role="button">翻开 »</a></p>
-      </div><!-- /.col-lg-4 -->
-      <div class="col-lg-4">
-        <h2>三年二班</h2>
-        <a href="demo3/index.html" target="_blank"><img src="{{ url_for('static', filename='images/tag.jpg') }}" height="250"></a>
-        <br><br>
-        <p>一个集体标签云相册示例。鼠标在标签附近停留会使标签旋转，点击标签打开图片。</p>
-        <p><a class="btn btn-success" href="demo3/index.html" target="_blank" role="button">翻开 »</a></p>
-      </div><!-- /.col-lg-4 -->
-    </div><!-- /.row -->
-
-
-    <!-- START THE FEATURETTES -->
-    <hr class="featurette-divider">
-    <div class="row featurette">
-      <div class="col-md-7">
-        <h2 class="featurette-heading">制作集体照片墙 <span class="text-muted">Our Image Wall.</span></h2>
-        <p class="lead">每个人拿出自己最喜欢的照片，不再只是在毕业照里留下一个小小的，不自然的脸。</p>
-      </div>
-      <div class="col-md-5">
-        <img class="featurette-image img-responsive center-block" src="{{ url_for('static', filename='images/classmate.jpg') }}" alt="Generic placeholder image">
-      </div>
-    </div>
-
-    <hr class="featurette-divider">
-
-    <div class="row featurette">
-      <div class="col-md-7 col-md-push-5">
-        <h2 class="featurette-heading">记录生活点滴 <span class="text-muted">Capture Beautiful Moments.</span></h2>
-        <p class="lead">写下拍照时的心情和趣事，记录每一个动人瞬间。</p>
-      </div>
-      <div class="col-md-5 col-md-pull-7">
-        <img class="featurette-image img-responsive center-block" src="{{ url_for('static', filename='images/caption.jpg') }}" alt="Generic placeholder image">
-      </div>
-    </div>
-
-    <hr class="featurette-divider">
-
-    <div class="row featurette">
-      <div class="col-md-7">
-        <h2 class="featurette-heading">打造自己的摄影展 <span class="text-muted">Showtime.</span></h2>
-        <p class="lead">创建一个立体相册，打造一个虚拟的摄影展。让你的朋友们眼前一亮。</p>
-      </div>
-      <div class="col-md-5">
-        <img class="featurette-image img-responsive center-block" src="{{ url_for('static', filename='images/3d.jpg') }}" alt="Generic placeholder image">
-      </div>
-    </div>
-
-    <hr class="featurette-divider">
-
-
-    <div class="row featurette">
-      <div class="col-md-7 col-md-push-5">
-        <h2 class="featurette-heading">多种相册样式<span class="text-muted">Choose The Favourite One.</span></h2>
-        <p class="lead">数十种相册样式可供选择：照片墙、立体、时间线、随机堆放……</p>
-      </div>
-      <div class="col-md-5 col-md-pull-7">
-        <img class="featurette-image img-responsive center-block" src="{{ url_for('static', filename='images/style.jpg') }}" alt="Generic placeholder image">
-      </div>
-    </div>
-
-    <hr class="featurette-divider">
-
-    <div class="row featurette">
-      <div class="col-md-7">
-        <h2 class="featurette-heading">丰富的自定义设置 <span class="text-muted">Do It Yourself.</span></h2>
-        <p class="lead">设置背景和相框的颜色，或是给照片添加文字说明，统统没问题。</p>
-      </div>
-      <div class="col-md-5">
-        <img class="featurette-image img-responsive center-block" src="{{ url_for('static', filename='images/hint.jpg') }}" alt="Generic placeholder image">
-      </div>
-    </div>
-    <br>
-    <hr class="featurette-divider">
-    <div align="center">
-      <p class="shake shake-horizontal"><a class="btn btn-lg btn-primary" href="#signup" role="button">立刻申请试用</a></p>
-    </div>
-</div>
 {% endif %}
 
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='js/remodal.min.js') }}"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="{{ url_for('static', filename='js/ie10-viewport-bug-workaround.js') }}"></script>
 <script src="{{ url_for('static', filename='js/typing.js') }}"></script>
-<script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
-<script>
-$('.grid').imagesLoaded( function(){
-    $('.grid').isotope({
-      itemSelector : '.grid-item',
-      {% if type == 'photo' %}
-      layoutMode: 'masonry',
-      {% endif %}
-    });
-  });
-</script>
 <script>
   var strings = new Array("特别的", "好玩的", "有趣的", "让人耳目一新的", "独一无二的", "属于大家的", "让人记忆深刻的", "充满欢乐和感动的") ; // multi words
   var typingSpeed = 100;
