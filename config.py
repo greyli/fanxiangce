@@ -50,7 +50,13 @@ class ProductionConfig(Config):
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 
-class HerokuConfig(DevelopmentConfig):
+class HerokuConfig(Config):
+    DEBUG = True
+    MAIL_SERVER = 'smtp.sina.com'
+    MAIL_PORT = 25
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = 'mimi_19@sina.com'  # os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = 'december'  # os.environ.get('MAIL_PASSWORD')
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
