@@ -140,7 +140,7 @@ a.thumbnail {
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
         <span class="pull-right">  &nbsp;
             {% if not no_pic %}
-            <a class="btn btn-default btn-xs" href="{{ photos[0].path_s }}" data-lightbox="slide" title="<br><a href={{ url_for('.photo', id=photos[0].id) }}><br>跳转到图片页面</a>">幻灯片</a>
+            <a class="btn btn-default btn-xs" href="{{ photos[0].url_s }}" data-lightbox="slide" title="<br><a href={{ url_for('.photo', id=photos[0].id) }}><br>跳转到图片页面</a>">幻灯片</a>
             {% endif %}
             <a class="btn btn-default btn-xs row-btn">对齐</a>
             <a class="btn btn-default btn-xs mas-btn">瀑布流</a>
@@ -173,10 +173,10 @@ a.thumbnail {
             {% for photo in photos %}
             <div class="post grid-item span3">
                 {% if loop.index != 1 %}
-                <a class="hide-photo" id="firstSlide" href="{{ photo.path_s }} " data-lightbox="slide" title="<br><a href={{ url_for('.photo', id=photo.id) }}>跳转到图片页面</a>"></a>
+                <a class="hide-photo" id="firstSlide" href="{{ photo.url_s }} " data-lightbox="slide" title="<br><a href={{ url_for('.photo', id=photo.id) }}>跳转到图片页面</a>"></a>
                 {% endif %}
                 <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
-                    <img class="img-responsive" src="{{ photo.path_t }}">
+                    <img class="img-responsive" src="{{ photo.url_t }}">
                 </a>
                 <div class="info">
                     <a class="comment" href="{{ url_for('.photo', id=photo.id) }}#comment">评论 <span class="badge">{{ photo.comments.count() }}</span></a>

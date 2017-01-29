@@ -397,10 +397,9 @@ def new_album():
                 json_data = urllib2.urlopen(request_).read()
                 data = json.loads(json_data)
                 url = data[u'linkurl']
-                s_url = data[u's_url']
-                t_url = data[u't_url']
-                print url
-                images.append((url, s_url, t_url))
+                url_s = data[u's_url']
+                url_t = data[u't_url']
+                images.append((url, url_s, url_t))
         title = form.title.data
         about = form.about.data
         author = current_user._get_current_object()
@@ -409,7 +408,7 @@ def new_album():
         db.session.add(album)
 
         for url in images:
-            photo = Photo(path=url[0], path_s=url[1], path_t=url[2],
+            photo = Photo(url=url[0], url_s=url[1], url_t=url[2],
                           album=album, author=current_user._get_current_object())
             db.session.add(photo)
         db.session.commit()
@@ -434,13 +433,12 @@ def add_photo(id):
                 json_data = urllib2.urlopen(request_).read()
                 data = json.loads(json_data)
                 url = data['linkurl']
-                s_url = data['s_url']
-                t_url = data['t_url']
-                print url
-                images.append((url, s_url, t_url))
+                url_s = data['s_url']
+                url_t = data['t_url']
+                images.append((url, url_s, url_t))
 
             for url in images:
-                photo = Photo(path=url[0], path_s=url[1], path_t=url[2],
+                photo = Photo(url=url[0], url_s=url[1], url_t=url[2],
                               album=album, author=current_user._get_current_object())
                 db.session.add(photo)
             db.session.commit()
@@ -542,7 +540,7 @@ def like_photo(id):
         redirect(url_for('.photo', id=id))
     else:
         current_user.like_photo(photo)
-        current_user.liked += 1
+        photo.author.liked += 1
     return redirect(url_for('.photo', id=id))
 
 @main.route('/album/like/<id>')
@@ -572,8 +570,8 @@ def unlike_photo(id):
         flash(u'无效的图片。', 'warning')
         return redirect(url_for('.likes', username=current_user.username))
     if current_user.is_like_photo(photo):
+        photo.author.liked -= 1
         current_user.unlike_photo(photo)
-        current_user.liked += 1
     return (''), 204
 
 

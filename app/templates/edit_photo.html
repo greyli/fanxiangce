@@ -95,11 +95,11 @@
 	<ul id="images">
         {% for photo in enu_photos %}
 		<li><div class="thumbnail">
-                <img class="img-responsive portrait" src="{{ photo[1].path_t }}" alt="Some description"/>
+                <img class="img-responsive portrait" src="{{ photo[1].url_t }}" alt="Some description"/>
             </div>
             <textarea name="{{ photo[1].id }}" placeholder="添加描述" rows="3">{% if photo[1].about %}{{ photo[1].about }}{% endif %}</textarea>
             <input class="order" type="hidden" name="order-{{ photo[1].id }}" value="{{ photo[0] + 1 }}">
-            设为封面<input type="radio" name="cover" value="{{ photo[1].path }}" {% if photo[1].path == album.cover %}checked{% endif %}>
+            设为封面<input type="radio" name="cover" value="{{ photo[1].url_t }}" {% if photo[1].url_t == album.cover %}checked{% endif %}>
             <a href="#" data-href="{{ url_for('.delete_edit_photo', id=photo[1].id) }}" class="pull-right btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete">删除</a>
         </li>
         {% endfor %}

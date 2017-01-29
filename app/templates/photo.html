@@ -150,7 +150,7 @@ div.comment-form {
     <div class="col-md-9">
         <div class="photo container-fluid">
         <a href="{{ url_for('.photo_next', id=photo.id)}}" title="点击跳到下一张">
-            <img src="{{ photo.path_s }}">
+            <img src="{{ photo.url_s }}">
         </a>
         <div class="text-left">
             <br>
@@ -173,7 +173,7 @@ div.comment-form {
                 <br>
                 <input class="btn btn-success" type="submit" name="submit" value="确定">
                 <input class="cancel-btn btn btn-default" type="button" value="取消">
-                设为封面：<input type="checkbox" name="cover" value="{{ photo.path }}"{% if album.cover == photo.path %}checked{% endif %}>
+                设为封面：<input type="checkbox" name="cover" value="{{ photo.url_t }}"{% if album.cover == photo.url_t %}checked{% endif %}>
             </form>
         </div>
         <div>
@@ -228,7 +228,7 @@ div.comment-form {
 
     <div class="info col-md-3" >
         <div class="view pull-right">
-            <a class="btn" href="{{ photo.path }}" data-lightbox="view" title="">
+            <a class="btn" href="{{ photo.url }}" data-lightbox="view" title="">
                 <i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;
             </a>
         </div>
@@ -284,7 +284,7 @@ div.comment-form {
         <p><a href="{{ url_for('.album', id=album.id )}}">{{ album.title }}</a>（{{ album.photos.count() }}张照片）</p>
         <div class="album-cover">
             <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
-                <img class="img-responsive  portrait" src="{{ album.cover }}">
+                <img class="img-responsive portrait" src="{{ album.cover }}">
             </a>
         </div>
     </div>

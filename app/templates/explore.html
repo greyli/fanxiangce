@@ -113,7 +113,7 @@ a.thumbnail {
         {% for photo in photos[:100] %}
             <div class="post span3 grid-item">
             <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" >
-                <img class="img-responsive lazy" src="{{ photo.path }}">
+                <img class="img-responsive lazy" src="{{ photo.path_t }}">
             </a>
             <div class="info">
               <span>上传于{{ moment(photo.timestamp).format('L') }}</span>
