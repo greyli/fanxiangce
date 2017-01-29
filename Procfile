@@ -1,1 +1,1 @@
-web: gunicorn -k gevent manage:manager
+web: gunicorn -k gevent manage:app
