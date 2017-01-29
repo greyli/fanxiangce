@@ -5,7 +5,7 @@ from app.models import User, Role
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
-app = create_app(os.getenv('heroku'))
+app = create_app('heroku')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
