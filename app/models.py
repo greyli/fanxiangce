@@ -152,7 +152,7 @@ class User(UserMixin, db.Model):
     status = db.Column(db.String(64))
     liked = db.Column(db.Integer, default=0)
     password_hash = db.Column(db.String(64))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    # role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean, default=False)
     like_public = db.Column(db.Boolean, default=True)
     name = db.Column(db.String(64))
@@ -183,11 +183,11 @@ class User(UserMixin, db.Model):
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
-        if self.role is None:
-            if self.email == current_app.config['FANXIANGCE_ADMIN']:
-                self.role = Role.query.filter_by(permissions=0xff).first()
-            if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
+        # if self.role is None:
+        #     if self.email == current_app.config['FANXIANGCE_ADMIN']:
+        #         self.role = Role.query.filter_by(permissions=0xff).first()
+        #     if self.role is None:
+        #         self.role = Role.query.filter_by(default=True).first()
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = hashlib.md5(
                 self.email.encode('utf-8')).hexdigest()
