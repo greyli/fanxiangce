@@ -331,6 +331,7 @@ def setting():
         current_user.status = form.status.data
         current_user.location = form.location.data
         current_user.website = form.website.data
+        current_user.about_me = form.about_me.data
         current_user.like_public = form.like_public.data
         flash(u'你的设置已经更新。', 'success')
         return redirect(url_for('.albums', username=current_user.username))
@@ -338,6 +339,7 @@ def setting():
     form.location.data = current_user.location
     form.status.data = current_user.status
     form.website.data = current_user.website
+    form.about_me.data = current_user.about_me
     form.like_public.data = current_user.like_public
     return render_template('setting.html', form=form, user=current_user)
 

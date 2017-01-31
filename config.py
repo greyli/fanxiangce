@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-import psycopg2
+# import psycopg2
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -57,7 +57,7 @@ class HerokuConfig(Config):
     MAIL_USE_TLS = True
     MAIL_USERNAME = 'mimi_19@sina.com'  # os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = 'december'  # os.environ.get('MAIL_PASSWORD')
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    # SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
 

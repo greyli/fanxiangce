@@ -6,36 +6,28 @@
 {% block head %}
 {{ super() }}
 <style>
-*{
-margin: 0;
-padding: 0;
-}
-.post {
-margin: 40px;
+
+.album {
+    width: 300px;
+    padding: 10px;
+    margin: 30px 60px 20px 60px;
 }
 
-.post h4 {
+
+
+.post h5 {
+    color: #333;
   margin-bottom: 9px;
-}
-
-.post h4 a {
-  color: #333;
-}
-
-.post img.image {
-  max-width: 400px;
-  margin-top: 9px;
 }
 
 .info {
 	padding:4px;
 }
 
-
 .thumbnail {
   position: relative;
-  width: 250px;
-  height: 200px;
+  width: 270px;
+  height: 220px;
   overflow: hidden;
 }
 .thumbnail img {
@@ -53,48 +45,32 @@ margin: 40px;
   height: auto;
 }
 
-/*http://127.0.0.1:5000/_uploads/photos/2c0e67b986216c4e40bc94fe609b99f9_r.png*/
-.user-content {
-    padding-top: 50px;
-    background-image: url(https://image.hitu.me/464fea6caeb3454ead97be332c2e936b/AScwREH4yHUTafkKgFxsJS/large);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-color: #ccc;
-    color: #fff;
-    }
+#likes {
+    color: red;
+}
 
 .user-area {
-    background: linear-gradient(180deg,transparent 0,rgba(0,0,0,.03) 8%,rgba(0,0,0,.11) 21%,rgba(0,0,0,.61) 78%,rgba(0,0,0,.7) 95%,rgba(0,0,0,.7));
+    background: #ffe6b3;
+    padding: 20px;
 }
 
-.user-area a, .user-area h1 {
-    color: #fff;
-    display: inline;
-}
-
-.user-area p {
-    font-size: 16px;
-}
-.icon-area {
-    padding-top: 80px;
+.data-area {
+    
+    background: #e6ccff;
+    padding: 20px;
+    
 }
 
 .about-area {
-    padding-top: 120px;
-}
-
-.info-area {
-     padding-top: 160px;
-}
-#likes {
-    color: red;
+    background: #d6f5d6;
+    padding: 20px;
 }
 
 .album-cover, .album-cover:before
 {
     background: transprent;
-    width: 245px;
-    height: 190px;
+    width: 265px;
+    height: 215px;
     margin: 5px;
     border: 3px solid #FFF;
     box-shadow: 0 0 0 1px #999;
@@ -144,62 +120,20 @@ div.comment-form {
     margin: 16px 0px 16px 32px;
 }
 
+.user-area h2 {
+    display: inline;
+}
+
 </style>
 {% endblock %}
 
 {% block page_content %}
-<div class="user-content container-fluid">
-    <div class="row user-area">
-        <div class="col-md-1"></div>
-        <div class="col-md-1 col-xs-12 icon-area text-center">
-            <p>
-                <img class="img-rounded" src="{{ user.gravatar(size=128) }}">
-            </p>
-        </div>
-        <div class="col-md-4 col-xs-12 about-area text-center">
-            <h1>{{ user.name }}</h1> <!--i id="likes" class="glyphicon glyphicon-heart"></i--> {#{ user.liked }#}<br>
-            {% if user.status %}<p>{{ user.status }}</p>{% endif %}
-        </div>
-        
-        <div class="col-md-4 col-xs-12 info-area text-center">
-            关注者<a href="{{ url_for('.followers', username=user.username) }}"><span class="badge">{{ user.followers.count() }}</span></a>
-        <a href="{{ url_for('.followed_by', username=user.username) }}"> 关注了<span class="badge">{{ user.followed.count() }}</span></a>个人
-        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-        | <span class="label label-default">他/她在关注你</span>
-        {% endif %}
-            {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
-            {% if not current_user.is_authenticated or not current_user.is_following(user) %}
-            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
-            {% else %}
-            <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  已关注
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li><a href="{{ url_for('.unfollow', username=user.username) }}">取消关注</a></li>
-                </ul>
-            </div>
-        {% endif %}
-        {% endif %}
-            <br>
-        {% if user.location %}
-            <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a>
-        {% endif %}
-        {% if current_user.is_administrator() %}
-        <a href="mailto:{{ user.email }}">{{ user.email }}</a>
-        {% endif %}
-        {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% endif %}
-            
-        </div>
-    </div>
-</div>
-<br>
 
 <ol class="breadcrumb">
-  <li><a href="{{ url_for('.index') }}">翻相册</a></li>
-  <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</li>
-    <li><a href="{{ url_for('main.likes', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</a></li>
+    <li><a href="{{ url_for('.index') }}">翻相册</a></li>
+    <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</li>
+    <li><a href="{{ url_for('main.likes', username=user.username) }}">{% if current_user == user %}我{% else %}{{
+        user.name }}{% endif %}的喜欢</a></li>
     {% if user == current_user %}
     <li class="pull-right"><a href="{{ url_for('.edit_profile') }}">编辑资料</a></li>
     {% endif %}
@@ -208,42 +142,108 @@ div.comment-form {
     {% endif %}
 </ol>
 
-<div class="page-header">
-    <h3>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</h3>
-    <p>{{ album_count }}个相册 {{ photo_count }}张照片
-        <a class="pull-right btn" href="{{ url_for('.new_album') }}" title="新建相册">
-            <i class="glyphicon glyphicon-plus"></i>
-        </a>
-    </p>
-</div>
-
-<div class="text-center container-fluid">
-    {% if album_count == 0 %}
-    {% if current_user == user %}
-    <h3>你还没有相册，快来<a href="{{ url_for('.new_album') }}">创建</a>一个吧！</h3>
-    {% else %}
-    <h3>他/她还没有创建相册。</h3>
-    {% endif %}
-    {% endif %}
-    <div id="posts" class="row text-center">
-        {% for album in albums %}
-        {% if not album.no_public or current_user == user%}
-        <div class="post item span3">
-              <div class="album-cover">
-                <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}" >
-                    <img class="img-responsive portrait" src="{{ album.cover }}">
-                </a>
-              </div>
-              <div class="info">
-                  <h5><a href="{{ url_for('.album', id=album.id) }}">{{ album.title }}</a></h5>
-                  <span>{{ album.photos.count() }}张图片</span>
-                  <span>创建于{{ moment(album.timestamp).format('L') }}</span><hr>
-              </div>
+<div class="row">
+    
+    
+    <div class="col-md-9">
+        
+        <div class="text-center container-fluid">
+            {% if album_count == 0 %}
+            {% if current_user == user %}
+            <h3>你还没有相册，快来<a href="{{ url_for('.new_album') }}">创建</a>一个吧！</h3>
+            {% else %}
+            <h3>他/她还没有创建相册。</h3>
+            {% endif %}
+            {% endif %}
+            <div class="row text-center">
+                {% for album in albums %}
+                {% if not album.no_public or current_user == user%}
+                <div class="album col-md-3">
+                    <div class="album-cover">
+                        <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
+                            <img class="img-responsive portrait" src="{{ album.cover }}">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <h5><a href="{{ url_for('.album', id=album.id) }}">{{ album.title }}</a></h5>
+                        <span>{{ album.photos.count() }}张图片</span>
+                        <span>创建于{{ moment(album.timestamp).format('L') }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="container-fluid col-md-3">
+        <div class="center-text user-area text-center">
+            <p>
+                <img class="img-rounded user-icon" src="{{ user.gravatar(size=64) }}">
+            </p>
+            <h2>{{ user.name }}</h2> <i id="likes" class="glyphicon glyphicon-heart"></i> {{ user.liked }}
+            {% if user.status %}<p>{{ user.status }}</p>{% endif %}
+        
+        
+        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+        | <span class="label label-default">他/她在关注你</span>
+        {% endif %}
+        {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
+        {% if not current_user.is_authenticated or not current_user.is_following(user) %}
+        <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
+        {% else %}
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                已关注
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="{{ url_for('.unfollow', username=user.username) }}">取消关注</a></li>
+            </ul>
         </div>
         {% endif %}
-        {% endfor %}
+        {% endif %}
+        </div>
+        
+        <hr>
+        <div class="data-area">
+            <i class="glyphicon glyphicon-user"></i>
+            关注者<a href="{{ url_for('.followers', username=user.username) }}"><span class="badge">{{ user.followers.count() }}</span></a>
+             <br>
+            <i class="glyphicon glyphicon-user"></i>
+            关注了<a href="{{ url_for('.followed_by', username=user.username) }}"><span class="badge">{{ user.followed.count() }}</span></a>个人
+            <br>
+            <i class="glyphicon glyphicon-th-large"></i> 相册{{ album_count }}
+            <br>
+            <i class="glyphicon glyphicon-picture"></i> 照片{{ photo_count }}
+            <br>
+            {% if user.location %}
+                <i class="glyphicon glyphicon-map-marker"></i>
+                <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a>
+            {% endif %}
+            {% if current_user.is_administrator() %}
+                <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+            {% endif %}<br>
+            {% if user.website %}
+                <i class="glyphicon glyphicon-link"></i>
+                <a href="{{ user.website }}" target="_blank">{{ user.website }}</a>
+            {% endif %}
+            <br>
+            <i class="glyphicon glyphicon-repeat"></i>
+            {{ moment(user.member_since).format('YYYY/M') }}加入
+        </div>
+        
+       {% if user.about_me %}
+         <hr>
+        <div class="about-area">
+            {{ user.about_me|replace('\r', '<br>')|safe }}
+        </div>
+        {% endif %}
     </div>
 </div>
+
 <div class="text-center">
     {{ macros.pagination_widget(pagination, '.albums', username=user.username) }}
 </div>
@@ -253,7 +253,7 @@ div.comment-form {
     <h3>留言板</h3>
     {{ wtf.quick_form(form) }}
     <div id="comment">
-    {% include '_comments.html' %}
+        {% include '_comments.html' %}
     </div>
 </div><br>
 {% endblock %}
@@ -268,5 +268,7 @@ div.comment-form {
       itemSelector : '.item'
     });
   });
+
+
 </script>
 {% endblock %}
