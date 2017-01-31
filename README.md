@@ -1,5 +1,5 @@
 # fanxiangce
 An album website made by Flask and Python.
 
-## Intro
+## Introducation
 http://fanxiangce.com
