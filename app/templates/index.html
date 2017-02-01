@@ -115,14 +115,14 @@ a.thumbnail {
 <div class="container">
     <h3>我的关注</h3>
 </div>
-
+<hr>
 <div class="container">
     <div class="row grid">
-        {% for photo in photos %}
-        {% if photo.album.is_public == True %}
+        {% for photo in photos[:50] %}
+        {% if photo.album.no_public == False %}
             <div class="post span3 grid-item">
             <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" >
-                <img class="img-responsive" src="{{ photo.path }}">
+                <img class="img-responsive" src="{{ photo.url_t }}">
             </a>
             <div class="info">
               <span>上传于{{ moment(photo.timestamp).format('L') }}</span>
@@ -132,20 +132,12 @@ a.thumbnail {
           </div>
         {% endif %}
         {% endfor %}
+        
+        {% if not photos %}
+        <h4>你还没有关注任何人，先去<a href="{{ url_for('.explore') }}">探索</a>一下吧！</h4>
+        {% endif %}
       </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 {% else %}
 <div class="jumbotron" style="background: #fff; height: 500px;">
@@ -167,10 +159,19 @@ a.thumbnail {
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="{{ url_for('static', filename='js/ie10-viewport-bug-workaround.js') }}"></script>
 <script src="{{ url_for('static', filename='js/typing.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
 <script>
   var strings = new Array("特别的", "好玩的", "有趣的", "让人耳目一新的", "独一无二的", "属于大家的", "让人记忆深刻的", "充满欢乐和感动的") ; // multi words
   var typingSpeed = 100;
   var deleteSpeed = 40;
   var isLoop = ture;
+  $('.grid').imagesLoaded( function(){
+        $('.grid').isotope({
+          itemSelector : '.grid-item',
+          layoutMode: 'masonry',
+        });
+    });
 </script>
 {% endblock %}

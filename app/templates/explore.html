@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}翻相册 - 发现{% endblock %}
+{% block title %}翻相册 - 探索{% endblock %}
 {% block head %}
 {{ super() }}
 <style>
@@ -94,12 +94,12 @@ a.thumbnail {
 {% block page_content %}
 <ol class="breadcrumb" id="navigation">
     <li><a href="{{ url_for('.index') }}">首页</a></li>
-    <li class="active">发现</li>
+    <li class="active">探索</li>
     <li class="pull-right"><a href="{{ url_for('.albums', username=current_user.username) }}">返回我的主页</a></li>
 </ol>
 
 <div class="page-header">
-    <h2>发现</h2>
+    <h2>探索</h2>
 </div>
 
 <ul class="nav nav-tabs">
@@ -107,13 +107,12 @@ a.thumbnail {
     <li {% if type == 'hot' %}class="active"{% endif %}><a href="{{ url_for('.explore_hot') }}">热门</a></li>
 </ul><br>
 
-<a href="../static/hi2.jpg">hi</a>
 <div class="container">
     <div class="row grid">
         {% for photo in photos[:100] %}
             <div class="post span3 grid-item">
             <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" >
-                <img class="img-responsive lazy" src="{{ photo.path_t }}">
+                <img class="img-responsive lazy" src="{{ photo.url_t }}">
             </a>
             <div class="info">
               <span>上传于{{ moment(photo.timestamp).format('L') }}</span>

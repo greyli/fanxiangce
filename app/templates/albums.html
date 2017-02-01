@@ -182,7 +182,7 @@ div.comment-form {
             <p>
                 <img class="img-rounded user-icon" src="{{ user.gravatar(size=64) }}">
             </p>
-            <h2>{{ user.name }}</h2> <i id="likes" class="glyphicon glyphicon-heart"></i> {{ user.liked }}
+            <h2>{{ user.name }}</h2> <i class="glyphicon glyphicon-heart red"></i> {{ user.liked }}
             {% if user.status %}<p>{{ user.status }}</p>{% endif %}
         
         
@@ -213,7 +213,7 @@ div.comment-form {
             关注者<a href="{{ url_for('.followers', username=user.username) }}"><span class="badge">{{ user.followers.count() }}</span></a>
              <br>
             <i class="glyphicon glyphicon-user"></i>
-            关注了<a href="{{ url_for('.followed_by', username=user.username) }}"><span class="badge">{{ user.followed.count() }}</span></a>个人
+            正在关注<a href="{{ url_for('.followed_by', username=user.username) }}"><span class="badge">{{ user.followed.count() }}</span></a>
             <br>
             <i class="glyphicon glyphicon-th-large"></i> 相册{{ album_count }}
             <br>
@@ -221,16 +221,16 @@ div.comment-form {
             <br>
             {% if user.location %}
                 <i class="glyphicon glyphicon-map-marker"></i>
-                <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a>
+                <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
             {% endif %}
             {% if current_user.is_administrator() %}
-                <a href="mailto:{{ user.email }}">{{ user.email }}</a>
-            {% endif %}<br>
+                <a href="mailto:{{ user.email }}">{{ user.email }}</a><br>
+            {% endif %}
             {% if user.website %}
                 <i class="glyphicon glyphicon-link"></i>
-                <a href="{{ user.website }}" target="_blank">{{ user.website }}</a>
+                <a href="{{ user.website }}" target="_blank">{{ user.website }}</a><br>
             {% endif %}
-            <br>
+            
             <i class="glyphicon glyphicon-repeat"></i>
             {{ moment(user.member_since).format('YYYY/M') }}加入
         </div>

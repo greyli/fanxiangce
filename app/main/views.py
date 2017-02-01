@@ -26,8 +26,7 @@ from ..decorators import admin_required, permission_required
 def index():
     if current_user.is_authenticated:
         photos = current_user.followed_photos
-        photos  = [photo for photo in photos if photo.album.is_public==True]
-        print photos
+        photos  = [photo for photo in photos if photo.album.no_public == False]
     else:
         photos = ""
     return render_template('index.html', photos=photos)
@@ -36,7 +35,7 @@ def index():
 @main.route('/explore', methods=['GET', 'POST'])
 def explore():
     photos = Photo.query.order_by(Photo.timestamp.desc()).all()
-    photos = [photo for photo in photos if photo.album.is_public == True]
+    photos = [photo for photo in photos if photo.album.no_public == False and photo.author != current_user]
     photo_type = "new"
     return render_template('explore.html', photos=photos, type=photo_type)
 
@@ -44,11 +43,10 @@ def explore():
 @main.route('/explore/hot', methods=['GET', 'POST'])
 def explore_hot():
     photos = Photo.query.all()
-    photos = [photo for photo in photos if photo.album.is_public == True]
+    photos = [photo for photo in photos if photo.album.no_public == False]
     result = {}
     for photo in photos:
         result[photo] = len(list(photo.photo_liked))
-    print result
     sorted_photo = sorted(result.items(), key=lambda x: x[1], reverse=True)
     temp = []
     for photo in sorted_photo:
@@ -174,9 +172,11 @@ def albums(username):
     album_count = len(albums)
 
     allowed_tags = ['br']
-    about_me = bleach.linkify(bleach.clean(
-        user.about_me.replace('\r', '<br>'), tags=allowed_tags, strip=True))
-
+    if user.about_me:
+        about_me = bleach.linkify(bleach.clean(
+            user.about_me.replace('\r', '<br>'), tags=allowed_tags, strip=True))
+    else:
+        about_me = None
     form = CommentForm()
     if form.validate_on_submit() and current_user.is_authenticated:
         comment = Message(body=form.body.data,
@@ -239,7 +239,7 @@ def album(id):
     elif photo_amount != 0 and album.cover == placeholder:
         album.cover = album.photos[0].path
 
-    if current_user != album.author and album.is_public == False:
+    if current_user != album.author and album.no_public == True:
         abort(404)
     page = request.args.get('page', 1, type=int)
     if album.asc_order:
@@ -551,6 +551,7 @@ def like_photo(id):
         return redirect(url_for('.album', id=album))
     if current_user.is_like_photo(photo):
         current_user.unlike_photo(photo)
+        photo.author.liked -= 1
         redirect(url_for('.photo', id=id))
     else:
         current_user.like_photo(photo)
@@ -573,20 +574,6 @@ def like_album(id):
         current_user.like_album(album)
         flash(u'相册已经添加到你的喜欢里了。', 'success')
     return redirect(url_for('.album', id=id))
-
-
-@main.route('/photo/unlike/<id>')
-@login_required
-#@permission_required(Permission.FOLLOW)# todo follow > like
-def unlike_photo(id):
-    photo = Photo.query.filter_by(id=id).first()
-    if photo is None:
-        flash(u'无效的图片。', 'warning')
-        return redirect(url_for('.likes', username=current_user.username))
-    if current_user.is_like_photo(photo):
-        photo.author.liked -= 1
-        current_user.unlike_photo(photo)
-    return (''), 204
 
 
 @main.route('/album/unlike/<id>')
