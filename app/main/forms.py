@@ -17,15 +17,13 @@ class SettingForm(Form):
     location = StringField(u'城市', validators=[Length(0, 64)])
     website = StringField(u'网站', validators=[Length(0, 64), Optional(),
                          ], render_kw={"placeholder": "http://..."})
-    about_me = TextAreaField(u'关于我', render_kw={"col": "15"})
+    about_me = TextAreaField(u'关于我', render_kw={'rows': 8})
     like_public = BooleanField(u'公开我的喜欢')
-    # background = SelectField(u'主页背景')
     submit = SubmitField(u'提交')
 
     def validate_website(self, field):
         if field.data[:4] != "http":
-            print field.data[:4]
-            field.data = "http://" + field.data
+             field.data = "http://" + field.data
 
 
 class EditProfileAdminForm(Form):

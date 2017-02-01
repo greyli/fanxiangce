@@ -3,6 +3,7 @@ import os
 import time
 import hashlib
 import json
+import bleach
 
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
@@ -161,15 +162,22 @@ def save_sort(id):
 @main.route('/user/<username>/albums', methods=['GET', 'POST'])
 def albums(username):
     user = User.query.filter_by(username=username).first()
-    form = CommentForm()
     if user is None:
         abort(404)
+
     page = request.args.get('page', 1, type=int)
     pagination = user.albums.order_by(Album.timestamp.desc()).paginate(
             page, per_page=current_app.config['FANXIANGCE_ALBUMS_PER_PAGE'], error_out=False)
     albums = pagination.items
+
     photo_count = sum([len(album.photos.all()) for album in albums])
     album_count = len(albums)
+
+    allowed_tags = ['br']
+    about_me = bleach.linkify(bleach.clean(
+        user.about_me.replace('\r', '<br>'), tags=allowed_tags, strip=True))
+
+    form = CommentForm()
     if form.validate_on_submit() and current_user.is_authenticated:
         comment = Message(body=form.body.data,
                           user=user,
@@ -177,10 +185,12 @@ def albums(username):
         db.session.add(comment)
         flash(u'你的评论已经发表。', 'success')
         return redirect(url_for('.albums', username=username))
+
     comments = user.messages.order_by(Message.timestamp.asc()).all()
     return render_template('albums.html', form=form, comments=comments,
                            user=user, albums=albums, album_count=album_count,
-                           photo_count=photo_count, pagination=pagination)
+                           photo_count=photo_count, pagination=pagination,
+                           about_me=about_me)
 
 
 @main.route('/user/<username>/likes')
