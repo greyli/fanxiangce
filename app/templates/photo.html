@@ -133,100 +133,109 @@ div.comment-form {
     z-index: -1;
 }
 
+
 </style>
 {% endblock %}
 
 {% block page_content %}
 <ol class="breadcrumb" id="navigation">
     <li><a href="{{ url_for('.index') }}">首页</a></li>
-    <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
+    <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else
+        %}{{ album.author.name }}{% endif %}的相册</a></li>
     <li><a href="{{ url_for('.album', id=album.id) }}">《{{ album.title }}》</a></li>
     <li class="active">第{{ photo_index }}张</li>
     <li class="pull-right"><a href="{{ url_for('.album', id=album.id) }}">返回</a></li>
-    <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的喜欢</a></li>
+    <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{% if current_user ==
+        album.author %}我{% else %}{{ album.author.name }}{% endif %}的喜欢</a></li>
 </ol>
 
 <div class="row" id="image">
     <div class="col-md-9">
         <div class="photo container-fluid">
-        <a href="{{ url_for('.photo_next', id=photo.id)}}" title="点击跳到下一张">
-            <img src="{{ photo.url_s }}">
-        </a>
-        <div class="text-left">
-            <br>
-            {% if photo.about %}
-            <p class="about-text">
-                {{ photo.about }}
-                {% if current_user.is_authenticated and current_user == photo.author %}
-                <a class="add-about label label-xs label-default">修改<i class="glyphicon glyphicon-edit"></i></a>
-                {% endif %}
-            </p>
-            {% else %}
-            <p class="about-text">
-                {% if current_user.is_authenticated and current_user == photo.author %}
-                <a class="add-about label label-xs label-default">添加描述<i class="glyphicon glyphicon-edit"></i></a>
-                {% endif %}
-            </p>
-            {% endif %}
-            <form class="about-form" action="{{ url_for('.save_photo_edit', id=photo.id) }}" method="POST">
-                <textarea class="form-control" name="about" placeholder="添加描述" rows="3" cols="100%">{% if photo.about %}{{ photo.about }}{% endif %}</textarea>
+            <a href="{{ url_for('.photo_next', id=photo.id)}}" title="点击跳到下一张">
+                <img src="{{ photo.url_s }}">
+            </a>
+            <div class="text-left">
                 <br>
-                <input class="btn btn-success" type="submit" name="submit" value="确定">
-                <input class="cancel-btn btn btn-default" type="button" value="取消">
-                设为封面：<input type="checkbox" name="cover" value="{{ photo.url_t }}"{% if album.cover == photo.url_t %}checked{% endif %}>
-            </form>
-        </div>
-        <div>
-        <br>
-            <p class="text-left">上传于{{ moment(album.timestamp).format('L') }}</p>
-            <p><span class="pull-left"><button type="button" class="btn btn-default btn-sm">推荐</button></span></p>
-        {% if current_user == photo.author %}
-            <!-- Button trigger modal -->
-            <p><span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#DeleteModal">
+                {% if photo.about %}
+                <p class="about-text">
+                    {{ photo.about }}
+                    {% if current_user.is_authenticated and current_user == photo.author %}
+                    <a class="add-about label label-xs label-default">修改<i class="glyphicon glyphicon-edit"></i></a>
+                    {% endif %}
+                </p>
+                {% else %}
+                <p class="about-text">
+                    {% if current_user.is_authenticated and current_user == photo.author %}
+                    <a class="add-about label label-xs label-default">添加描述<i class="glyphicon glyphicon-edit"></i></a>
+                    {% endif %}
+                </p>
+                {% endif %}
+                <form class="about-form" action="{{ url_for('.save_photo_edit', id=photo.id) }}" method="POST">
+                    <textarea class="form-control" name="about" placeholder="添加描述" rows="3" cols="100%">{% if photo.about %}{{ photo.about }}{% endif %}</textarea>
+                    <br>
+                    <input class="btn btn-success" type="submit" name="submit" value="确定">
+                    <input class="cancel-btn btn btn-default" type="button" value="取消">
+                    设为封面：<input type="checkbox" name="cover" value="{{ photo.url_t }}" {% if album.cover== photo.url_t
+                                %}checked{% endif %}>
+                </form>
+            </div>
+            <div class="container">
+                <br>
+                <p class="text-left">上传于{{ moment(album.timestamp).format('L') }}</p>
+                <p><span class="pull-left"><button type="button" class="btn btn-default btn-sm">推荐</button></span></p>
+                {% if current_user == photo.author %}
+                <!-- Button trigger modal -->
+                <p><span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                                    data-target="#DeleteModal">
               删除
             </button></span></p>
-        <!-- 删除确认弹窗 -->
-        <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog">
-          <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    确定要删除这张图片？
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <a href="{{ url_for('.delete_photo', id=photo.id) }}"><button type="button" class="btn btn-danger">确认</button></a>
-              </div>
-            </div><!-- /.modal-content -->
-          </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-        {% endif %}
+                <!-- 删除确认弹窗 -->
+                <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                确定要删除这张图片？
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <a href="{{ url_for('.delete_photo', id=photo.id) }}">
+                                    <button type="button" class="btn btn-danger">确认</button>
+                                </a>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+                {% endif %}
+            </div>
         </div>
-    </div>
-        <hr>
-        {% if not album.no_comment %}
+                    <hr>
+
+            {% if not album.no_comment %}
             {% if amount == 0 %}
-                <div class="comment container-fluid">
+            <div class="comment">
                 {{ wtf.quick_form(form) }}
-                </div>
+            </div>
             {% else %}
-                <h4>共{{ amount }}个留言</h4>
-                <div id="comment">
+            <h4>共{{ amount }}个留言</h4>
+            <div id="comment">
                 {% include '_comments.html' %}
                 <div class="pagination">
                     {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
                 </div>
-                </div>
-                <div class="comment container-fluid">
+            </div>
+            <div class="comment">
                 {{ wtf.quick_form(form) }}
-                </div>
+            </div>
             {% endif %}
-        {% else %}
+            {% else %}
             <p>评论被作者关闭。</p>
-        {% endif %}
+            {% endif %}
     </div>
-
-    <div class="info col-md-3" >
+    
+    <div class="info col-md-3">
         <div class="view pull-right">
             <a class="btn" href="{{ photo.url }}" data-lightbox="view" title="">
                 <i class="glyphicon glyphicon-resize-full"></i>&nbsp;&nbsp;&nbsp;
@@ -234,18 +243,18 @@ div.comment-form {
         </div>
         <div class="pagination">
             <p>
-            <a class="btn btn-default" href="{{ url_for('.photo_previous', id=photo.id)}}">上一张</a>
-            <a class="btn btn-default" href="{{ url_for('.photo_next', id=photo.id)}}">下一张</a>
+                <a class="btn btn-default" href="{{ url_for('.photo_previous', id=photo.id)}}">上一张</a>
+                <a class="btn btn-default" href="{{ url_for('.photo_next', id=photo.id)}}">下一张</a>
                 &nbsp;第{{ photo_index }}张 / 共{{ photo_sum }}张
             </p>
             <br>
             <p>
-            {% if current_user.is_authenticated and photo.is_liked_by(current_user) %}
-            <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-            {% else %}
-            <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-            {% endif %}
-            <span class="badge">{{ photo.photo_liked.count() }}</span>
+                {% if current_user.is_authenticated and photo.is_liked_by(current_user) %}
+                <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+                {% else %}
+                <a href="{{ url_for('.like_photo', id=photo.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+                {% endif %}
+                <span class="badge">{{ photo.photo_liked.count() }}</span>
             </p>
         </div>
         <br>
@@ -253,32 +262,35 @@ div.comment-form {
         <div id="author">
             <div class="row">
                 <div class="col-md-4">
-                <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
-            </div>
+                    <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
+                </div>
                 <div class="col-md-6">
-                    <h4><a href="{{ url_for('.albums', username=album.author.username) }}">{{ album.author.name }}</a></h4>
+                    <h4><a href="{{ url_for('.albums', username=album.author.username) }}">{{ album.author.name }}</a>
+                    </h4>
                     <i class="glyphicon glyphicon-heart red"></i> {{ album.author.liked }}
                 </div>
             </div>
             <br>
-        {% if album.author.status %}<p>{{ album.author.status }}</p>{% else %}<p>-</p>{% endif %}
+            {% if album.author.status %}<p>{{ album.author.status }}</p>{% else %}<p>-</p>{% endif %}
             {% if album.author != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
             {% if not current_user.is_authenticated or not current_user.is_following(album.author) %}
             <a href="{{ url_for('.follow', username=album.author.username) }}" class="btn btn-primary">关注</a>
             {% else %}
             <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  已关注
-                  <span class="caret"></span>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    已关注
+                    <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="{{ url_for('.unfollow', username=album.author.username) }}">取消关注</a></li>
+                    <li><a href="{{ url_for('.unfollow', username=album.author.username) }}">取消关注</a></li>
                 </ul>
-              </div>&nbsp; {{ album.author.followers.count() }}人关注
+            </div>
+            &nbsp; {{ album.author.followers.count() }}人关注
             {% endif %}
             {% endif %}
         </div>
-
+        
         <br>
         <hr>
         <p><a href="{{ url_for('.album', id=album.id )}}">{{ album.title }}</a>（{{ album.photos.count() }}张照片）</p>
@@ -289,12 +301,6 @@ div.comment-form {
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-8">
-
-    </div>
-</div>
-
 
 {% endblock %}
 
@@ -315,6 +321,7 @@ div.comment-form {
       $(".about-text").show();
     });
 
+
 </script>
 <script>
     var $= jQuery.noConflict();
@@ -324,6 +331,7 @@ div.comment-form {
       'maxWidth': 1000,
       'disableScrolling': true,
     })
+
 </script>
 
 {% endblock %}

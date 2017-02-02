@@ -558,6 +558,22 @@ def like_photo(id):
         photo.author.liked += 1
     return redirect(url_for('.photo', id=id))
 
+
+@main.route('/photo/unlike/<id>')
+@login_required
+#@permission_required(Permission.FOLLOW)# todo follow > like
+def unlike_photo(id):
+    # unlike photo in likes page.
+    photo = Photo.query.filter_by(id=id).first()
+    if photo is None:
+        flash(u'无效的图片。', 'warning')
+        return redirect(url_for('.likes', username=current_user.username))
+    if current_user.is_like_photo(photo):
+        current_user.unlike_photo(photo)
+        photo.author.liked -= 1
+    return (''), 204
+
+
 @main.route('/album/like/<id>')
 @login_required
 #@permission_required(Permission.FOLLOW)# todo follow > like
@@ -574,6 +590,8 @@ def like_album(id):
         current_user.like_album(album)
         flash(u'相册已经添加到你的喜欢里了。', 'success')
     return redirect(url_for('.album', id=id))
+
+
 
 
 @main.route('/album/unlike/<id>')

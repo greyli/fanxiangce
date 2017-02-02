@@ -185,9 +185,9 @@ div.comment-form {
             <h2>{{ user.name }}</h2> <i class="glyphicon glyphicon-heart red"></i> {{ user.liked }}
             {% if user.status %}<p>{{ user.status }}</p>{% endif %}
         
-        
+        <br>
         {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-        | <span class="label label-default">他/她在关注你</span>
+        <p class="label label-default">他/她在关注你</p><br><br>
         {% endif %}
         {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
         {% if not current_user.is_authenticated or not current_user.is_following(user) %}
