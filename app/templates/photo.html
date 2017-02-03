@@ -132,8 +132,6 @@ div.comment-form {
     background: white;
     z-index: -1;
 }
-
-
 </style>
 {% endblock %}
 
@@ -211,28 +209,28 @@ div.comment-form {
                 {% endif %}
             </div>
         </div>
-                    <hr>
-
-            {% if not album.no_comment %}
-            {% if amount == 0 %}
-            <div class="comment">
-                {{ wtf.quick_form(form) }}
+        <hr>
+        
+        {% if not album.no_comment %}
+        {% if amount == 0 %}
+        <div class="comment">
+            {{ wtf.quick_form(form) }}
+        </div>
+        {% else %}
+        <h4>共{{ amount }}个留言</h4>
+        <div id="comment">
+            {% include '_comments.html' %}
+            <div class="pagination">
+                {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
             </div>
-            {% else %}
-            <h4>共{{ amount }}个留言</h4>
-            <div id="comment">
-                {% include '_comments.html' %}
-                <div class="pagination">
-                    {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
-                </div>
-            </div>
-            <div class="comment">
-                {{ wtf.quick_form(form) }}
-            </div>
-            {% endif %}
-            {% else %}
-            <p>评论被作者关闭。</p>
-            {% endif %}
+        </div>
+        <div class="comment">
+            {{ wtf.quick_form(form) }}
+        </div>
+        {% endif %}
+        {% else %}
+        <p>评论被作者关闭。</p>
+        {% endif %}
     </div>
     
     <div class="info col-md-3">
@@ -322,6 +320,7 @@ div.comment-form {
     });
 
 
+
 </script>
 <script>
     var $= jQuery.noConflict();
@@ -331,6 +330,7 @@ div.comment-form {
       'maxWidth': 1000,
       'disableScrolling': true,
     })
+
 
 </script>
 

@@ -121,17 +121,21 @@ a.thumbnail {
  .hide-photo {
     display: none;
 }
+
+
 </style>
 {% endblock %}
 
 {% block page_content %}
 
 <ol class="breadcrumb">
-  <li><a href="{{ url_for('.index') }}">首页</a></li>
-  <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的相册</a></li>
-  <li class="active">《{{ album.title }}》</li>
-  <li class="pull-right"><a href="{{ url_for('.albums', username=album.author.username) }}">返回</a></li>
-  <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{% if current_user == album.author %}我{% else %}{{ album.author.name }}{% endif %}的喜欢</a></li>
+    <li><a href="{{ url_for('.index') }}">首页</a></li>
+    <li><a href="{{ url_for('.albums', username=album.author.username) }}">{% if current_user == album.author %}我{% else
+        %}{{ album.author.name }}{% endif %}的相册</a></li>
+    <li class="active">《{{ album.title }}》</li>
+    <li class="pull-right"><a href="{{ url_for('.albums', username=album.author.username) }}">返回</a></li>
+    <li class="pull-right"><a href="{{ url_for('main.likes', username=album.author.username) }}">{% if current_user ==
+        album.author %}我{% else %}{{ album.author.name }}{% endif %}的喜欢</a></li>
 </ol>
 
 <div class="page-header">
@@ -140,7 +144,8 @@ a.thumbnail {
     <p>{{ album.photos.count() }}张图片 创建于{{ moment(album.timestamp).format('L') }}
         <span class="pull-right">  &nbsp;
             {% if not no_pic %}
-            <a class="btn btn-default btn-xs" href="{{ photos[0].url_s }}" data-lightbox="slide" title="<br><a href={{ url_for('.photo', id=photos[0].id) }}><br>跳转到图片页面</a>">幻灯片</a>
+            <a class="btn btn-default btn-xs" href="{{ photos[0].url_s }}" data-lightbox="slide"
+               title="<br><a href={{ url_for('.photo', id=photos[0].id) }}><br>跳转到图片页面</a>">幻灯片</a>
             {% endif %}
             <a class="btn btn-default btn-xs row-btn">对齐</a>
             <a class="btn btn-default btn-xs mas-btn">瀑布流</a>
@@ -170,49 +175,54 @@ a.thumbnail {
     </h3>
 </div>
 <div class="grid row">
-            {% for photo in photos %}
-            <div class="post grid-item span3">
-                {% if loop.index != 1 %}
-                <a class="hide-photo" id="firstSlide" href="{{ photo.url_s }} " data-lightbox="slide" title="<br><a href={{ url_for('.photo', id=photo.id) }}>跳转到图片页面</a>"></a>
-                {% endif %}
-                <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
-                    <img class="img-responsive" src="{{ photo.url_t }}">
-                </a>
-                <div class="info">
-                    <a class="comment" href="{{ url_for('.photo', id=photo.id) }}#comment">评论 <span class="badge">{{ photo.comments.count() }}</span></a>
-                    喜欢 <span class="badge">{{ photo.photo_liked.count() }}</span>
-              </div>
-            </div>
-            {% endfor %}
+    {% for photo in photos %}
+    <div class="post grid-item span3">
+        {% if loop.index != 1 %}
+        <a class="hide-photo" id="firstSlide" href="{{ photo.url_s }} " data-lightbox="slide"
+           title="<br><a href={{ url_for('.photo', id=photo.id) }}>跳转到图片页面</a>"></a>
+        {% endif %}
+        <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
+            <img class="img-responsive" src="{{ photo.url_t }}">
+        </a>
+        <div class="info">
+            <a class="comment" href="{{ url_for('.photo', id=photo.id) }}#comment">评论 <span class="badge">{{ photo.comments.count() }}</span></a>
+            喜欢 <span class="badge">{{ photo.photo_liked.count() }}</span>
+        </div>
+    </div>
+    {% endfor %}
 </div>
-    <p>
-        {% if current_user == album.author %}
-        <!-- Button trigger modal -->
-                    <span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal">
+<p>
+    {% if current_user == album.author %}
+    <!-- Button trigger modal -->
+    <span class="pull-right"><button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                     data-target="#myModal">
                       删除相册
                     </button></span>
-                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
-                      <div class="modal-dialog modal-sm" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                确定要删除这张图片？
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            </div>
-                            <div class="modal-body">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            <a href="{{ url_for('.delete_album', id=album.id) }}"><button type="button" class="btn btn-danger">确认</button></a>
-                          </div>
-                        </div><!-- /.modal-content -->
-                      </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-        {% endif %}
-     推荐 |
-            {% if current_user.is_authenticated and album.is_liked_by(current_user) %}
-            <a href="{{ url_for('.like_album', id=album.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-            {% else %}
-            <a href="{{ url_for('.like_album', id=album.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
-            {% endif %}
-            <span class="badge">{{ album.album_liked.count() }}人喜欢</span>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                确定要删除这张图片？
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <a href="{{ url_for('.delete_album', id=album.id) }}">
+                    <button type="button" class="btn btn-danger">确认</button>
+                </a>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% endif %}
+推荐 |
+{% if current_user.is_authenticated and album.is_liked_by(current_user) %}
+<a href="{{ url_for('.like_album', id=album.id) }}" class="fav-btn fav-cancel" title="取消喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+{% else %}
+<a href="{{ url_for('.like_album', id=album.id) }}" class="fav-btn" title="标为喜欢？">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;喜欢</a>
+{% endif %}
+<span class="badge">{{ album.album_liked.count() }}人喜欢</span>
 
 <div class="text-center">
     {{ macros.pagination_widget(pagination, '.album', id=album.id) }}
@@ -224,7 +234,6 @@ a.thumbnail {
 {{ super() }}
 <script src="{{ url_for('static', filename='js/lightbox.js') }}"></script>
 <script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/packery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
 
 <script>
@@ -239,6 +248,8 @@ $(".row-btn").click(function(event) {
 $(".mas-btn").click(function(event) {
    $('.grid').isotope({ layoutMode: 'masonry' });
 });
+
+
 </script>
 
 <script>
@@ -249,6 +260,8 @@ $(".mas-btn").click(function(event) {
       'maxWidth': 1000,
       'disableScrolling': true,
     })
+
+
 </script>
 
 <script>
@@ -259,6 +272,8 @@ $(".mas-btn").click(function(event) {
     $(".").click(function(event) {
       $(event.target).toggleClass("fav-cancel");
     });
+
+
 </script>
 
 {% endblock %}

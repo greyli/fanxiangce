@@ -146,26 +146,31 @@ a.thumbnail {
     margin-bottom: 60px;
 }
 {% endif %}
+
 </style>
 {% endblock %}
 {% block page_content %}
 <ol class="breadcrumb">
-  <li><a href="{{ url_for('.index') }}">首页</a></li>
-  <li><a href="{{ url_for('.albums', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</a></li>
-  <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</li>
-  <li class="pull-right"><a href="{{ url_for('.albums', username=user.username) }}">返回</a></li>
+    <li><a href="{{ url_for('.index') }}">首页</a></li>
+    <li><a href="{{ url_for('.albums', username=user.username) }}">{% if current_user == user %}我{% else %}{{ user.name
+        }}{% endif %}的相册</a></li>
+    <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</li>
+    <li class="pull-right"><a href="{{ url_for('.albums', username=user.username) }}">返回</a></li>
 </ol>
 
 <div class="container-fluid">
     <h2>{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的喜欢</h2><br>
 </div>
 <ul class="nav nav-tabs">
-    <li {% if type == 'photo' %}class="active"{% endif %}><a href="{{ url_for('.likes', username=user.username) }}">照片<span class="badge">{{ user.photo_likes.count() }}</span></a></li>
-    <li {% if type == 'album' %}class="active"{% endif %}><a href="{{ url_for('.album_likes', username=user.username) }}">相册<span class="badge">{{ user.album_likes.count() }}</span></a></li>
+    <li {% if type==
+    'photo' %}class="active"{% endif %}><a href="{{ url_for('.likes', username=user.username) }}">照片<span class="badge">{{ user.photo_likes.count() }}</span></a></li>
+    <li {% if type==
+    'album' %}class="active"{% endif %}><a href="{{ url_for('.album_likes', username=user.username) }}">相册<span
+        class="badge">{{ user.album_likes.count() }}</span></a></li>
     {% if current_user == user %}
     <li class="pull-right">
         <a class="btn pull-right" href="{{ url_for('.setting') + '#pravicy' }}">
-        <i class="glyphicon glyphicon-cog"></i>
+            <i class="glyphicon glyphicon-cog"></i>
         </a>
     </li>
     {% endif %}
@@ -176,60 +181,65 @@ a.thumbnail {
     <h2>你还没有标记过喜欢，快来<a href="">探索</a>一下吧！</h2>
     {% endif %}
     <div class="row grid">
-    {% if type == 'album' %}
+        {% if type == 'album' %}
         {% for like in album_likes %}
         <div class="grid-item">
-              <div class="album-cover">
-                <a class="thumbnail" href="{{ url_for('.album', id=like.album.id) }}" >
+            <div class="album-cover">
+                <a class="thumbnail" href="{{ url_for('.album', id=like.album.id) }}">
                     <img class="img-responsive portrait" src="{{ like.cover }}">
                 </a>
                 <div class="info">
-                  {{ like.album.title }}
-                  <span>{{ like.photo.count() }}张图片</span><br>
-                  <span>标记于{{ moment(like.timestamp).format('L') }}</span>
+                    {{ like.album.title }}
+                    <span>{{ like.photo.count() }}张图片</span><br>
+                    <span>标记于{{ moment(like.timestamp).format('L') }}</span>
                     {% if current_user.username == user.username %}
-                    <a href="#" data-href="{{ url_for('.unlike_album', id=like.album.id) }}" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete" title="取消喜欢？">删除</a>
+                    <a href="#" data-href="{{ url_for('.unlike_album', id=like.album.id) }}"
+                       class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete"
+                       title="取消喜欢？">删除</a>
                     {% endif %}
                 </div>
-              </div>
+            </div>
         </div>
-            {% endfor %}
-    {% endif %}
-
-    {% if type == 'photo' %}
-            {% for like in photo_likes %}
-            <div class="">
-                <div class="post span3 grid-item">
-                <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}" >
+        {% endfor %}
+        {% endif %}
+        
+        {% if type == 'photo' %}
+        {% for like in photo_likes %}
+        <div class="">
+            <div class="post span3 grid-item">
+                <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}">
                     <img class="img-responsive" src="{{ like.url_t }}">
                 </a>
                 <div class="info">
-                  <span>标记于{{ moment(like.timestamp).format('L') }}</span>
+                    <span>标记于{{ moment(like.timestamp).format('L') }}</span>
                     {% if current_user.username == user.username %}
-                    <a href="#" data-href="{{ url_for('.unlike_photo', id=like.photo.id) }}" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete" title="取消喜欢？">删除</a>
+                    <a href="#" data-href="{{ url_for('.unlike_photo', id=like.photo.id) }}"
+                       class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete"
+                       title="取消喜欢？">删除</a>
                     {% endif %}
                 </div>
-              </div>
             </div>
-            {% endfor %}
+        </div>
+        {% endfor %}
         {% endif %}
         <!-- 图片删除确认弹窗 用于喜欢页面和上传页面-->
         <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
-          <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    确定要删除这张图片？
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                 <a class="btn btn-danger btn-ok">确定</a>
-              </div>
-            </div><!-- /.modal-content -->
-          </div><!-- /.modal-dialog -->
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        确定要删除这张图片？
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <a class="btn btn-danger btn-ok">确定</a>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-      </div>
     </div>
+</div>
 
 <div class="text-center">
     {% if type == 'photo' %}
@@ -253,6 +263,7 @@ $('.grid').imagesLoaded( function(){
       {% endif %}
     });
   });
+
 </script>
 
 <script>
@@ -269,5 +280,6 @@ $('#confirm-delete').on('show.bs.modal', function(e) {
     $('.grid').isotope()
  });
 });
+
 </script>
 {% endblock %}

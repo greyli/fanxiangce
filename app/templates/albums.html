@@ -13,8 +13,6 @@
     margin: 30px 60px 20px 60px;
 }
 
-
-
 .post h5 {
     color: #333;
   margin-bottom: 9px;
@@ -124,6 +122,7 @@ div.comment-form {
     display: inline;
 }
 
+
 </style>
 {% endblock %}
 
@@ -184,34 +183,35 @@ div.comment-form {
             </p>
             <h2>{{ user.name }}</h2> <i class="glyphicon glyphicon-heart red"></i> {{ user.liked }}
             {% if user.status %}<p>{{ user.status }}</p>{% endif %}
-        
-        <br>
-        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-        <p class="label label-default">他/她在关注你</p><br><br>
-        {% endif %}
-        {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
-        {% if not current_user.is_authenticated or not current_user.is_following(user) %}
-        <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
-        {% else %}
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                已关注
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a href="{{ url_for('.unfollow', username=user.username) }}">取消关注</a></li>
-            </ul>
-        </div>
-        {% endif %}
-        {% endif %}
+            
+            <br>
+            {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+            <p class="label label-default">他/她在关注你</p><br><br>
+            {% endif %}
+            {% if user != current_user %} <!--current_user.can(Permission.FOLLOW) and -->
+            {% if not current_user.is_authenticated or not current_user.is_following(user) %}
+            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
+            {% else %}
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false">
+                    已关注
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('.unfollow', username=user.username) }}">取消关注</a></li>
+                </ul>
+            </div>
+            {% endif %}
+            {% endif %}
         </div>
         
         <hr>
         <div class="data-area">
             <i class="glyphicon glyphicon-user"></i>
             关注者<a href="{{ url_for('.followers', username=user.username) }}"><span class="badge">{{ user.followers.count() }}</span></a>
-             <br>
+            <br>
             <i class="glyphicon glyphicon-user"></i>
             正在关注<a href="{{ url_for('.followed_by', username=user.username) }}"><span class="badge">{{ user.followed.count() }}</span></a>
             <br>
@@ -220,23 +220,23 @@ div.comment-form {
             <i class="glyphicon glyphicon-picture"></i> 照片{{ photo_count }}
             <br>
             {% if user.location %}
-                <i class="glyphicon glyphicon-map-marker"></i>
-                <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
+            <i class="glyphicon glyphicon-map-marker"></i>
+            <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
             {% endif %}
             {% if current_user.is_administrator() %}
-                <a href="mailto:{{ user.email }}">{{ user.email }}</a><br>
+            <a href="mailto:{{ user.email }}">{{ user.email }}</a><br>
             {% endif %}
             {% if user.website %}
-                <i class="glyphicon glyphicon-link"></i>
-                <a href="{{ user.website }}" target="_blank">{{ user.website }}</a><br>
+            <i class="glyphicon glyphicon-link"></i>
+            <a href="{{ user.website }}" target="_blank">{{ user.website }}</a><br>
             {% endif %}
             
             <i class="glyphicon glyphicon-repeat"></i>
             {{ moment(user.member_since).format('YYYY/M') }}加入
         </div>
         
-       {% if user.about_me %}
-         <hr>
+        {% if user.about_me %}
+        <hr>
         <div class="about-area">
             {{ about_me|safe }}
         </div>
@@ -268,6 +268,7 @@ div.comment-form {
       itemSelector : '.item'
     });
   });
+
 
 
 </script>

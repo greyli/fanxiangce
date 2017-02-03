@@ -5,9 +5,6 @@
 
 {{ super() }}
 <link href="{{ url_for('static', filename='css/typing.css') }}" rel="stylesheet">
-<link href="{{ url_for('static', filename='css/remodal.css') }}" rel="stylesheet">
-<link href="{{ url_for('static', filename='css/remodal-default-theme.css') }}" rel="stylesheet">
-<link href="{{ url_for('static', filename='css/csshake.css') }}" rel="stylesheet">
 <link href="{{ url_for('static', filename='css/carousel.css') }}" rel="stylesheet">
 
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -146,7 +143,7 @@ a.thumbnail {
     <h1>创建一个<span id="words"></span><span id="cursor">|</span>相册</h1>
     <br><br>
     <h2>
-      <a class="btn btn-lg btn-primary btn-shadow shake shake-vertical" href="{{ url_for('auth.register') }}">立即注册</a>
+      <a class="btn btn-lg btn-primary btn-shadow" href="{{ url_for('auth.register') }}">立即注册</a>
     </h2>
   </div>
 </div>
