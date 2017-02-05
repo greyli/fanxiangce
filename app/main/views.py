@@ -1,24 +1,19 @@
 # -*-coding: utf-8-*-
-import os
-import time
-import hashlib
 import json
 import bleach
 
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
 import urllib2
-from datetime import datetime
-from flask import render_template, session, redirect, \
-    url_for, flash, abort, request, current_app
+from flask import render_template, redirect, \
+    url_for, flash, abort, request, current_app, send_from_directory
 from flask_login import login_required, current_user
 
 from . import main
 from .forms import NewAlbumForm, EditProfileAdminForm, \
     CommentForm, EditAlbumForm, AddPhotoForm, SettingForm
-from .. import db, photos
+from .. import db
 from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
-from wall import wall
 from ..decorators import admin_required, permission_required
 
 
@@ -30,6 +25,11 @@ def index():
     else:
         photos = ""
     return render_template('index.html', photos=photos)
+
+
+@main.route('/return-files', methods=['GET'])
+def return_file():
+    return send_from_directory(directory='static', filename='styles.css', as_attachment=True)
 
 
 @main.route('/explore', methods=['GET', 'POST'])
@@ -90,7 +90,7 @@ def fast_sort(id):
 
 @main.route('/edit-album/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit_album(id):  # todo test if user can edit other people's album
+def edit_album(id):
     album = Album.query.get_or_404(id)
     form = EditAlbumForm()
     if form.validate_on_submit():
@@ -486,7 +486,7 @@ def follow(username):
         flash(u'你已经关注过该用户了。', 'warning')
         return redirect(url_for('.alubms', username=username))
     current_user.follow(user)
-    flash(u'成功关注%s。' % username, 'info')
+    flash(u'成功关注%s。' % user.name, 'info')
     return redirect(url_for('.albums', username=username))
 
 
@@ -502,7 +502,7 @@ def unfollow(username):
         flash(u'你没有关注该用户。', 'warning')
         return redirect(url_for('.alubms', username=username))
     current_user.unfollow(user)
-    flash(u'取消关注%s。' % username, 'info')
+    flash(u'取消关注%s。' % user.name, 'info')
     return redirect(url_for('.albums', username=username))
 
 
@@ -542,7 +542,7 @@ def followed_by(username):
 
 @main.route('/photo/like/<id>')
 @login_required
-#@permission_required(Permission.FOLLOW)# todo follow > like
+#@permission_required(Permission.FOLLOW)
 def like_photo(id):
     photo = Photo.query.filter_by(id=id).first()
     album = photo.album
@@ -561,7 +561,7 @@ def like_photo(id):
 
 @main.route('/photo/unlike/<id>')
 @login_required
-#@permission_required(Permission.FOLLOW)# todo follow > like
+#@permission_required(Permission.FOLLOW)
 def unlike_photo(id):
     # unlike photo in likes page.
     photo = Photo.query.filter_by(id=id).first()
@@ -576,7 +576,7 @@ def unlike_photo(id):
 
 @main.route('/album/like/<id>')
 @login_required
-#@permission_required(Permission.FOLLOW)# todo follow > like
+#@permission_required(Permission.FOLLOW)
 def like_album(id):
     album = Album.query.filter_by(id=id).first()
     if album is None:
@@ -592,11 +592,9 @@ def like_album(id):
     return redirect(url_for('.album', id=id))
 
 
-
-
 @main.route('/album/unlike/<id>')
 @login_required
-#@permission_required(Permission.FOLLOW)# todo follow > like
+# @permission_required(Permission.FOLLOW)
 def unlike_album(id):
     album = Album.query.filter_by(id=id).first()
     if album is None:
@@ -605,14 +603,6 @@ def unlike_album(id):
     if current_user.is_like_album(album):
         current_user.unlike_album(album)
     return (''), 204
-
-
-def redirect_url(default='index'):
-    return request.args.get('next') or \
-           request.referrer or \
-           url_for(default)
-
-# usage: return redirect(redirect_url())
 
 
 @main.route('/delete/photo/<id>')
