@@ -8,131 +8,6 @@
 {{ super() }}
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <link href="{{ url_for('static', filename='css/lightbox.css') }}" rel="stylesheet">
-<style>
-
-
-.fav-btn {
-      border: 1px solid black;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-      }
-
-.fav-btn:link, .fav-btn:hover  {
-    text-decoration: none;
-    }
-
-.fav-btn, .fav-btn:link, .fav-btn:hover {
-      border: 1px solid lightgrey;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px 5px;
-    }
-.fav-cancel, .fav-cancel:link, .fav-cancel:hover {
-    border: 1px solid lightgrey;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-
-    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
-    }
-
-#author {
-    background: #ffe6b3;
-    padding: 20px;
-    }
-
-.thumbnail {
-  position: relative;
-  width: 250px;
-  height: 200px;
-  overflow: hidden;
-}
-.thumbnail img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 100%;
-  width: auto;
-  -webkit-transform: translate(-50%,-50%);
-      -ms-transform: translate(-50%,-50%);
-          transform: translate(-50%,-50%);
-}
-.thumbnail img.portrait {
-  width: 100%;
-  height: auto;
-}
-
-.photo {
-    text-align: center;
-    }
-
-.photo img{
-    max-height: 700px;
-    max-width: 100%;
-    width: expression(this.offsetWidth > 700 ? "700px" : "auto"); /* IE6 */
-}
-
-
-ul.comments {
-    list-style-type: none;
-    padding: 0px;
-    margin: 16px 0px 0px 0px;
-}
-ul.comments li.comment {
-    margin-left: 32px;
-    padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
-}
-ul.comments li.comment:nth-child(1) {
-    border-top: 1px solid #e0e0e0;
-}
-ul.comments li.comment:hover {
-    background-color: #f0f0f0;
-}
-div.comment-date {
-    float: right;
-}
-div.comment-author {
-    font-weight: bold;
-}
-div.comment-thumbnail {
-    position: absolute;
-}
-div.comment-content {
-    margin-left: 48px;
-    min-height: 48px;
-}
-div.comment-form {
-    margin: 16px 0px 16px 32px;
-}
-
-.about-btn, .about-form {
-    display: none;
-}
-
-.album-cover, .album-cover:before
-{
-    background: transprent;
-    width: 245px;
-    height: 190px;
-    margin: 5px;
-    border: 3px solid #FFF;
-    box-shadow: 0 0 0 1px #999;
-    position: relative;
-}
-.album-cover:before
-{
-    margin: 0;
-    content: "";
-    position: absolute;
-    top: -7px;
-    left: -7px;
-    background: white;
-    z-index: -1;
-}
-</style>
 {% endblock %}
 
 {% block page_content %}
@@ -156,20 +31,20 @@ div.comment-form {
             <div class="text-left">
                 <br>
                 {% if photo.about %}
-                <p class="about-text">
+                <p class="edit-text">
                     {{ photo.about }}
                     {% if current_user.is_authenticated and current_user == photo.author %}
-                    <a class="add-about label label-xs label-default">修改<i class="glyphicon glyphicon-edit"></i></a>
+                    <a class="edit-btn btn btn-xs btn-default">修改<i class="glyphicon glyphicon-edit"></i></a>
                     {% endif %}
                 </p>
                 {% else %}
-                <p class="about-text">
+                <p class="edit-text">
                     {% if current_user.is_authenticated and current_user == photo.author %}
-                    <a class="add-about label label-xs label-default">添加描述<i class="glyphicon glyphicon-edit"></i></a>
+                    <a class="edit-btn btn btn-xs btn-default">添加描述<i class="glyphicon glyphicon-edit"></i></a>
                     {% endif %}
                 </p>
                 {% endif %}
-                <form class="about-form" action="{{ url_for('.save_photo_edit', id=photo.id) }}" method="POST">
+                <form class="edit-form" action="{{ url_for('.save_photo_edit', id=photo.id) }}" method="POST">
                     <textarea class="form-control" name="about" placeholder="添加描述" rows="3" cols="100%">{% if photo.about %}{{ photo.about }}{% endif %}</textarea>
                     <br>
                     <input class="btn btn-success" type="submit" name="submit" value="确定">
@@ -178,7 +53,7 @@ div.comment-form {
                                 %}checked{% endif %}>
                 </form>
             </div>
-            <div class="container">
+            <div>
                 <br>
                 <p class="text-left">上传于{{ moment(album.timestamp).format('L') }}</p>
                 <p><span class="pull-left"><button type="button" class="btn btn-default btn-sm">推荐</button></span></p>
@@ -209,28 +84,31 @@ div.comment-form {
                 {% endif %}
             </div>
         </div>
-        <hr>
         
-        {% if not album.no_comment %}
-        {% if amount == 0 %}
-        <div class="comment">
-            {{ wtf.quick_form(form) }}
-        </div>
-        {% else %}
-        <h4>共{{ amount }}个留言</h4>
-        <div id="comment">
-            {% include '_comments.html' %}
-            <div class="pagination">
-                {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
+        
+        <div class="comment-area">
+            
+            {% if not album.no_comment %}
+            {% if amount == 0 %}
+            <div class="comment">
+                {{ wtf.quick_form(form) }}
             </div>
+            {% else %}
+            <h4>共{{ amount }}个留言</h4>
+            <div id="comment">
+                {% include '_comments.html' %}
+                <div class="pagination">
+                    {{ macros.pagination_widget(pagination, '.photo', id=photo.id) }}
+                </div>
+            </div>
+            <div class="comment">
+                {{ wtf.quick_form(form) }}
+            </div>
+            {% endif %}
+            {% else %}
+            <p>评论被作者关闭。</p>
+            {% endif %}
         </div>
-        <div class="comment">
-            {{ wtf.quick_form(form) }}
-        </div>
-        {% endif %}
-        {% else %}
-        <p>评论被作者关闭。</p>
-        {% endif %}
     </div>
     
     <div class="info col-md-3">
@@ -257,7 +135,7 @@ div.comment-form {
         </div>
         <br>
         <hr>
-        <div id="author">
+        <div class="author">
             <div class="row">
                 <div class="col-md-4">
                     <img class="img-rounded profile-thumbnail" src="{{ album.author.gravatar(size=64) }}">
@@ -293,7 +171,7 @@ div.comment-form {
         <hr>
         <p><a href="{{ url_for('.album', id=album.id )}}">{{ album.title }}</a>（{{ album.photos.count() }}张照片）</p>
         <div class="album-cover">
-            <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
+            <a class="album-thumbnail thumbnail" href="{{ url_for('.album', id=album.id) }}">
                 <img class="img-responsive portrait" src="{{ album.cover }}">
             </a>
         </div>
@@ -310,15 +188,14 @@ div.comment-form {
     $(".fav-btn").click(function(event) {
       $(event.target).toggleClass("fav-cancel");
     });
-    $(".add-about").click(function() {
-      $(".about-text").hide();
-      $(".about-form").show();
+    $(".edit-btn").click(function() {
+      $(".edit-text").hide();
+      $(".edit-form").show();
     });
     $(".cancel-btn").click(function() {
-      $(".about-form").hide();
-      $(".about-text").show();
+      $(".edit-form").hide();
+      $(".edit-text").show();
     });
-
 
 
 </script>
@@ -330,6 +207,8 @@ div.comment-form {
       'maxWidth': 1000,
       'disableScrolling': true,
     })
+
+
 
 
 </script>

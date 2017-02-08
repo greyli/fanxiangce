@@ -157,7 +157,7 @@ def save_sort(id):
     return redirect(url_for('.album', id=id))
 
 
-@main.route('/user/<username>/albums', methods=['GET', 'POST'])
+@main.route('/<username>', methods=['GET', 'POST'])
 def albums(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -193,7 +193,7 @@ def albums(username):
                            about_me=about_me)
 
 
-@main.route('/user/<username>/likes')
+@main.route('/<username>/likes')
 def likes(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -210,7 +210,7 @@ def likes(username):
                            pagination=pagination, type=type)
 
 
-@main.route('/user/<username>/likes/album')
+@main.route('/<username>/likes/album')
 def album_likes(username):
     user = User.query.filter_by(username=username).first()
     if user is None:

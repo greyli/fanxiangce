@@ -3,152 +3,7 @@
 {% import "_macros.html" as macros %}
 
 {% block title %}{{ user.name }} - 翻相册{% endblock %}
-{% block head %}
-{{ super() }}
-<style>
 
-/* make the well swell */
-.well {
-    height: 290px;
-    width: 290px;
-	border-color:#c9c9c9;
-}
-
-.post {
-margin: 40px;
-}
-
-a.thumbnail {
-    margin-bottom: 2px !important;
-}
-
-
-.post h4 {
-  margin-bottom: 9px;
-}
-
-.post h4 a {
-  color: #333;
-}
-
-.post img.image {
-  max-width: 100%;
-  margin-top: 9px;
-}
-
-.info {
-	padding:2px;
-}
-
-  .info {
-    margin: 5px;
-    padding:4px;
-    cursor: pointer;
-  }
-
-/* responsive media queries */
-
-@media (max-width: 480px) {
-
-}
-
-@media (max-width: 768px) {
-  header h1 small {
-    display: block;
-  }
-
-  header div.description {
-    padding-top: 9px;
-    padding-bottom: 4px;
-  }
-
-  .isotope .item {
-    position: static ! important;
-    -webkit-transform: translate(0px, 0px) ! important;
-       -moz-transform: translate(0px, 0px) ! important;
-            transform: translate(0px, 0px) ! important;
-  }
-}
-
-@media (max-width: 980px) {
-  header p.lead span {
-    display: block;
-  }
-}
-
-@media (min-width: 480px) and (max-width: 768px) {
-
-}
-
-
-@media (min-width: 768px) and (max-width: 980px) {
-  .span3 {
-    width: 352px;
-  }
-}
-
-@media (min-width: 980px) and (max-width: 1200px) {
-  .span3 {
-    width: 300px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .span3 {
-    width: 270px;
-  }
-}
-{% if type == 'album' %}
-.thumbnail {
-  position: relative;
-  width: 250px;
-  height: 200px;
-  overflow: hidden;
-}
-.thumbnail img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 100%;
-  width: auto;
-  -webkit-transform: translate(-50%,-50%);
-      -ms-transform: translate(-50%,-50%);
-          transform: translate(-50%,-50%);
-}
-.thumbnail img.portrait {
-  width: 100%;
-  height: auto;
-}
-
-.album-cover, .album-cover:before
-{
-    background: transprent;
-    width: 245px;
-    height: 190px;
-    margin: 5px;
-    border: 3px solid #FFF;
-    box-shadow: 0 0 0 1px #999;
-    position: relative;
-}
-.album-cover:before
-{
-    margin: 0;
-    content: "";
-    position: absolute;
-    top: -7px;
-    left: -7px;
-    background: white;
-    z-index: -1;
-}
-
-.grid-item {
-    margin: 40px;
-    margin-bottom: 60px;
-}
-{% endif %}
-
-</style>
-{% endblock %}
 {% block page_content %}
 <ol class="breadcrumb">
     <li><a href="{{ url_for('.index') }}">首页</a></li>
@@ -183,13 +38,13 @@ a.thumbnail {
     <div class="row grid">
         {% if type == 'album' %}
         {% for like in album_likes %}
-        <div class="grid-item">
+        <div class="grid-item album-like">
             <div class="album-cover">
-                <a class="thumbnail" href="{{ url_for('.album', id=like.album.id) }}">
+                <a class="album-thumbnail thumbnail" href="{{ url_for('.album', id=like.album.id) }}">
                     <img class="img-responsive portrait" src="{{ like.cover }}">
                 </a>
                 <div class="info">
-                    {{ like.album.title }}
+                    <a href="{{ url_for('.album', id=like.album.id) }}">{{ like.album.title }}</a>
                     <span>{{ like.photo.count() }}张图片</span><br>
                     <span>标记于{{ moment(like.timestamp).format('L') }}</span>
                     {% if current_user.username == user.username %}
@@ -205,19 +60,17 @@ a.thumbnail {
         
         {% if type == 'photo' %}
         {% for like in photo_likes %}
-        <div class="">
-            <div class="post span3 grid-item">
-                <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}">
-                    <img class="img-responsive" src="{{ like.url_t }}">
-                </a>
-                <div class="info">
-                    <span>标记于{{ moment(like.timestamp).format('L') }}</span>
-                    {% if current_user.username == user.username %}
-                    <a href="#" data-href="{{ url_for('.unlike_photo', id=like.photo.id) }}"
-                       class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete"
-                       title="取消喜欢？">删除</a>
-                    {% endif %}
-                </div>
+        <div class="explore-image grid-item">
+            <a class="thumbnail" href="{{ url_for('.photo', id=like.photo.id) }}">
+                <img class="img-responsive" src="{{ like.url_t }}">
+            </a>
+            <div class="info">
+                <span>标记于{{ moment(like.timestamp).format('L') }}</span>
+                {% if current_user.username == user.username %}
+                <a href="#" data-href="{{ url_for('.unlike_photo', id=like.photo.id) }}"
+                   class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete"
+                   title="取消喜欢？">删除</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -264,6 +117,7 @@ $('.grid').imagesLoaded( function(){
     });
   });
 
+
 </script>
 
 <script>
@@ -280,6 +134,7 @@ $('#confirm-delete').on('show.bs.modal', function(e) {
     $('.grid').isotope()
  });
 });
+
 
 </script>
 {% endblock %}

@@ -2,63 +2,6 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}翻相册 - 编辑照片{% endblock %}
-{% block head %}
-{{super()}}
-<!--link href="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" rel="stylesheet" type="text/css" /-->
-
-<style>
-.sort-area {
-    background: #f8f8f8;
-    padding: 30px;
-    margin-bottom: 50px;
-}
-#wrapper,#images {
-
-    margin: auto;
-	text-align: center;
-}
-#wrapper {
-    width:940px;
-	margin: 0 auto;
-}
-#images {
-	list-style: none;
-}
-#images li {
-	float: left;
-	display: block;
-	width: 130px;
-	height: 130px;
-	margin: 0 10px 10px 0;
-	padding: 10px;
-}
-#images img {
-	cursor: move;
-}
-
-.thumbnail {
-  position: relative;
-  width: 110px;
-  height: 110px;
-  overflow: hidden;
-}
-.thumbnail img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 100%;
-  width: auto;
-  -webkit-transform: translate(-50%,-50%);
-      -ms-transform: translate(-50%,-50%);
-          transform: translate(-50%,-50%);
-}
-.thumbnail img.portrait {
-  width: 100%;
-  height: auto;
-}
-</style>
-{% endblock %}
-
 
 {% block page_content %}
 <div class="page-header">
@@ -77,9 +20,9 @@
     <div class="sort-area">
     <div class="row">
     <section id="wrapper">
-	<ul id="images">
+	<ul class="images images-sort" id="images">
         {% for photo in enu_photos %}
-		<li><div class="thumbnail">
+		<li><div class="sort-thumbnail">
                 <img class="img-responsive portrait" src="{{ photo[1].url_t }}" alt="Some description"/>
             </div>
             <input class="order" type="hidden" name="order-{{ photo[1].id }}" value="{{ photo[0] + 1 }}">

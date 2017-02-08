@@ -8,122 +8,6 @@
 {{ super() }}
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <link href="{{ url_for('static', filename='css/lightbox.css') }}" rel="stylesheet">
-<style>
-
-.post {
-margin: 10px;
-margin-bottom: 20px;
-
-}
-
-a.thumbnail {
-    margin-bottom: 2px !important;
-}
-
-
-.post h4 {
-  margin-bottom: 9px;
-}
-
-.post h4 a {
-  color: #333;
-}
-
-.post img.image {
-  max-width: 100%;
-  margin-top: 9px;
-}
-
-.info {
-	padding:2px;
-}
-
-/* responsive media queries */
-
-@media (max-width: 480px) {
-
-}
-
-@media (max-width: 768px) {
-  header h1 small {
-    display: block;
-  }
-
-  header div.description {
-    padding-top: 9px;
-    padding-bottom: 4px;
-  }
-
-  .isotope .item {
-    position: static ! important;
-    -webkit-transform: translate(0px, 0px) ! important;
-       -moz-transform: translate(0px, 0px) ! important;
-            transform: translate(0px, 0px) ! important;
-  }
-}
-
-@media (max-width: 980px) {
-  header p.lead span {
-    display: block;
-  }
-}
-
-@media (min-width: 480px) and (max-width: 768px) {
-
-}
-
-
-@media (min-width: 768px) and (max-width: 980px) {
-  .span3 {
-    width: 352px;
-  }
-}
-
-@media (min-width: 980px) and (max-width: 1200px) {
-  .span3 {
-    width: 300px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .span3 {
-    width: 270px;
-  }
-}
-
-.fav-btn {
-      border: 1px solid black;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-      }
-
-.fav-btn:link, .fav-btn:hover  {
-    text-decoration: none;
-    }
-
-.fa v-btn, .fav-btn:link, .fav-btn:hover {
-      border: 1px solid black;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px 5px;
-    }
-.fav-cancel, .fav-cancel:link, .fav-cancel:hover {
-    border: 1px solid black;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-
-    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
-    }
-
- .hide-photo {
-    display: none;
-}
-
-
-</style>
 {% endblock %}
 
 {% block page_content %}
@@ -176,10 +60,10 @@ a.thumbnail {
 </div>
 <div class="grid row">
     {% for photo in photos %}
-    <div class="post grid-item span3">
+    <div class="image grid-item">
         {% if loop.index != 1 %}
         <a class="hide-photo" id="firstSlide" href="{{ photo.url_s }} " data-lightbox="slide"
-           title="<br><a href={{ url_for('.photo', id=photo.id) }}>跳转到图片页面</a>"></a>
+           title="<br><a href={{ url_for('.photo', id=photo.id) }}>转到图片页面</a>"></a>
         {% endif %}
         <a class="thumbnail" href="{{ url_for('.photo', id=photo.id) }}" title="">
             <img class="img-responsive" src="{{ photo.url_t }}">

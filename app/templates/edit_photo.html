@@ -5,75 +5,7 @@
 {% block head %}
 {{super()}}
 <link href="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" rel="stylesheet" type="text/css" />
-
-<style>
-.sort-area {
-    background: #f8f8f8;
-    padding: 30px;
-    margin-bottom: 50px;
-}
-#wrapper,#images {
-
-    margin: auto;
-	text-align: center;
-}
-#wrapper {
-    width:940px;
-	margin: 0 auto;
-}
-#images {
-	list-style: none;
-}
-#images li {
-	float: left;
-	display: block;
-	width: 170px;
-	height: 280px;
-	background:#fff;
-	margin: 0 55px 55px 0;
-	padding: 10px;
-	-webkit-border-radius: 7px;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
-}
-#images img {
-	cursor: move;
-}
-
-#images textarea {
-	width: 150px;
-}
-
-#images li.active {
-	background:#4c96d8;
-}
-#images li span {
-	font-weight: bold;
-}
-
-.thumbnail {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-}
-.thumbnail img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 100%;
-  width: auto;
-  -webkit-transform: translate(-50%,-50%);
-      -ms-transform: translate(-50%,-50%);
-          transform: translate(-50%,-50%);
-}
-.thumbnail img.portrait {
-  width: 100%;
-  height: auto;
-}
-</style>
 {% endblock %}
-
 
 {% block page_content %}
 <div class="page-header">
@@ -92,13 +24,13 @@
     <div class="sort-area">
     <div class="row">
     <section id="wrapper">
-	<ul id="images">
+	<ul class="images images-edit" id="images">
         {% for photo in enu_photos %}
-		<li><div class="thumbnail">
+		<li><div class="edit-thumbnail">
                 <img class="img-responsive portrait" src="{{ photo[1].url_t }}" alt="Some description"/>
-            </div>
+            </div><br>
             <textarea name="{{ photo[1].id }}" placeholder="添加描述" rows="3">{% if photo[1].about %}{{ photo[1].about }}{% endif %}</textarea>
-            <input class="order" type="hidden" name="order-{{ photo[1].id }}" value="{{ photo[0] + 1 }}">
+            <input class="order" type="hidden" name="order-{{ photo[1].id }}" value="{{ photo[0] + 1 }}"><br>
             设为封面<input type="radio" name="cover" value="{{ photo[1].url_t }}" {% if photo[1].url_t == album.cover %}checked{% endif %}>
             <a href="#" data-href="{{ url_for('.delete_edit_photo', id=photo[1].id) }}" class="pull-right btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-delete">删除</a>
         </li>

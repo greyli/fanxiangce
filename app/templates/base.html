@@ -6,83 +6,7 @@
 {{ super() }}
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-<!--link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"-->
-<style>
-body { padding-top: 70px; }
-
-.choice {
-    background: #f8f8f8;
-    padding: 30px;
-    margin-bottom: 50px;
-}
-
-html, body {
-    height: 100%;
-}
-    .wrapper {
-    min-height: 100%;
-    height: auto !important;
-    height: 100%;
-    margin: 0 auto -60px; /* the bottom margin is the negative value of the footer's height */
-}
-.footer, .push {
-    height: 60px; /* .push must be the same height as .footer */
-}
-
-.footer{
-    margin-top: 20px;
-    padding-top: 10px;
-    background-color: #f5f5f5;
-}
-
-.mask-bg {
-        display: none;
-        position: absolute;
-        top: 0%;
-        left: 0%;
-        width: 100%;
-        height: 100%;
-        background-color: black;
-        z-index: 1;
-        -moz-opacity: 0.7;
-        opacity: .70;
-        filter: alpha(opacity=70);
-    }
-    
-.loader {
-  display: none;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 2;
-  width: 200px;
-  height: 200px;
-  margin: -75px 0 0 -75px;
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #f79d00;
-  border-right: 16px solid #8b3fb2;
-  border-bottom: 16px solid #4CAF50;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-}
-
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.red {
-    color: red;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 {% endblock %}
 
 {% block navbar %}
@@ -97,13 +21,13 @@ html, body {
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/">
-              <b>
-              <span style="color: #f79d00">翻</span>
-              <span style="color: #8b3fb2">相</span>
-              <span style="color: #4CAF50">册</span>
-              </b></a>
+                <b>
+                    <span class="fan">翻</span>
+                    <span class="xiang">相</span>
+                    <span class="ce">册</span>
+                </b></a>
         </div>
-
+        
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 {% if current_user.is_authenticated %}
@@ -116,22 +40,23 @@ html, body {
                 <li><a href="/about">关于</a></li>
                 {% endif %}
             </ul>
-
-                <!--form class="navbar-form navbar-left" role="search">
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="搜索用户/相册">
-                  </div>
-                  <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
-                </form-->
+            
+            <!--form class="navbar-form navbar-left" role="search">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="搜索用户/相册">
+              </div>
+              <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+            </form-->
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{{ url_for('main.new_album') }}">新建相册</a></li>
                 <li><a href="{{ url_for('main.upload') }}">上传照片</a></li>
                 {% if current_user.is_authenticated %}
                 <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <span></span>
-                    <img src="{{ current_user.gravatar(size=18) }}">
-                    {{ current_user.name }} <strong class="caret"></strong>
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <span></span>
+                        <img src="{{ current_user.gravatar(size=18) }}">
+                        {{ current_user.name }} <strong class="caret"></strong>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url_for('main.edit_profile', username=current_user.username) }}">编辑资料</a></li>
@@ -142,16 +67,16 @@ html, body {
                         <li><a href="{{ url_for('auth.change_email_request') }}">更改邮箱</a></li>
                         <li><a href='{{ url_for("auth.logout") }}'>注销</a></li>
                     </ul>
-
-
+                
+                
                 </li>
-
+                
                 {% else %}
                 <li><a href="{{ url_for('auth.login') }}">登录</a></li>
             </ul>
-
+            
             {% endif %}
-
+        
         </div>
     </div>
 </div>
@@ -166,9 +91,9 @@ html, body {
         {{ message[1] }}
     </div>
     {% endfor %}
-
+    
     {% block page_content %}{% endblock %}
-
+    
     <div class="push"></div>  <!-- push the footer so it stay at the bootom of the page -->
 </div>
 
@@ -176,10 +101,11 @@ html, body {
     <div class="col-md-2"></div>
     <div class="col-md-6">
         <p>© 2016 <b>
-        <span style="color: #f79d00">翻</span>
-        <span style="color: #8b3fb2">相</span>
-        <span style="color: #4CAF50">册</span>
-        </b> · <a href="#terms">隐私权和条款</a> · <a href="#contact">联系我们</a> · <a target="_blank" href="http://withlihui.com">关于翻相册</a></p>
+            <span class="fan">翻</span>
+            <span class="xiang">相</span>
+            <span class="ce">册</span>
+        </b> · <a href="#terms">隐私权和条款</a> · <a href="#contact">联系我们</a> · <a target="_blank"
+                                                                              href="http://withlihui.com">关于翻相册</a></p>
     </div>
     <div class="col-md-2">
         <p class="pull-right"><a id="totop" href="#">返回顶部</a></p>

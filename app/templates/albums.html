@@ -3,131 +3,8 @@
 {% import "_macros.html" as macros %}
 
 {% block title %}{{ user.name }} - 翻相册{% endblock %}
-{% block head %}
-{{ super() }}
-<style>
-
-.album {
-    width: 300px;
-    padding: 10px;
-    margin: 30px 60px 20px 60px;
-}
-
-.post h5 {
-    color: #333;
-  margin-bottom: 9px;
-}
-
-.info {
-	padding:4px;
-}
-
-.thumbnail {
-  position: relative;
-  width: 270px;
-  height: 220px;
-  overflow: hidden;
-}
-.thumbnail img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  height: 100%;
-  width: auto;
-  -webkit-transform: translate(-50%,-50%);
-      -ms-transform: translate(-50%,-50%);
-          transform: translate(-50%,-50%);
-}
-.thumbnail img.portrait {
-  width: 100%;
-  height: auto;
-}
-
-#likes {
-    color: red;
-}
-
-.user-area {
-    background: #ffe6b3;
-    padding: 20px;
-}
-
-.data-area {
-    
-    background: #e6ccff;
-    padding: 20px;
-    
-}
-
-.about-area {
-    background: #d6f5d6;
-    padding: 20px;
-}
-
-.album-cover, .album-cover:before
-{
-    background: transprent;
-    width: 265px;
-    height: 215px;
-    margin: 5px;
-    border: 3px solid #FFF;
-    box-shadow: 0 0 0 1px #999;
-    position: relative;
-}
-.album-cover:before
-{
-    margin: 0;
-    content: "";
-    position: absolute;
-    top: -7px;
-    left: -7px;
-    background: white;
-    z-index: -1;
-}
-
-
-ul.comments {
-    list-style-type: none;
-    padding: 0px;
-    margin: 16px 0px 0px 0px;
-}
-ul.comments li.comment {
-    padding: 8px;
-    border-bottom: 1px solid #e0e0e0;
-}
-ul.comments li.comment:nth-child(1) {
-    border-top: 1px solid #e0e0e0;
-}
-ul.comments li.comment:hover {
-    background-color: #f0f0f0;
-}
-div.comment-date {
-    float: right;
-}
-div.comment-author {
-    font-weight: bold;
-}
-div.comment-thumbnail {
-    position: absolute;
-}
-div.comment-content {
-    margin-left: 48px;
-    min-height: 48px;
-}
-div.comment-form {
-    margin: 16px 0px 16px 32px;
-}
-
-.user-area h2 {
-    display: inline;
-}
-
-
-</style>
-{% endblock %}
 
 {% block page_content %}
-
 <ol class="breadcrumb">
     <li><a href="{{ url_for('.index') }}">翻相册</a></li>
     <li class="active">{% if current_user == user %}我{% else %}{{ user.name }}{% endif %}的相册</li>
@@ -142,10 +19,7 @@ div.comment-form {
 </ol>
 
 <div class="row">
-    
-    
     <div class="col-md-9">
-        
         <div class="text-center container-fluid">
             {% if album_count == 0 %}
             {% if current_user == user %}
@@ -159,7 +33,7 @@ div.comment-form {
                 {% if not album.no_public or current_user == user%}
                 <div class="album col-md-3">
                     <div class="album-cover">
-                        <a class="thumbnail" href="{{ url_for('.album', id=album.id) }}">
+                        <a class="thumbnail album-thumbnail" href="{{ url_for('.album', id=album.id) }}">
                             <img class="img-responsive portrait" src="{{ album.cover }}">
                         </a>
                     </div>
@@ -174,7 +48,6 @@ div.comment-form {
             </div>
         </div>
     </div>
-    
     
     <div class="container-fluid col-md-3">
         <div class="center-text user-area text-center">
@@ -255,21 +128,5 @@ div.comment-form {
     <div id="comment">
         {% include '_comments.html' %}
     </div>
-</div><br>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script src="{{ url_for('static', filename='js/isotope.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/imagesloaded.js') }}"></script>
-<script>
-  $('#posts').imagesLoaded( function(){
-    $('#posts').isotope({
-      itemSelector : '.item'
-    });
-  });
-
-
-
-</script>
+</div>
 {% endblock %}
