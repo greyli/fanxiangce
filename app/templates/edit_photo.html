@@ -66,7 +66,7 @@
 {% block scripts %}
 {{super()}}
 <script src="{{ url_for('static', filename='jquery-ui-1.12.1/jquery-ui.min.js') }}" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='core.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/core.js') }}" type="text/javascript"></script>
 <script>
 $('#confirm-delete').on('show.bs.modal', function(e) {
  $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href')); // redirect the url

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}关于 - 翻相册{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>关于翻相册</h1>
+</div>
+
+<h3>翻相册</h3>
+<p>
+翻相册是一个相册网站。
+<p>
+一开始只是想做一个在线生成照片墙的工具，恰好在学习Flask，就打算用它来实现一个相册网站。<br>
+功能和页面上借鉴了豆瓣相册，使用的开源项目有isotope、Bootstrap、imagesLoaded、lightbox2等。<br>
+目前完成了大部分的功能，但还有一些地方需要完善，比如图片的上传。目前图片上传到在线图床，临时使用Python实现上传。<br>
+<br>
+<h3>待办事项</h3>
+<p>
+<input type="checkbox">照片墙浏览<br>
+<input type="checkbox">用JavaScript实现上传<br>
+<input type="checkbox">消息系统<br>
+<input type="checkbox">完善用户权限<br>
+<input type="checkbox">探索页面和首页的无限滚动或分页<br>
+<br>
+<h3>相关链接</h3>
+<p>
+翻相册是一个开源项目，欢迎贡献代码~<br>
+Github链接 - <a href="https://github.com/greyli/fanxiangce">https://github.com/greyli/fanxiangce</a><br>
+我的博客 - <a href="http://greyli.com" target="_blank">Blog</a>
+知乎专栏 - <a href="https://zhuanlan.zhihu.com/flask" target="_blank">Hello, Flask!</a><br>
+    
+    
+{% endblock %}

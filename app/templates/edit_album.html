@@ -24,14 +24,14 @@
           {{ wtf.form_field(form.about) }}
           {{ wtf.form_field(form.asc_order) }}
           {% if album.is_public %}
-          {{ wtf.form_field(form.is_public) }}
+          {{ wtf.form_field(form.no_public) }}
             {% else %}
-            {{ wtf.form_field(form.is_public, checked) }}
+            {{ wtf.form_field(form.no_public, checked) }}
             {% endif %}
             {% if album.can_comment %}
-          {{ wtf.form_field(form.can_comment, checked) }}
+          {{ wtf.form_field(form.no_comment, checked) }}
             {% else %}
-             {{ wtf.form_field(form.can_comment) }}
+             {{ wtf.form_field(form.no_comment) }}
             {% endif %}
              <hr>
           {{ wtf.form_field(form.submit) }}

@@ -1,6 +1,5 @@
 body {
-    font-family: 'PT Sans', "Times New Roman",
-         "Microsoft YaHei", STXihei, sans-serif;
+    font-family: 'PT Sans', "Microsoft YaHei", STXihei, sans-serif;
     padding-top: 70px;
 }
 
@@ -10,7 +9,8 @@ body {
     margin-bottom: 50px;
 }
 
-html, body {
+html,
+body {
     height: 100%;
 }
 
@@ -18,14 +18,17 @@ html, body {
     min-height: 100%;
     height: auto !important;
     height: 100%;
-    margin: 0 auto -60px; /* the bottom margin is the negative value of the footer's height */
+    margin: 0 auto -60px;
+    /* the bottom margin is the negative value of the footer's height */
 }
 
-.footer, .push {
-    height: 60px; /* .push must be the same height as .footer */
+.footer,
+.push {
+    height: 60px;
+    /* .push must be the same height as .footer */
 }
 
-.footer{
+.footer {
     margin-top: 20px;
     padding-top: 10px;
     background-color: #f5f5f5;
@@ -34,8 +37,8 @@ html, body {
 .mask-bg {
     display: none;
     position: absolute;
-    top: 0%;
-    left: 0%;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     background-color: black;
@@ -59,21 +62,28 @@ html, body {
     border-top: 16px solid #f79d00;
     border-right: 16px solid #8b3fb2;
     border-bottom: 16px solid #4CAF50;
-    width: 120px;
-    height: 120px;
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
 }
 
 @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
+
 
 /* user page */
 
@@ -87,13 +97,15 @@ html, body {
     margin: 30px 60px 20px 60px;
 }
 
+
 /* albums in like page */
+
 .album-like {
     margin: 40px 40px 60px 40px;
 }
 
 .info {
-	padding:4px;
+    padding: 4px;
 }
 
 .album-thumbnail {
@@ -102,16 +114,18 @@ html, body {
     height: 220px;
     overflow: hidden;
 }
+
 .album-thumbnail img {
     position: absolute;
     left: 50%;
     top: 50%;
     height: 100%;
     width: auto;
-    -webkit-transform: translate(-50%,-50%);
-        -ms-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
+
 .album-thumbnail img.portrait {
     width: 100%;
     height: auto;
@@ -132,7 +146,8 @@ html, body {
     padding: 20px;
 }
 
-.album-cover, .album-cover:before {
+.album-cover,
+.album-cover:before {
     background: transprent;
     width: 265px;
     height: 215px;
@@ -154,39 +169,48 @@ html, body {
 
 ul.comments {
     list-style-type: none;
-    padding: 0px;
-    margin: 16px 0px 0px 0px;
+    padding: 0;
+    margin: 16px 0 0 0;
 }
+
 ul.comments li.comment {
     padding: 8px;
     border-bottom: 1px solid #e0e0e0;
 }
+
 ul.comments li.comment:nth-child(1) {
     border-top: 1px solid #e0e0e0;
 }
+
 ul.comments li.comment:hover {
     background-color: #f0f0f0;
 }
-div.comment-date {
+
+.comment-date {
     float: right;
 }
-div.comment-author {
+
+.comment-author {
     font-weight: bold;
 }
-div.comment-thumbnail {
+
+.comment-thumbnail {
     position: absolute;
 }
-div.comment-content {
+
+.comment-content {
     margin-left: 48px;
     min-height: 48px;
 }
-div.comment-form {
-    margin: 16px 0px 16px 32px;
+
+.comment-form {
+    margin: 16px 0 16px 32px;
 }
 
 .user-area h2 {
     display: inline;
 }
+
 
 /* album page */
 
@@ -197,80 +221,92 @@ div.comment-form {
 }
 
 .fav-btn {
-      border: 1px solid lightgrey;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-      }
-
-.fav-btn:link, .fav-btn:hover  {
-    text-decoration: none;
-    }
-
-.fa v-btn, .fav-btn:link, .fav-btn:hover {
-      border: 1px solid lightgrey;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
-    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px 5px;
-    }
-
-.fav-cancel, .fav-cancel:link, .fav-cancel:hover {
     border: 1px solid lightgrey;
-      padding: 4px 8px;
-      border-radius: 3px;
-      text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    text-decoration: none;
+}
 
+.fav-btn:link,
+.fav-btn:hover {
+    text-decoration: none;
+}
+
+.fa v-btn,
+.fav-btn:link,
+.fav-btn:hover {
+    border: 1px solid lightgrey;
+    padding: 4px 8px;
+    border-radius: 3px;
+    text-decoration: none;
+    background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px 6px;
+}
+
+.fav-cancel,
+.fav-cancel:link,
+.fav-cancel:hover {
+    border: 1px solid lightgrey;
+    padding: 4px 8px;
+    border-radius: 3px;
+    text-decoration: none;
     background: url(https://img3.doubanio.com/f/shire/f392cc86b542687ce4011dd495ee9522dfe81d93/pics/ic_like.png) no-repeat 8px -15px;
-    }
+}
 
- .hide-photo {
+.hide-photo {
     display: none;
 }
 
+
 /* photo edit page */
+
 .sort-area {
     background: #f8f8f8;
     padding: 30px;
     margin-bottom: 50px;
 }
-#wrapper, .images {
 
-    margin: auto;
-	text-align: center;
-}
-#wrapper {
-    width:940px;
-	margin: 0 auto;
-}
+#wrapper,
 .images {
-	list-style: none;
+    margin: auto;
+    text-align: center;
 }
+
+#wrapper {
+    width: 940px;
+    margin: 0 auto;
+}
+
+.images {
+    list-style: none;
+}
+
 .images-edit li {
-	float: left;
-	display: block;
-	width: 170px;
-	height: 280px;
-	background:#fff;
-	margin: 0 55px 55px 0;
-	padding: 10px;
-	-webkit-border-radius: 7px;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
+    float: left;
+    display: block;
+    width: 170px;
+    height: 280px;
+    background: #fff;
+    margin: 0 55px 55px 0;
+    padding: 10px;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
 }
+
 .images img {
-	cursor: move;
+    cursor: move;
 }
 
 .images textarea {
-	width: 150px;
+    width: 150px;
 }
 
-#images li.active {
-	background:#4c96d8;
+#images .active {
+    background: #4c96d8;
 }
+
 #images li span {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .edit-thumbnail {
@@ -279,32 +315,36 @@ div.comment-form {
     height: 150px;
     overflow: hidden;
 }
+
 .edit-thumbnail img {
     position: absolute;
     left: 50%;
     top: 50%;
     height: 100%;
     width: auto;
-    -webkit-transform: translate(-50%,-50%);
-        -ms-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
+
 .edit-thumbnail img.portrait {
-  width: 100%;
-  height: auto;
+    width: 100%;
+    height: auto;
 }
+
+
 /* fast sort page */
 
 .images-sort li {
-	float: left;
-	display: block;
-	width: 130px;
-	height: 130px;
-	margin: 0 10px 10px 0;
-	padding: 10px;
-	-webkit-border-radius: 7px;
-	-moz-border-radius: 7px;
-	border-radius: 7px;
+    float: left;
+    display: block;
+    width: 130px;
+    height: 130px;
+    margin: 0 10px 10px 0;
+    padding: 10px;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
 }
 
 .sort-thumbnail {
@@ -313,41 +353,48 @@ div.comment-form {
     height: 110px;
     overflow: hidden;
 }
+
 .sort-thumbnail img {
     position: absolute;
     left: 50%;
     top: 50%;
     height: 100%;
     width: auto;
-    -webkit-transform: translate(-50%,-50%);
-        -ms-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
+
 .sort-thumbnail img.portrait {
     width: 100%;
     height: auto;
 }
 
+
 /* explore page */
+
 .explore-image {
     margin: 40px;
     width: 300px;
 }
 
+
 /* photo page */
- .author {
+
+.author {
     background: #ffe6b3;
     padding: 20px;
-    }
+}
 
 .photo {
     text-align: center;
-    }
+}
 
-.photo img{
+.photo img {
     max-height: 700px;
     max-width: 100%;
-    width: expression(this.offsetWidth > 700 ? "700px" : "auto"); /* IE6 */
+    width: expression(this.offsetWidth > 700 ? "700px": "auto");
+    /* IE6 */
 }
 
 .edit-form {
@@ -355,10 +402,12 @@ div.comment-form {
 }
 
 .comment-area {
-     margin-top: 80px;
+    margin-top: 80px;
 }
 
+
 /* logo */
+
 .fan {
     color: #f79d00;
 }

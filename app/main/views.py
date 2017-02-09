@@ -27,6 +27,11 @@ def index():
     return render_template('index.html', photos=photos)
 
 
+@main.route('/about')
+def about():
+    return render_template('about.html')
+
+
 @main.route('/return-files', methods=['GET'])
 def return_file():
     return send_from_directory(directory='static', filename='styles.css', as_attachment=True)
