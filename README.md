@@ -1,5 +1,6 @@
 # fanxiangce
-An album website made by Flask and Python.
+An album website made by Flask and Python (fanxiangce is 翻(flip)相册(album)'s pinyin).  
+
 
 ## Sub-Project
 https://github.com/greyli/image-wall
