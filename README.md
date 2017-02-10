@@ -1,9 +1,5 @@
 # fanxiangce
-An album website made by Flask and Python (fanxiangce is 翻(flip)相册(album)'s pinyin).  
-
-
-## Sub-Project
-https://github.com/greyli/image-wall
+An album website made by Flask and Python (翻相册). 
 
 ## Extensions and Plugins
 
@@ -45,9 +41,13 @@ $ python manage.py runserver
 ```
 Now Go to http://127.0.0.1:5000/
 
-## More details
+## Sub-Project
+https://github.com/greyli/image-wall
 
-Hello, Flask!—— https://zhuanlan.zhihu.com/flask
+## More details
+- fanxiangce is 翻相册's pinyin (翻: flip, 相册: album).
+- [fanxiangce.com](http://fanxiangce.com) now is only an old demo page.
+- More information can be found on ['Hello, Flask!'](https://zhuanlan.zhihu.com/flask) -- an column about Flask and Web development.
 
 ## License
 This demo application is licensed under the MIT license: http://opensource.org/licenses/mit-license.php
