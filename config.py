@@ -14,8 +14,8 @@ class Config:
             'iYWlkIjoiMTI1MzA4NCIsImZyb20iOiJmaWxlIn0='
     FANXIANGCE_MAIL_SUBJECT_PREFIX = u'[翻相册]'
     FANXIANGCE_MAIL_SENDER = 'mimi_19@sina.com'
-    FANXIANGCE_ADMIN = 'withlihui@qq.com' # os.environ.get('FANXIANG_ADMIN')
-    UPLOADED_PHOTOS_DEST = r'D:\Projects\fanxiangce\app\static\img'  # local test
+    FANXIANGCE_ADMIN = 'withlihui@gmail.com' # os.environ.get('FANXIANG_ADMIN')
+    UPLOADED_PHOTOS_DEST = os.getcwd() + '/app/static/img/'  # local test
     FANXIANGCE_COMMENTS_PER_PAGE = 15
     FANXIANGCE_ALBUMS_PER_PAGE = 12
     FANXIANGCE_PHOTOS_PER_PAGE = 20

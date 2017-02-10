@@ -1,10 +1,15 @@
 # -*-coding: utf-8-*-
+import os
+import time
 import json
 import bleach
+import PIL
+import urllib2
+import hashlib
 
+from PIL import Image
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
-import urllib2
 from flask import render_template, redirect, \
     url_for, flash, abort, request, current_app, send_from_directory
 from flask_login import login_required, current_user
@@ -12,8 +17,9 @@ from flask_login import login_required, current_user
 from . import main
 from .forms import NewAlbumForm, EditProfileAdminForm, \
     CommentForm, EditAlbumForm, AddPhotoForm, SettingForm
-from .. import db
-from ..models import User, Role, Permission, Album, Photo, Comment, Follow, LikePhoto, LikeAlbum, Message
+from .. import db, photos
+from ..models import User, Role, Permission, Album, Photo, Comment,\
+    Follow, LikePhoto, LikeAlbum, Message
 from ..decorators import admin_required, permission_required
 
 
@@ -394,28 +400,73 @@ def edit_profile_admin(id):
     return render_template('edit_profile.html', form=form, user=user)
 
 
+@main.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(current_app.config['UPLOADED_PHOTOS_DEST'],
+                               filename)
+
+
+def create_show(image):
+    filename, ext = os.path.splitext(image)
+    base_width = 800
+    img = Image.open(photos.path(image))
+    if img.size[0] <= 800:
+        return photos.url(image)
+    w_percent = (base_width / float(img.size[0]))
+    h_size = int((float(img.size[1]) * float(w_percent)))
+    img = img.resize((base_width, h_size), PIL.Image.ANTIALIAS)
+    img.save(os.path.join(current_app.config['UPLOADED_PHOTOS_DEST'], filename+'_s' + ext))
+    return url_for('.uploaded_file', filename=filename + '_s' + ext)
+
+
+def create_thumbnail(image):
+    filename, ext = os.path.splitext(image)
+    base_width = 300
+    img = Image.open(photos.path(image))
+    if img.size[0] <= 300:
+        return photos.url(image)
+    w_percent = (base_width / float(img.size[0]))
+    h_size = int((float(img.size[1]) * float(w_percent)))
+    img = img.resize((base_width, h_size), PIL.Image.ANTIALIAS)
+    img.save(os.path.join(current_app.config['UPLOADED_PHOTOS_DEST'], filename+'_t' + ext))
+    return url_for('.uploaded_file', filename=filename + '_t' + ext)
+
+
+def save_image(files):
+    photo_amount = len(files)
+    if photo_amount > 50:
+        flash(u'抱歉，测试阶段每次上传不超过50张！', 'warning')
+        return redirect(url_for('.new_album'))
+    images = []
+    for img in files:
+        filename = hashlib.md5(current_user.username + str(time.time())).hexdigest()[:10]
+        image = photos.save(img, name=filename + '.')
+        file_url = photos.url(image)
+        url_s = create_show(image)
+        url_t = create_thumbnail(image)
+        images.append((file_url, url_s, url_t))
+    return images
+        # store image at tietuku.com
+        # register_openers()
+        # send_data = {"Token": current_app.config['TOKEN'], "file": img}
+        # data_gen, headers = multipart_encode(send_data)
+        # request_ = urllib2.Request("http://up.tietuku.com/", data_gen, headers)
+        # json_data = urllib2.urlopen(request_).read()
+        # data = json.loads(json_data)
+        # url = data[u'linkurl']
+        # url_s = data[u's_url']
+        # url_t = data[u't_url']
+        # images.append((url, url_s, url_t))
+
+
 @main.route('/new-album', methods=['GET', 'POST'])
 @login_required
 def new_album():
     form = NewAlbumForm()
     if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
         if request.method == 'POST' and 'photo' in request.files:
-            photo_amount = len(request.files.getlist('photo'))
-            if photo_amount > 25:
-                flash(u'抱歉，测试阶段每次上传不超过25张！', 'warning')
-                return redirect(url_for('.new_album'))
-            images = []
-            for img in request.files.getlist('photo'):
-                register_openers()
-                send_data = {"Token": current_app.config['TOKEN'], "file": img}
-                data_gen, headers = multipart_encode(send_data)
-                request_ = urllib2.Request("http://up.tietuku.com/", data_gen, headers)
-                json_data = urllib2.urlopen(request_).read()
-                data = json.loads(json_data)
-                url = data[u'linkurl']
-                url_s = data[u's_url']
-                url_t = data[u't_url']
-                images.append((url, url_s, url_t))
+            images = save_image(request.files.getlist('photo'))
+
         title = form.title.data
         about = form.about.data
         author = current_user._get_current_object()
@@ -441,20 +492,9 @@ def new_album():
 def add_photo(id):
     album = Album.query.get_or_404(id)
     form = AddPhotoForm()
-    if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
+    if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS)
         if request.method == 'POST' and 'photo' in request.files:
-            images = []
-            for img in request.files.getlist('photo'):
-                register_openers()
-                send_data = {"Token": current_app.config['TOKEN'], "file": img}
-                data_gen, headers = multipart_encode(send_data)
-                request_ = urllib2.Request("http://up.tietuku.com/", data_gen, headers)
-                json_data = urllib2.urlopen(request_).read()
-                data = json.loads(json_data)
-                url = data['linkurl']
-                url_s = data['s_url']
-                url_t = data['t_url']
-                images.append((url, url_s, url_t))
+            images = save_image(request.files.getlist('photo'))
 
             for url in images:
                 photo = Photo(url=url[0], url_s=url[1], url_t=url[2],
