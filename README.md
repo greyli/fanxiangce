@@ -27,7 +27,7 @@ $ git clone https://github.com/greyli/fanxiangce.git
 Use `virtualenv` to create a virtual enviroment and activate it (Optional but Recommend).  
 Then install packages:
 ```
-$ pip install -r requirements.txt
+$ pip install -r requirements/prod.txt
 ```
 Create database and migration file:
 ```
