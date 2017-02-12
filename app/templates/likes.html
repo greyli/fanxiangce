@@ -39,7 +39,7 @@
         {% if type == 'album' %}
         {% for like in album_likes %}
         <div class="grid-item album-like">
-            <div class="album-cover">
+            <div class="album-frame">
                 <a class="album-thumbnail thumbnail" href="{{ url_for('.album', id=like.album.id) }}">
                     <img class="img-responsive portrait" src="{{ like.cover }}">
                 </a>

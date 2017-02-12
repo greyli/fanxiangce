@@ -146,8 +146,8 @@ body {
     padding: 20px;
 }
 
-.album-cover,
-.album-cover:before {
+.album-frame,
+.album-frame:before {
     background: transprent;
     width: 265px;
     height: 215px;
@@ -157,7 +157,7 @@ body {
     position: relative;
 }
 
-.album-cover:before {
+.album-frame:before {
     margin: 0;
     content: "";
     position: absolute;
