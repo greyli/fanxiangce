@@ -1,6 +1,19 @@
 # fanxiangce
 An album website made by Flask and Python (翻相册). 
 
+## ScreenShots
+User page:  
+![user page](https://raw.githubusercontent.com/greyli/fanxiangce/master/screenshots/user.png)
+
+Album page:  
+![album page](https://raw.githubusercontent.com/greyli/fanxiangce/master/screenshots/album.png)
+
+Edit page:  
+![edit page](https://raw.githubusercontent.com/greyli/fanxiangce/master/screenshots/edit.png)
+
+Photo page:  
+![photo page](https://raw.githubusercontent.com/greyli/fanxiangce/master/screenshots/photo.png)
+
 ## Extensions and Plugins
 
 - Flask==0.11.1
