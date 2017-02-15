@@ -19,7 +19,7 @@
 <div class="col-md-6">
     <form class="form form-horizontal" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
-        {{ wtf.form_field(form.title, class="form-control user") }}
+        {{ wtf.form_field(form.title) }}
         {{ wtf.form_field(form.about) }}
         {{ wtf.form_field(form.photo, multiple="multiple") }}
         {{ wtf.form_field(form.asc_order) }}
