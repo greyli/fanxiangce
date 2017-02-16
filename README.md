@@ -44,6 +44,7 @@ $ pip install -r requirements/prod.txt
 ```
 Create database and migration file:
 ```
+$ cd fanxiangce
 $ python manage.py db init
 $ python manage.py db migrate
 $ python manage.py db upgrade
