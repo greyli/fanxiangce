@@ -46,15 +46,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 log/
-*.pyc
-*.pyc
-*.pyc
-*.pyc
-app/main/views.pyc
-*.pyc
 
 app/static/img/
 venv/
-*.pyc
-*.pyc
 *.pyc
