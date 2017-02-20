@@ -1,15 +1,11 @@
 # -*-coding: utf-8-*-
 import os
 import time
-import json
 import bleach
 import PIL
-import urllib2
 import hashlib
 
 from PIL import Image
-from poster.encode import multipart_encode
-from poster.streaminghttp import register_openers
 from flask import render_template, redirect, \
     url_for, flash, abort, request, current_app, send_from_directory
 from flask_login import login_required, current_user
@@ -405,31 +401,24 @@ def uploaded_file(filename):
     return send_from_directory(current_app.config['UPLOADED_PHOTOS_DEST'],
                                filename)
 
+# add different suffix for image
+img_suffix = {
+    300: '_t',  # thumbnail
+    800: '_s'  # show
+}
 
-def create_show(image):
+
+def image_resize(image, base_width):
+    #: create thumbnail
     filename, ext = os.path.splitext(image)
-    base_width = 800
     img = Image.open(photos.path(image))
-    if img.size[0] <= 800:
+    if img.size[0] <= base_width:
         return photos.url(image)
     w_percent = (base_width / float(img.size[0]))
     h_size = int((float(img.size[1]) * float(w_percent)))
     img = img.resize((base_width, h_size), PIL.Image.ANTIALIAS)
-    img.save(os.path.join(current_app.config['UPLOADED_PHOTOS_DEST'], filename+'_s' + ext))
-    return url_for('.uploaded_file', filename=filename + '_s' + ext)
-
-
-def create_thumbnail(image):
-    filename, ext = os.path.splitext(image)
-    base_width = 300
-    img = Image.open(photos.path(image))
-    if img.size[0] <= 300:
-        return photos.url(image)
-    w_percent = (base_width / float(img.size[0]))
-    h_size = int((float(img.size[1]) * float(w_percent)))
-    img = img.resize((base_width, h_size), PIL.Image.ANTIALIAS)
-    img.save(os.path.join(current_app.config['UPLOADED_PHOTOS_DEST'], filename+'_t' + ext))
-    return url_for('.uploaded_file', filename=filename + '_t' + ext)
+    img.save(os.path.join(current_app.config['UPLOADED_PHOTOS_DEST'], filename + img_suffix[base_width] + ext))
+    return url_for('.uploaded_file', filename=filename + img_suffix[base_width] + ext)
 
 
 def save_image(files):
@@ -442,28 +431,17 @@ def save_image(files):
         filename = hashlib.md5(current_user.username + str(time.time())).hexdigest()[:10]
         image = photos.save(img, name=filename + '.')
         file_url = photos.url(image)
-        url_s = create_show(image)
-        url_t = create_thumbnail(image)
+        url_s = image_resize(image, 800)
+        url_t = image_resize(image, 300)
         images.append((file_url, url_s, url_t))
     return images
-        # store image at tietuku.com
-        # register_openers()
-        # send_data = {"Token": current_app.config['TOKEN'], "file": img}
-        # data_gen, headers = multipart_encode(send_data)
-        # request_ = urllib2.Request("http://up.tietuku.com/", data_gen, headers)
-        # json_data = urllib2.urlopen(request_).read()
-        # data = json.loads(json_data)
-        # url = data[u'linkurl']
-        # url_s = data[u's_url']
-        # url_t = data[u't_url']
-        # images.append((url, url_s, url_t))
 
 
 @main.route('/new-album', methods=['GET', 'POST'])
 @login_required
 def new_album():
     form = NewAlbumForm()
-    if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS) and
+    if form.validate_on_submit(): # current_user.can(Permission.CREATE_ALBUMS)
         if request.method == 'POST' and 'photo' in request.files:
             images = save_image(request.files.getlist('photo'))
 
@@ -521,7 +499,6 @@ def upload_add():
 
 @main.route('/follow/<username>')
 @login_required
-# @permission_required(Permission.FOLLOW)
 def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -537,7 +514,6 @@ def follow(username):
 
 @main.route('/unfollow/<username>')
 @login_required
-# @permission_required(Permission.FOLLOW)
 def unfollow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -559,7 +535,7 @@ def followers(username):
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     pagination = user.followers.paginate(
-        page, per_page=10 ,#current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
+        page, per_page=current_app.config['FANXIANGCE_FOLLOWERS_PER_PAGE'],
         error_out=False)
     follows = [{'user': item.follower, 'timestamp': item.timestamp}
                for item in pagination.items]
