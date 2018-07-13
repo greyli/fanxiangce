@@ -6,4 +6,4 @@ psycopg2==2.6.2
 pyperclip==1.5.27
 # heroku server
 gevent==1.2.1
-gunicorn==18.0
+gunicorn==19.5.0
